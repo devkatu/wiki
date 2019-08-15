@@ -6,6 +6,107 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
   <title>jquery</title>
   <style>
+  /* ハンバーガーメニュー用css */
+  /*ナビメニューのスタイルを指定*/
+  nav.NavMenu{
+    position: fixed; /*表示位置を固定*/
+    z-index: 2; /*重ね順を変更*/
+    top: 0; /*表示位置を指定*/
+    left: 0; /*表示位置を指定*/
+    background: #fff;/*背景を白にする*/
+    color: #000; /*文字色を黒にする*/
+    text-align: center; /*テキストを中央揃え*/
+    width: 100%; /*全幅表示*/
+    transform: translateY(-100%); /*ナビを上に隠す*/
+    transition: all 0.6s; /*アニメーションの時間を指定*/
+  }
+
+  nav.NavMenu ul{
+    background: #ccc; /*背景をグレーにする*/
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+  }
+
+  nav.NavMenu ul li{
+    font-size: 1.1em;
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+    border-bottom: 1px dotted #333;
+  }
+
+  nav.NavMenu ul li:last-child{
+    padding-bottom: 0;
+    border-bottom: none; /*最後のメニュー項目のみ下線を消す*/
+  }
+
+  nav.NavMenu ul li a{
+    display: block; /*クリックできる領域を広げる*/
+    color: #000;
+    padding: 1em 0;
+  }
+
+  /*トグルボタンが押されたときに付与するクラス*/
+  nav.NavMenu.active{
+    transform: translateY(0%);
+  }
+
+  /*トグルボタンのスタイルを指定*/
+  .Toggle {
+    display: block;
+    position: fixed;    /* bodyに対しての絶対位置指定 */
+    right: 13px;
+    top: 12px;
+    width: 42px;
+    height: 42px;
+    cursor: pointer;
+    z-index: 3;
+  }
+
+  .Toggle span {
+    display: block;
+    position: absolute;
+    width: 30px;
+    border-bottom: solid 3px #000;
+    -webkit-transition: .35s ease-in-out;	/*変化の速度を指定*/
+    -moz-transition: .35s ease-in-out;		/*変化の速度を指定*/
+    transition: .35s ease-in-out;			/*変化の速度を指定*/
+    left: 6px;
+  }
+
+  .Toggle span:nth-child(1) {
+    top: 9px;
+  }
+
+  .Toggle span:nth-child(2) {
+    top: 18px;
+  }
+
+  .Toggle span:nth-child(3) {
+    top: 27px;
+  }
+
+  /* 最初のspanをマイナス45度に */
+  .Toggle.active span:nth-child(1) {
+    top: 18px;
+    left: 6px;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+  }
+
+  /* 2番目と3番目のspanを45度に */
+  .Toggle.active span:nth-child(2),
+  .Toggle.active span:nth-child(3) {
+    top: 18px;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+
+
+  /* アコーディオンメニューcss */
   .accordion_menu_1,.accordion_menu_2{
     color:blue;
     cursor:pointer;
@@ -30,6 +131,24 @@
   </style>
 </head>
 <body>
+  <!-- ハンバーガーメニュー -->
+  <div class="Toggle">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  <!-- ハンバーガーメニューをクリックした時に出すナビゲーション -->
+  <nav class="NavMenu">
+    <ul>
+      <li><a href="#">Menu1</a></li>
+      <li><a href="#">Menu1</a></li>
+      <li><a href="#">Menu1</a></li>
+      <li><a href="#">Menu1</a></li>
+      <li><a href="#">Menu1</a></li>
+    </ul>
+  </nav>
+
+
   <div style="text-align:center;" >
     <h1>上へ戻るボタン</h1>
     <p>要素</p>
@@ -127,7 +246,7 @@
       <li>項目3-5</li>
     </ul>
 
-  <h1>ハンバーガーメニュー</h1>
+    <h1>ハンバーガーメニュー</h1>
 
   </div>
   <!-- jqueryで出現させる上へ戻るボタン -->
@@ -143,55 +262,65 @@
   <!-- jqueryそのものを読込んでから処理を記述する -->
   <!-- 基本的にはcssと同じ感じでセレクタを書いてそれに対するメソッドでcssのプロパティを設定していくイメージ -->
   <script>
-    //一番外側の()は$(document).ready(function(){});と同じ。省略記法
-    $(function(){
-      // 上へ戻るボタン処理
-      // #backを隠す
-      $('#back').hide();
-
-      // windowがスクロールしたときのイベント
-      // スクロール量がある程度行くと#backを表示
-      $(window).scroll(function(){
-        $('#pos').text($(this).scrollTop());
-        if($(this).scrollTop() > 60){
-          // $('#back').show();
-          $('#back').fadeIn();
-        }else{
-          $('#back').fadeOut();
-        }
-      });
-
-      // clickメソッドを作る
-      $('#back a').click(function(){
-        // $('body').animate({  //chromeだと効かなかった！！
-        $('html').animate({
-          scrollTop:0
-        },500);
-
-        return false;
-      });
-
-
-      // アコーディオンメニューその１　複数開閉
-      $('.accordion_menu_1').click(function(){
-        //クリックした要素の次にある要素をスライド表示・消去する
-        $(this).next().slideToggle();
-      });
-
-      // アコーディオンメニューその２　複数から択一
-      $('.accordion_menu_2 li').click(function(){
-        //クリックした要素の次にある要素をスライド表示・消去する
-        $(this).next().slideToggle();
-        // 自分以外のli要素の次にあるul要素をslideUpする
-        $('.accordion_menu_2 li').not($(this)).next('.accordion_menu_2 ul').slideUp();
-      });
-
-      // 矢印を付けたり消したり
-      $('.accordion_arrow').click(function(){
-        $(this).toggleClass('open');
-      });
-
+  //一番外側の()は$(document).ready(function(){});と同じ。省略記法
+  $(function(){
+    // ハンバーガーメニュー
+    $('.Toggle').click(function(){
+      $(this).toggleClass('active');
+      // .Toggleにactiveクラスが付いているかで分岐
+      if($(this).hasClass('active')){
+        $('.NavMenu').addClass('active');
+      }else{
+        $('.NavMenu').removeClass('active');
+      }
     });
+
+    // 上へ戻るボタン処理
+    // #backを隠す
+    $('#back').hide();
+    // windowがスクロールしたときのイベント
+    // スクロール量がある程度行くと#backを表示
+    $(window).scroll(function(){
+      $('#pos').text($(this).scrollTop());
+      if($(this).scrollTop() > 60){
+        // $('#back').show();
+        $('#back').fadeIn();
+      }else{
+        $('#back').fadeOut();
+      }
+    });
+
+    // clickメソッドを作る
+    $('#back a').click(function(){
+      // $('body').animate({  //chromeだと効かなかった！！
+      $('html').animate({
+        scrollTop:0
+      },500);
+
+      return false;
+    });
+
+
+    // アコーディオンメニューその１　複数開閉
+    $('.accordion_menu_1').click(function(){
+      //クリックした要素の次にある要素をスライド表示・消去する
+      $(this).next().slideToggle();
+    });
+
+    // アコーディオンメニューその２　複数から択一
+    $('.accordion_menu_2 li').click(function(){
+      //クリックした要素の次にある要素をスライド表示・消去する
+      $(this).next().slideToggle();
+      // 自分以外のli要素の次にあるul要素をslideUpする
+      $('.accordion_menu_2 li').not($(this)).next('.accordion_menu_2 ul').slideUp();
+    });
+
+    // 矢印を付けたり消したり
+    $('.accordion_arrow').click(function(){
+      $(this).toggleClass('open');
+    });
+
+  });
   </script>
 </body>
 </html>
