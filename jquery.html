@@ -5,10 +5,33 @@
   <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
   <title>jquery</title>
+  <style>
+  .accordion_menu_1,.accordion_menu_2{
+    color:blue;
+    cursor:pointer;
+  }
+
+  /* アコーディオンメニューの矢印用css */
+  .accordion_arrow:after {
+    content: "";
+    transition: all 0.2s ease-in-out;
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-top: solid 2px #000;
+    border-right: solid 2px #000;
+    -webkit-transform: rotate(135deg);
+    transform: rotate(135deg);
+  }
+  .accordion_arrow.open:after {
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+  }
+  </style>
 </head>
 <body>
-  <div style="text-align:center;">
-    <h1>スクロール</h1>
+  <div style="text-align:center;" >
+    <h1>上へ戻るボタン</h1>
     <p>要素</p>
     <p>要素</p>
     <p>要素</p>
@@ -36,8 +59,78 @@
     <p>要素</p>
     <p>要素</p>
     <p>要素</p>
+    <h1>アコーディオンメニュー</h1>
+    <h2 class="accordion_menu_1">メニュー１</h2>
+    <ul style="display:none;list-style:none;">
+      <li class="accordion_menu_1">項目1-1</li>
+      <ul style="display:none;list-style:none;">
+        <li>項目1-1-1</li>
+        <li>項目1-1-2</li>
+        <li>項目1-1-3</li>
+        <li>項目1-1-4</li>
+        <li>項目1-1-5</li>
+      </ul>
+      <li>項目1-2</li>
+      <li>項目1-3</li>
+      <li>項目1-4</li>
+      <li>項目1-5</li>
+    </ul>
+    <h2 class="accordion_menu_1">メニュー２</h2>
+    <ul class="accordion_menu_2" style="display:none;list-style:none;">
+      <li>項目2-1</li>
+      <ul style="display:none;list-style:none;">
+        <li>項目2-1-1</li>
+        <li>項目2-1-2</li>
+        <li>項目2-1-3</li>
+        <li>項目2-1-4</li>
+        <li>項目2-1-5</li>
+      </ul>
+      <li>項目2-2</li>
+      <ul style="display:none;list-style:none;">
+        <li>項目2-2-1</li>
+        <li>項目2-2-2</li>
+        <li>項目2-2-3</li>
+        <li>項目2-2-4</li>
+        <li>項目2-2-5</li>
+      </ul>
+      <li>項目2-3</li>
+      <ul style="display:none;list-style:none;">
+        <li>項目2-3-1</li>
+        <li>項目2-3-2</li>
+        <li>項目2-3-3</li>
+        <li>項目2-3-4</li>
+        <li>項目2-3-5</li>
+      </ul>
+      <li>項目2-4</li>
+      <ul style="display:none;list-style:none;">
+        <li>項目2-4-1</li>
+        <li>項目2-4-2</li>
+        <li>項目2-4-3</li>
+        <li>項目2-4-4</li>
+        <li>項目2-4-5</li>
+      </ul>
+      <li>項目2-5</li>
+      <ul style="display:none;list-style:none;">
+        <li>項目2-5-1</li>
+        <li>項目2-5-2</li>
+        <li>項目2-5-3</li>
+        <li>項目2-5-4</li>
+        <li>項目2-5-5</li>
+      </ul>
+    </ul>
+    <h2 class="accordion_menu_1 accordion_arrow">メニュー３</h2>
+    <ul style="display:none;list-style:none;">
+      <li>項目3-1</li>
+      <li>項目3-2</li>
+      <li>項目3-3</li>
+      <li>項目3-4</li>
+      <li>項目3-5</li>
+    </ul>
+
+  <h1>ハンバーガーメニュー</h1>
+
   </div>
-  <!-- jqueryで出現させるdiv -->
+  <!-- jqueryで出現させる上へ戻るボタン -->
   <div id="back" style="position:fixed;right:5px;bottom:5px;font-size:100px;font-weight:bold;color:blue;"><a href="#">↑</a></div>
   <!-- デバッグ用のdiv　スクロール位置を表示する -->
   <div id="pos" style="position:fixed;left:5px;top:5px;font-size:50px;"></div>
@@ -52,6 +145,7 @@
   <script>
     //一番外側の()は$(document).ready(function(){});と同じ。省略記法
     $(function(){
+      // 上へ戻るボタン処理
       // #backを隠す
       $('#back').hide();
 
@@ -76,6 +170,27 @@
 
         return false;
       });
+
+
+      // アコーディオンメニューその１　複数開閉
+      $('.accordion_menu_1').click(function(){
+        //クリックした要素の次にある要素をスライド表示・消去する
+        $(this).next().slideToggle();
+      });
+
+      // アコーディオンメニューその２　複数から択一
+      $('.accordion_menu_2 li').click(function(){
+        //クリックした要素の次にある要素をスライド表示・消去する
+        $(this).next().slideToggle();
+        // 自分以外のli要素の次にあるul要素をslideUpする
+        $('.accordion_menu_2 li').not($(this)).next('.accordion_menu_2 ul').slideUp();
+      });
+
+      // 矢印を付けたり消したり
+      $('.accordion_arrow').click(function(){
+        $(this).toggleClass('open');
+      });
+
     });
   </script>
 </body>
