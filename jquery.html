@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
+  <title>jquery</title>
+</head>
+<body>
+  <div style="text-align:center;">
+    <h1>スクロール</h1>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+    <p>要素</p>
+  </div>
+  <!-- jqueryで出現させるdiv -->
+  <div id="back" style="position:fixed;right:5px;bottom:5px;font-size:100px;font-weight:bold;color:blue;"><a href="#">↑</a></div>
+  <!-- デバッグ用のdiv　スクロール位置を表示する -->
+  <div id="pos" style="position:fixed;left:5px;top:5px;font-size:50px;"></div>
+
+  <!-- jqueryの読み込み基本はbody閉じタグの前に読込む(html読み込み時間短縮) -->
+  <script
+  src="https://code.jquery.com/jquery-1.12.4.min.js"
+  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+  crossorigin="anonymous"></script>
+  <!-- jqueryそのものを読込んでから処理を記述する -->
+  <!-- 基本的にはcssと同じ感じでセレクタを書いてそれに対するメソッドでcssのプロパティを設定していくイメージ -->
+  <script>
+    //一番外側の()は$(document).ready(function(){});と同じ。省略記法
+    $(function(){
+      // #backを隠す
+      $('#back').hide();
+
+      // windowがスクロールしたときのイベント
+      // スクロール量がある程度行くと#backを表示
+      $(window).scroll(function(){
+        $('#pos').text($(this).scrollTop());
+        if($(this).scrollTop() > 60){
+          // $('#back').show();
+          $('#back').fadeIn();
+        }else{
+          $('#back').fadeOut();
+        }
+      });
+
+      // clickメソッドを作る
+      $('#back a').click(function(){
+        // $('body').animate({  //chromeだと効かなかった！！
+        $('html').animate({
+          scrollTop:0
+        },500);
+
+        return false;
+      });
+    });
+  </script>
+</body>
+</html>
