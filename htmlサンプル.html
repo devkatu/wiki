@@ -10,20 +10,25 @@
 <body>
   <h1>各種中央揃えのサンプル</h1>
   <div class="outer">
-    <h2>text-align</h2>
+    <h2>text-align:center;</h2>
+    <p class="desc">innerのpのブロックの幅はouterのいっぱいまで、高さは成り行き次第でテキスト内容のみを中央揃えする</p>
     <p class="inner inner_ex1">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
   </div>
   <div class="outer">
     <h2>margin: 0 auto;</h2>
+    <p class="desc">innerブロックの幅を指定して左右のmarginを自動調整させ、outerの横中央に配置する。高さは成り行き</p>
     <p class="inner inner_ex2">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
   </div>
   <div class="outer outer_ex3">
     <h2>display:inline-block;</h2>
+    <p class="desc">inline-block指定するとその要素の幅は内容量に応じて決まる。その要素をouterからtext-align:center;</p>
     <p class="inner inner_ex3">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,<br />inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
   </div>
   <h2>ここから上下左右ともに中央揃え</h2>
   <div class="outer outer_ex4">
     <h2>display:table-cell & vertical-align:center;</h2>
+    <p class="desc">outerをtable、innerをtable-cell(tdタグと同じ働き)に指定して、vertical-align:middle;する。
+      vertical-alignはtable-cellでないと効かない。</p>
     <p class="inner inner_ex4">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
   </div>
   <div class="outer outer_ex5">
@@ -39,11 +44,43 @@
     <p class="inner">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
   </div>
   
-  <h1>簡単な解説もいれて</h1>
   <h1>ついでのflexbox</h1>
+  
   <h1>横並べ</h1>
+  <div class="outer">
+    <h2>float:left;</h2>
+    <ul class="inner ul1 clr_fix">
+      <li>list1</li>
+      <li>list2</li>
+      <li>list3</li>
+      <li>list4</li>
+      <li>list5</li>
+    </ul>
+  </div>
+  <div class="outer">
+    <h2>display:inline-block;</h2>
+    <ul class="inner ul2">
+      <li>list1</li>
+      <li>list2</li>
+      <li>list3</li>
+      <li>list4</li>
+      <li>list5</li>
+    </ul>
+  </div>
+  <div class="outer">
+    <h2>display:table-cell;</h2>
+    <ul class="inner ul3">
+      <li>list1</li>
+      <li>list2</li>
+      <li>list3</li>
+      <li>list4</li>
+      <li>list5</li>
+    </ul>
+  </div>
+
   <h1>background</h1>
   <h1>position</h1>
+  <h1>簡単な解説もいれて</h1>
 
 
 </body>

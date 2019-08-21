@@ -9,6 +9,9 @@
 body h1{
   text-align: center;
 }
+.desc{
+  font-size: 12px;
+}
 .outer{
   width: 40%;
   margin: 10px auto 0;
@@ -78,4 +81,31 @@ body h1{
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+li{
+  list-style: none;
+}
+
+.ul1 li{
+  float: left;
+}
+
+.clr_fix::after{
+  content: "";
+  display: block;
+  clear: both;
+
+  /* わかりやすく四角を表示 */
+  width:10px;
+  height:10px;
+  background-color: #f0f;
+}
+
+.ul2 li{
+  display: inline-block;
+}
+
+.ul3 li{
+  display: table-cell;
 }
