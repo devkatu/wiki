@@ -33,14 +33,18 @@
   </div>
   <div class="outer outer_ex5">
     <h2>margin:auto;</h2>
+    <p class="desc">innerにposition:absolute;(outerはrelativeにする)を指定し、top,right,bottom,left全て0、幅高さも指定した上で
+    margin:auto;にすると上下、左右ともに自動調整してくれる</p>
     <p class="inner inner_ex5">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
   </div>
   <div class="outer outer_ex5">
     <h2>transform & translate()</h2>
+    <p class="desc">transformでinner要素を親要素からleft、topともに50%移動し、さらにtranslate()で自要素の50%分左、上に移動する事で中心揃え</p>
     <p class="inner inner_ex6">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
   </div>
   <div class="outer outer_ex6">
     <h2>display:flex;</h2>
+    <p class="desc">flexは色々できる</p>
     <p class="inner">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
   </div>
   
@@ -49,6 +53,7 @@
   <h1>横並べ</h1>
   <div class="outer">
     <h2>float:left;</h2>
+    <p class="desc">お馴染みfloat clr_fixしたり親要素の高さなくなったりに注意が必要</p>
     <ul class="inner ul1 clr_fix">
       <li>list1</li>
       <li>list2</li>
@@ -59,6 +64,7 @@
   </div>
   <div class="outer">
     <h2>display:inline-block;</h2>
+    <p class="desc">display:inline;だけでも横並びにはなるが、高さ指定できない為inline-blockの方が良い。又自動的にmarginが入る</p>
     <ul class="inner ul2">
       <li>list1</li>
       <li>list2</li>
@@ -69,6 +75,7 @@
   </div>
   <div class="outer">
     <h2>display:table-cell;</h2>
+    <p class="desc">親要素にdisaplay:table;指定。tdタグと同じになるので横並びになる。marginが効かない</p>
     <ul class="inner ul3">
       <li>list1</li>
       <li>list2</li>
