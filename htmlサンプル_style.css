@@ -6,8 +6,16 @@
   box-sizing: border-box;
 }
 
-body h1{
+body h1, h2{
   text-align: center;
+  margin-top: 40px;
+}
+body > p{
+  text-align: center;
+}
+.title{
+  width: 40%;
+  margin: 30px auto 0;
 }
 .desc{
   font-size: 12px;
@@ -47,6 +55,10 @@ body h1{
   text-align: center;
 }
 
+.outer_ex4 > div{
+  display: table-row;
+}
+
 .inner_ex4{
   display: table-cell;
   vertical-align: middle;
@@ -76,7 +88,7 @@ body h1{
   -webkit- transform: translateX(-50%) translateY(-50%);
 }
 
-.outer_ex6{
+.outer_ex7{
   height: 150px;
   display: flex;
   justify-content: center;

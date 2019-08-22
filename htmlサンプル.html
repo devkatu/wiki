@@ -5,55 +5,79 @@
   <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
   <link rel="stylesheet" href="htmlサンプル_style.css" />
-  <title>html各種サンプル</title>
+  <title>css各種サンプル</title>
 </head>
 <body>
-  <h1>各種中央揃えのサンプル</h1>
-  <div class="outer">
-    <h2>text-align:center;</h2>
+  <h1>中央揃え各種サンプル</h1>
+  <div class="title">
+    <h3>text-align:center;</h3>
     <p class="desc">innerのpのブロックの幅はouterのいっぱいまで、高さは成り行き次第でテキスト内容のみを中央揃えする</p>
+  </div>
+  <div class="outer">
     <p class="inner inner_ex1">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
   </div>
-  <div class="outer">
-    <h2>margin: 0 auto;</h2>
+
+  <div class="title">
+    <h3>margin: 0 auto;</h3>
     <p class="desc">innerブロックの幅を指定して左右のmarginを自動調整させ、outerの横中央に配置する。高さは成り行き</p>
+  </div>
+  <div class="outer">
     <p class="inner inner_ex2">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
   </div>
-  <div class="outer outer_ex3">
-    <h2>display:inline-block;</h2>
+
+  <div class="title">
+    <h3>display:inline-block;</h3>
     <p class="desc">inline-block指定するとその要素の幅は内容量に応じて決まる。その要素をouterからtext-align:center;</p>
+  </div>
+  <div class="outer outer_ex3">
     <p class="inner inner_ex3">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,<br />inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
   </div>
+
   <h2>ここから上下左右ともに中央揃え</h2>
-  <div class="outer outer_ex4">
-    <h2>display:table-cell & vertical-align:center;</h2>
+
+  <div class="title">
+    <h3>display:table-cell & vertical-align:middle;</h3>
     <p class="desc">outerをtable、innerをtable-cell(tdタグと同じ働き)に指定して、vertical-align:middle;する。
-      vertical-alignはtable-cellでないと効かない。</p>
+      vertical-alignはtable-cellでないと効かない。幅、高さ共に親要素のいっぱいまで伸びる。<br />例)横並びの高さの違う要素を中央揃えするのに便利</p>
+  </div>
+  <div class="outer outer_ex4">
     <p class="inner inner_ex4">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
   </div>
-  <div class="outer outer_ex5">
-    <h2>margin:auto;</h2>
+
+  <div class="title">
+    <h3>margin:auto;</h3>
     <p class="desc">innerにposition:absolute;(outerはrelativeにする)を指定し、top,right,bottom,left全て0、幅高さも指定した上で
-    margin:auto;にすると上下、左右ともに自動調整してくれる</p>
+      margin:auto;にすると上下、左右ともに自動調整してくれる。ただし絶対配置なので他の要素を入れるときは注意</p>
+  </div>
+  <div class="outer outer_ex5">
     <p class="inner inner_ex5">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
   </div>
+
+  <div class="title">
+    <h3>transform & translate()</h3>
+    <p class="desc">transformでinner要素を親要素からleft、topともに50%移動し、さらにtranslate()で自要素の50%分左、上に移動する事で中心揃え。また ボタン等の中文字を中心に合わせたいならposition: absolute; top: 50%; margin-top: -.5em;とかもOK/</p>
+  </div>
   <div class="outer outer_ex5">
-    <h2>transform & translate()</h2>
-    <p class="desc">transformでinner要素を親要素からleft、topともに50%移動し、さらにtranslate()で自要素の50%分左、上に移動する事で中心揃え</p>
     <p class="inner inner_ex6">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
   </div>
-  <div class="outer outer_ex6">
-    <h2>display:flex;</h2>
-    <p class="desc">flexは色々できる</p>
+
+  <div class="title">
+    <h3>display:flex;</h3>
+    <p class="desc">flexは色々できる。次のセクション参照</p>
+  </div>
+  <div class="outer outer_ex7">
     <p class="inner">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
   </div>
-  
-  <h1>ついでのflexbox</h1>
-  
-  <h1>横並べ</h1>
+
+  <h1>ついでのflexbox(qiita)</h1>
+  <p class="desc">結構たくさんあるので<a href="https://qiita.com/watamura/items/48b6a99aea925c707925">https://qiita.com/watamura/items/48b6a99aea925c707925</a>を参照</p>
+
+  <h1>横並び各種サンプル</h1>
+  <div class="title">
+    <h3>float:left;</h3>
+    <p class="desc">お馴染みfloat clr_fixしたり親要素の高さなくなったりに注意が必要。紫色の四角がclr_fix疑似要素でこの四角からfloat解除になる。<br />例)文章＆画像とかに使える</p>
+  </div>
   <div class="outer">
-    <h2>float:left;</h2>
-    <p class="desc">お馴染みfloat clr_fixしたり親要素の高さなくなったりに注意が必要</p>
     <ul class="inner ul1 clr_fix">
       <li>list1</li>
       <li>list2</li>
@@ -62,9 +86,12 @@
       <li>list5</li>
     </ul>
   </div>
+
+  <div class="title">
+    <h3>display:inline-block;</h3>
+    <p class="desc">display:inline;だけでも横並びにはなるが、高さ指定できない為inline-blockの方が良い。又自動的にmarginが入る。<br />例)パンくずリストとかナビゲーションバーに使える</p>
+  </div>
   <div class="outer">
-    <h2>display:inline-block;</h2>
-    <p class="desc">display:inline;だけでも横並びにはなるが、高さ指定できない為inline-blockの方が良い。又自動的にmarginが入る</p>
     <ul class="inner ul2">
       <li>list1</li>
       <li>list2</li>
@@ -73,9 +100,12 @@
       <li>list5</li>
     </ul>
   </div>
+
+  <div class="title">
+    <h3>display:table-cell;</h3>
+    <p class="desc">親要素にdisaplay:table;指定。tdタグと同じになるので横並びになる。paddingは効くがmarginが効かない。<br />例)navbarとかに使える…と思ったけど柔軟な変更が効かない。がvertical-align:middle;が使えるので、高さがマチマチだけど中心揃えしたいときに使う</p>
+  </div>
   <div class="outer">
-    <h2>display:table-cell;</h2>
-    <p class="desc">親要素にdisaplay:table;指定。tdタグと同じになるので横並びになる。marginが効かない</p>
     <ul class="inner ul3">
       <li>list1</li>
       <li>list2</li>
@@ -87,8 +117,6 @@
 
   <h1>background</h1>
   <h1>position</h1>
-  <h1>簡単な解説もいれて</h1>
-
 
 </body>
 </html>
