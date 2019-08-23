@@ -170,5 +170,63 @@
 
 
       <h1>height,widthの指定方法</h1>
+      
+      
+      
+      <h1>background</h1>
+      
+      <div class="sampleimg">
+        <img alt="sample" src="1.png">
+        <p class="desc">↑元画像(50px*50px)。以下positionは全てcenter center;
+        top left;とかの指定もでき、親要素に対する位置を指定できる</p>
+      </div>
+
+      <div class="title">
+        <h3>background-size:auto;</h3>
+        <p class="desc">初期値。元画像のサイズそのまま表示する</p>
+      </div>
+      <div class="outer">
+        <div class="bg0">
+        </div>
+      </div>
+      
+      <div class="title">
+        <h3>background-size:contain;</h3>
+        <p class="desc">親要素に対し画像を全部表示できる範囲で拡大表示する。</p>
+      </div>
+      <div class="outer">
+        <div class="bg1">
+        </div>
+      </div>
+      
+      <div class="title">
+        <h3>background-size:contain; background-repeat: no-repeat;</h3>
+        <p class="desc">繰り返し表示をしないようにする。repeat-x;repeat-y;で横方向、縦方向への繰り返し表示もできる</p>
+      </div>
+      <div class="outer">
+        <div class="bg2">
+        </div>
+      </div>
+      
+      <div class="title">
+        <h3>background-size:cover;</h3>
+        <p class="desc">親要素を全て埋め尽くすように拡大表示する。はみ出た部分は非表示</p>
+      </div>
+      <div class="outer">
+        <div class="bg3">
+        </div>
+      </div>
+      
+      <div class="title">
+        <h3>background-attachment:fixed;</h3>
+        <p class="desc">背景画像をｽｸﾛｰﾙに関わらず固定する。大体body要素の背景に対して使うはず
+        ここではbottom centerに表示している</p>
+      </div>
+      <div class="outer">
+        <div class="bg4">
+        </div>
+      </div>
+      
+      
     </body>
     </html>
