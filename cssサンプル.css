@@ -170,3 +170,51 @@ li{
     /* background-color: blue; */
 }
 /* test */
+
+.sampleimg{
+  text-align: center;
+}
+
+.bg0{
+  width: auto;
+  height: 100px;
+  background-image: url("1.png");
+  background-position: center center;
+  background-size: auto;
+}
+
+.bg1{
+  width: auto;
+  height: 100px;
+  background-image: url("1.png");
+  background-position: center center;
+  background-size: contain;
+}
+
+.bg2{
+  width: auto;
+  height: 100px;
+  background-image: url("1.png");
+  background-position: center center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.bg3{
+  width: auto;
+  height: 100px;
+  background-image: url("1.png");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.bg4{
+  width: auto;
+  height: 100px;
+  background-image: url("1.png");
+  background-position: bottom center;
+  background-size: auto;
+  background-repeat: repeat-x;
+  background-attachment: fixed;
+}
