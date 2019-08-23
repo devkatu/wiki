@@ -39,126 +39,136 @@
     <h3>display:table-cell & vertical-align:middle;</h3>
     <p class="desc">outerをtable、innerをtable-cell(tdタグと同じ働き)に指定して、vertical-align:middle;する。
       vertical-alignはtable-cellでないと効かない。幅、高さ共に親要素のいっぱいまで伸びる。<br />例)横並びの高さの違う要素を中央揃えするのに便利</p>
-  </div>
-  <div class="outer outer_ex4">
-    <p class="inner inner_ex4">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
-  </div>
-
-  <div class="title">
-    <h3>margin:auto;</h3>
-    <p class="desc">innerにposition:absolute;(outerはrelativeにする)を指定し、top,right,bottom,left全て0、幅高さも指定した上で
-      margin:auto;にすると上下、左右ともに自動調整してくれる。ただし絶対配置なので他の要素を入れるときは注意</p>
-  </div>
-  <div class="outer outer_ex5">
-    <p class="inner inner_ex5">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
-  </div>
-
-  <div class="title">
-    <h3>transform & translate()</h3>
-    <p class="desc">transformでinner要素を親要素からleft、topともに50%移動し、さらにtranslate()で自要素の50%分左、上に移動する事で中心揃え。また ボタン等の中文字を中心に合わせたいならposition: absolute; top: 50%; margin-top: -.5em;とかもOK/</p>
-  </div>
-  <div class="outer outer_ex5">
-    <p class="inner inner_ex6">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
-  </div>
-
-  <div class="title">
-    <h3>display:flex;</h3>
-    <p class="desc">flexは色々できる。次のセクション参照</p>
-  </div>
-  <div class="outer outer_ex7">
-    <p class="inner">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
-  </div>
-
-  <h1>ついでのflexbox(qiita)</h1>
-  <p class="desc">結構たくさんあるので<a href="https://qiita.com/watamura/items/48b6a99aea925c707925">https://qiita.com/watamura/items/48b6a99aea925c707925</a>を参照</p>
-
-  <h1>横並び各種サンプル</h1>
-  <div class="title">
-    <h3>float:left;</h3>
-    <p class="desc">お馴染みfloat clr_fixしたり親要素の高さなくなったりに注意が必要。紫色の四角がclr_fix疑似要素でこの四角からfloat解除になる。<br />例)文章＆画像とかに使える</p>
-  </div>
-  <div class="outer">
-    <ul class="inner ul1 clr_fix">
-      <li>list1</li>
-      <li>list2</li>
-      <li>list3</li>
-      <li>list4</li>
-      <li>list5</li>
-    </ul>
-  </div>
-
-  <div class="title">
-    <h3>display:inline-block;</h3>
-    <p class="desc">display:inline;だけでも横並びにはなるが、高さ指定できない為inline-blockの方が良い。又自動的にmarginが入る。<br />例)パンくずリストとかナビゲーションバーに使える</p>
-  </div>
-  <div class="outer">
-    <ul class="inner ul2">
-      <li>list1</li>
-      <li>list2</li>
-      <li>list3</li>
-      <li>list4</li>
-      <li>list5</li>
-    </ul>
-  </div>
-
-  <div class="title">
-    <h3>display:table-cell;</h3>
-    <p class="desc">親要素にdisaplay:table;指定。tdタグと同じになるので横並びになる。paddingは効くがmarginが効かない。<br />例)navbarとかに使える…と思ったけど柔軟な変更が効かない。がvertical-align:middle;が使えるので、高さがマチマチだけど中心揃えしたいときに使う</p>
-  </div>
-  <div class="outer">
-    <ul class="inner ul3">
-      <li>list1</li>
-      <li>list2</li>
-      <li>list3</li>
-      <li>list4</li>
-      <li>list5</li>
-    </ul>
-  </div>
-
-  <h1>background</h1>
-  <h1>position</h1>
-  <div class="title">
-    <h3>position:static;</h3>
-    <p class="desc">positionの初期値。top,left等指定しても効果なし</p>
-  </div>
-  <div class="outer">
-    <div class="inner" >
-      <p>通常の要素<span class="st">後続要素(static)</span></p>
     </div>
-  </div>
+    <div class="outer outer_ex4">
+      <p class="inner inner_ex4">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
+    </div>
 
-  <div class="title">
-    <h3>position:relative;</h3>
-    <p class="desc">staticを指定したときの位置(つまりその要素の初期値)を基準にtop,left等で場所を指定する。親要素の高さ、幅は変わらないみたい…</p>
-  </div>
-  <div class="outer">
-      <div class="inner" >
-        <p>通常の要素<span class="rl">後続要素(relative)</span></p>
+    <div class="title">
+      <h3>margin:auto;</h3>
+      <p class="desc">innerにposition:absolute;(outerはrelativeにする)を指定し、top,right,bottom,left全て0、幅高さも指定した上で
+        margin:auto;にすると上下、左右ともに自動調整してくれる。ただし絶対配置なので他の要素を入れるときは注意</p>
       </div>
-    </div>
-
-  <div class="title">
-    <h3>position:absolute;</h3>
-    <p class="desc">親要素に対する絶対値でtop,left等を指定する。ただし親要素にposition:static;以外が指定されていなければならず
-      指定無しの場合は更に先祖の要素まで(body要素まで)遡る。親要素の高さ、幅は変わらないみたい…
-    </p>
-  </div>
-  <div class="outer">
-      <div class="inner" >
-        <p>通常の要素<span class="ab">後続要素(absolute)</span></p>
+      <div class="outer outer_ex5">
+        <p class="inner inner_ex5">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
       </div>
-    </div>
 
-  <div class="title">
-    <h3>position:fixed;</h3>
-    <p class="desc">windowに対する指定。スクロールしてもその位置のまま</p>
-  </div>
-  <div class="outer">
-      <div class="inner" >
-        <p>通常の要素<span class="fx">後続要素(fixed)</span></p>
+      <div class="title">
+        <h3>transform & translate()</h3>
+        <p class="desc">transformでinner要素を親要素からleft、topともに50%移動し、さらにtranslate()で自要素の50%分左、上に移動する事で中心揃え。また ボタン等の中文字を中心に合わせたいならposition: absolute; top: 50%; margin-top: -.5em;とかもOK/</p>
       </div>
-    </div>
+      <div class="outer outer_ex5">
+        <p class="inner inner_ex6">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
+      </div>
 
-    <h1>height,widthの指定方法</h1>
-</body>
-</html>
+      <div class="title">
+        <h3>display:flex;</h3>
+        <p class="desc">flexは色々できる。次のセクション参照</p>
+      </div>
+      <div class="outer outer_ex7">
+        <p class="inner">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
+      </div>
+
+      <h1>ついでのflexbox(qiita)</h1>
+      <p class="desc">結構たくさんあるので<a href="https://qiita.com/watamura/items/48b6a99aea925c707925">https://qiita.com/watamura/items/48b6a99aea925c707925</a>を参照</p>
+
+      <h1>横並び各種サンプル</h1>
+      <div class="title">
+        <h3>float:left;</h3>
+        <p class="desc">お馴染みfloat clr_fixしたり親要素の高さなくなったりに注意が必要。紫色の四角がclr_fix疑似要素でこの四角からfloat解除になる。<br />例)文章＆画像とかに使える</p>
+      </div>
+      <div class="outer">
+        <ul class="inner ul1 clr_fix">
+          <li>list1</li>
+          <li>list2</li>
+          <li>list3</li>
+          <li>list4</li>
+          <li>list5</li>
+        </ul>
+      </div>
+
+      <div class="title">
+        <h3>display:inline-block;</h3>
+        <p class="desc">display:inline;だけでも横並びにはなるが、高さ指定できない為inline-blockの方が良い。又自動的にmarginが入る。<br />例)パンくずリストとかナビゲーションバーに使える</p>
+      </div>
+      <div class="outer">
+        <ul class="inner ul2">
+          <li>list1</li>
+          <li>list2</li>
+          <li>list3</li>
+          <li>list4</li>
+          <li>list5</li>
+        </ul>
+      </div>
+
+      <div class="title">
+        <h3>display:table-cell;</h3>
+        <p class="desc">親要素にdisaplay:table;指定。tdタグと同じになるので横並びになる。paddingは効くがmarginが効かない。<br />例)navbarとかに使える…と思ったけど柔軟な変更が効かない。がvertical-align:middle;が使えるので、高さがマチマチだけど中心揃えしたいときに使う</p>
+      </div>
+      <div class="outer">
+        <ul class="inner ul3">
+          <li>list1</li>
+          <li>list2</li>
+          <li>list3</li>
+          <li>list4</li>
+          <li>list5</li>
+        </ul>
+      </div>
+
+      <h1>background</h1>
+      <h1>position</h1>
+      <div class="title">
+        <h3>position:static;</h3>
+        <p class="desc">positionの初期値。top,left等指定しても効果なし</p>
+      </div>
+      <div class="outer">
+        <div class="inner" >
+          <p>通常の要素<span class="st">後続要素(static)</span></p>
+        </div>
+      </div>
+
+      <div class="title">
+        <h3>position:relative;</h3>
+        <p class="desc">staticを指定したときの位置(つまりその要素の初期値)を基準にtop,left等で場所を指定する。通常のレイアウト処理から除外される(存在していないかのように扱われる)ため、親要素の高さ、幅は変わらないみたい…親要素にheight、widthを指定する等必要あり</p>
+      </div>
+      <div class="outer">
+        <div class="inner" >
+          <p>通常の要素<span class="rl">後続要素(relative)</span></p>
+        </div>
+      </div>
+
+      <div class="title">
+        <h3>position:absolute;</h3>
+        <p class="desc">親要素に対する絶対値でtop,left等を指定する。ただし親要素にposition:static;以外が指定されていなければならず
+          指定無しの場合は更に先祖の要素まで(body要素まで)遡る。通常のレイアウト処理から除外される(存在していないかのように扱われる)ため、親要素の高さ、幅は変わらないみたい…親要素にheight、widthを指定する等必要あり
+        </p>
+      </div>
+      <div class="outer">
+        <div class="inner" >
+          <p>通常の要素<span class="ab">後続要素(absolute)</span></p>
+        </div>
+      </div>
+
+      <div class="title">
+        <h3>position:fixed;</h3>
+        <p class="desc">windowに対する指定。スクロールしてもその位置のまま</p>
+      </div>
+      <div class="outer">
+        <div class="inner" >
+          <p>通常の要素<span class="fx">後続要素(fixed)</span></p>
+        </div>
+      </div>
+
+
+<!-- test -->
+      <div class="box ratio-1_1">
+          <div class="_inner">
+              <p>1 : 1</p>
+          </div>
+      </div>
+<!-- test -->
+
+
+      <h1>height,widthの指定方法</h1>
+    </body>
+    </html>
