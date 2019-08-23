@@ -29,6 +29,7 @@ body > p{
 .inner{
   background-color: #EEF2F6;
   border: 1px solid white;
+  position: relative;
 }
 
 .inner_ex1{
@@ -120,4 +121,28 @@ li{
 
 .ul3 li{
   display: table-cell;
+}
+
+.st{
+  position: static;
+  top:20px;
+  left:20px;
+}
+
+.rl{
+  position: relative;
+  top:20px;
+  left:20px;
+}
+
+.ab{
+  position: absolute;
+  top:20px;
+  left:20px;
+}
+
+.fx{
+  position: fixed;
+  top:20px;
+  left:20px;
 }

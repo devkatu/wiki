@@ -117,6 +117,47 @@
 
   <h1>background</h1>
   <h1>position</h1>
+  <div class="title">
+    <h3>position:static;</h3>
+    <p class="desc">positionの初期値。top,left等指定しても効果なし</p>
+  </div>
+  <div class="outer">
+    <div class="inner" >
+      <p>通常の要素<span class="st">後続要素(static)</span></p>
+    </div>
+  </div>
+
+  <div class="title">
+    <h3>position:relative;</h3>
+    <p class="desc">staticを指定したときの位置(つまりその要素の初期値)を基準にtop,left等で場所を指定する。親要素の高さ、幅は変わらないみたい…</p>
+  </div>
+  <div class="outer">
+      <div class="inner" >
+        <p>通常の要素<span class="rl">後続要素(relative)</span></p>
+      </div>
+    </div>
+
+  <div class="title">
+    <h3>position:absolute;</h3>
+    <p class="desc">親要素に対する絶対値でtop,left等を指定する。ただし親要素にposition:static;以外が指定されていなければならず
+      指定無しの場合は更に先祖の要素まで(body要素まで)遡る。親要素の高さ、幅は変わらないみたい…
+    </p>
+  </div>
+  <div class="outer">
+      <div class="inner" >
+        <p>通常の要素<span class="ab">後続要素(absolute)</span></p>
+      </div>
+    </div>
+
+  <div class="title">
+    <h3>position:fixed;</h3>
+    <p class="desc">windowに対する指定。スクロールしてもその位置のまま</p>
+  </div>
+  <div class="outer">
+      <div class="inner" >
+        <p>通常の要素<span class="fx">後続要素(fixed)</span></p>
+      </div>
+    </div>
 
 </body>
 </html>
