@@ -171,6 +171,49 @@ li{
 }
 /* test */
 
+
+.width_50per{
+  width: 50%;
+  float: left;
+  text-align: center;
+  background-color: red;
+}
+
+.width_30per{
+  width: 30%;
+  float: left;
+  text-align: center;
+  background-color: green;
+}
+
+.width_20per{
+  width: 20%;
+  float: left;
+  text-align: center;
+  background-color: blue;
+}
+
+.width_100per{
+  width: 100%;
+  padding: 0 20px;
+  text-align: center;
+  color: white;
+  background-color: rgb(240, 135, 48);
+}
+
+.contentbox{
+  box-sizing: content-box;
+  background-color: rgb(92, 205, 111);
+}
+
+.width_auto{
+  box-sizing: content-box;
+  width: auto;
+  padding: 0 20px;
+  text-align: center;
+  background-color: white;
+}
+
 .sampleimg{
   text-align: center;
 }
@@ -178,7 +221,7 @@ li{
 .bg0{
   width: auto;
   height: 100px;
-  background-image: url("1.png");
+  background-image: url("star.png");
   background-position: center center;
   background-size: auto;
 }
@@ -186,7 +229,7 @@ li{
 .bg1{
   width: auto;
   height: 100px;
-  background-image: url("1.png");
+  background-image: url("star.png");
   background-position: center center;
   background-size: contain;
 }
@@ -194,7 +237,7 @@ li{
 .bg2{
   width: auto;
   height: 100px;
-  background-image: url("1.png");
+  background-image: url("star.png");
   background-position: center center;
   background-size: contain;
   background-repeat: no-repeat;
@@ -203,7 +246,7 @@ li{
 .bg3{
   width: auto;
   height: 100px;
-  background-image: url("1.png");
+  background-image: url("star.png");
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -212,7 +255,7 @@ li{
 .bg4{
   width: auto;
   height: 100px;
-  background-image: url("1.png");
+  background-image: url("star.png");
   background-position: bottom center;
   background-size: auto;
   background-repeat: repeat-x;
