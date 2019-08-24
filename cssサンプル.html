@@ -8,6 +8,8 @@
   <title>css各種サンプル</title>
 </head>
 <body>
+
+  
   <h1>中央揃え各種サンプル</h1>
   <div class="title">
     <h3>text-align:center;</h3>
@@ -69,6 +71,7 @@
         <p class="inner">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
       </div>
 
+
       <h1>ついでのflexbox(qiita)</h1>
       <p class="desc">結構たくさんあるので<a href="https://qiita.com/watamura/items/48b6a99aea925c707925">https://qiita.com/watamura/items/48b6a99aea925c707925</a>を参照</p>
 
@@ -115,6 +118,7 @@
         </ul>
       </div>
 
+
       <h1>background</h1>
       <h1>position</h1>
       <div class="title">
@@ -160,20 +164,11 @@
       </div>
 
 
-<!-- test -->
-      <div class="box ratio-1_1">
-          <div class="_inner">
-              <p>1 : 1</p>
-          </div>
-      </div>
-<!-- test -->
-
-
       <h1>height,widthの指定方法</h1>
       <p class="desc">基本的にはデフォルトでblock要素、inline-block要素においてwidthは親要素の幅いっぱい、heightは子要素の高さに合わせ成り行き。<br />inline要素においてwidthは子要素の幅に合わせ成り行き、heightも同様。<br />※pxはそのままなので例を省略！</p>
       <div class="title">
         <h3>width ％指定</h3>
-        <p class="desc">親要素の幅(padding含まず)に対する割合い％で指定する。合計が100%を超えないようにする。ただしデフォルトでpaddingを含む幅指定なので,100%指定するとwidthが親要素の幅いっぱい+paddingで親要素からはみ出てしまう。auto(初期値)だとpadding含みで親要素の幅いっぱいに調整される。これを解消するためにbox-sizing:border-box;を指定するとよい。min-width,max-widthを指定しておくとレスポンシブ</p>
+        <p class="desc">親要素の幅(padding含まず)に対する割合い％で指定する。合計が100%を超えないようにする。ただしデフォルトでpaddingを含む幅指定なので,100%指定するとwidthが親要素の幅いっぱい+paddingで親要素からはみ出てしまう。auto(初期値)だとpadding含みで親要素の幅いっぱいに調整される。これを解消するためにbox-sizing:border-box;を指定するか、paddingとwidthを含め100%となるように指定するとよい。min-width,max-widthを指定しておくとレスポンシブ</p>
       </div>
       <div class="outer">
         <div class="clr_fix">
@@ -184,79 +179,102 @@
         <p class="width_auto">auto</p>
         <p class="width_100per contentbox">100% + content_box(初期値)</p>
         <p class="width_100per">100% + border_box</p>
+        <div class="wp_sel_contain">
+          <p class="wp_sel">
+            width80% + padding 10%ずつ + content_box
+          </p>
+        </div>
       </div>
 
-<!-- ここここここから！ -->
       <div class="title">
-        <h3 style="color:red;font-weight: bold;">height ％指定</h3>
-        <p class="desc">親要素の高さ(padding含まず)に対する割合い％で指定する。合計が100%を超えないようにする。ただしデフォルトでpaddingを含む幅指定なので,100%指定するとwidthが親要素の幅いっぱい+paddingで親要素からはみ出てしまう。auto(初期値)だとpadding含みで親要素の幅いっぱいに調整される。これを解消するためにbox-sizing:border-box;を指定するとよい。min-width,max-widthを指定しておくとレスポンシブ</p>
+        <h3>height ％指定</h3>
+        <p class="desc">親要素の高さ(padding含まず)に対する割合い％で指定する。合計が100%を超えないようにする。heightは初期値がautoなので、親要素には必ずheight:auto;以外の指定をしなければ子要素の％指定は不可。ただしwidthと同様デフォルトでpaddingを含む高さ指定なので,100%指定するとwidthが親要素の高さいっぱい+paddingで親要素からはみ出てしまう。これを解消するためにbox-sizing:border-box;を指定する。ただしwidthと同様にpaddingとheightを含め100%になるようにはできない(次で説明)。min-width,max-widthを指定しておくとレスポンシブ</p>
       </div>
-      <div class="outer">
-        <div class="clr_fix">
-          <p class="width_50per">50%</p>
-          <p class="width_30per">30%</p>
-          <p class="width_20per">20%</p>
+      <div class="outer height_parent clr_fix">
+        <div class="height_smpcontain25">
+          <p class="height_50per">50% + border_box</p>
+          <p class="height_30per">30% + border_box</p>
+          <p class="height_20per">20% + border_box</p>
         </div>
-        <p class="width_auto">auto</p>
-        <p class="width_100per contentbox">100% + content_box(初期値)</p>
-        <p class="width_100per">100% + border_box</p>
+        <div class="height_smpcontain25">
+          <p class="height_100per content_box">100% + content-box(初期値)</p>
+        </div>
+        <div class="height_smpcontain25">
+          <p class="height_100per">100% + border-box</p>
+        </div>
+        <div class="height_smpcontain25">
+          <div class="hp_sel_contain">
+            <p class="hp_sel">height80% + padding10%ずつ + content-box(レイアウト崩れる)</p>
+          </div>
+        </div>
       </div>
 
+      <div class="title">
+        <h3>margin,paddingの％指定は基本横方向のみ</h3>
+        <p class="desc">基本横方向のみ％指定で使い、縦方向に使用すると前述のとおりレイアウトが崩れて見える。これは縦方向に％指定しているが、基準となるのは"親要素の高さ"ではなく"親要素の幅"を基準にしているためである。</p>
+      </div>
+      <div class="outer">
+        <div class="inner paddingtop">
+          <p>
+            padding: 25% 0;<br />
+            横幅の25%ずつを上下にpadding<br />
+            縦横比を保つことができる。
+          </p>
+        </div>
+      </div>
 
 
       <h1>background</h1>
       <div class="sampleimg">
         <img alt="sample" src="star.png">
         <p class="desc">↑元画像(50px*50px)。以下positionは全てcenter center;
-        top left;とかの指定もでき、親要素に対する位置を指定できる</p>
-      </div>
-
-      <div class="title">
-        <h3>background-size:auto;</h3>
-        <p class="desc">初期値。元画像のサイズそのまま表示する</p>
-      </div>
-      <div class="outer">
-        <div class="bg0">
+          top left;とかの指定もでき、親要素に対する位置を指定できる</p>
         </div>
-      </div>
 
-      <div class="title">
-        <h3>background-size:contain;</h3>
-        <p class="desc">親要素に対し画像を全部表示できる範囲で拡大表示する。</p>
-      </div>
-      <div class="outer">
-        <div class="bg1">
+        <div class="title">
+          <h3>background-size:auto;</h3>
+          <p class="desc">初期値。元画像のサイズそのまま表示する</p>
         </div>
-      </div>
-
-      <div class="title">
-        <h3>background-size:contain; background-repeat: no-repeat;</h3>
-        <p class="desc">繰り返し表示をしないようにする。repeat-x;repeat-y;で横方向、縦方向への繰り返し表示もできる</p>
-      </div>
-      <div class="outer">
-        <div class="bg2">
+        <div class="outer">
+          <div class="bg0">
+          </div>
         </div>
-      </div>
 
-      <div class="title">
-        <h3>background-size:cover;</h3>
-        <p class="desc">親要素を全て埋め尽くすように拡大表示する。はみ出た部分は非表示</p>
-      </div>
-      <div class="outer">
-        <div class="bg3">
+        <div class="title">
+          <h3>background-size:contain;</h3>
+          <p class="desc">親要素に対し画像を全部表示できる範囲で拡大表示する。</p>
         </div>
-      </div>
-
-      <div class="title">
-        <h3>background-attachment:fixed;</h3>
-        <p class="desc">背景画像をｽｸﾛｰﾙに関わらず固定する。大体body要素の背景に対して使うはず
-        ここではbottom centerに表示している</p>
-      </div>
-      <div class="outer">
-        <div class="bg4">
+        <div class="outer">
+          <div class="bg1">
+          </div>
         </div>
-      </div>
 
+        <div class="title">
+          <h3>background-size:contain; background-repeat: no-repeat;</h3>
+          <p class="desc">繰り返し表示をしないようにする。repeat-x;repeat-y;で横方向、縦方向への繰り返し表示もできる</p>
+        </div>
+        <div class="outer">
+          <div class="bg2">
+          </div>
+        </div>
 
-    </body>
-    </html>
+        <div class="title">
+          <h3>background-size:cover;</h3>
+          <p class="desc">親要素を全て埋め尽くすように拡大表示する。はみ出た部分は非表示</p>
+        </div>
+        <div class="outer">
+          <div class="bg3">
+          </div>
+        </div>
+
+        <div class="title">
+          <h3>background-attachment:fixed;</h3>
+          <p class="desc">背景画像をｽｸﾛｰﾙに関わらず固定する。大体body要素の背景に対して使うはず
+            ここではbottom centerに表示している</p>
+          </div>
+          <div class="outer">
+            <div class="bg4">
+            </div>
+          </div>
+        </body>
+        </html>

@@ -206,6 +206,19 @@ li{
   background-color: rgb(92, 205, 111);
 }
 
+.wp_sel_contain{
+  width: 80%;
+  padding: 0 10%;
+  box-sizing: content-box;
+  background-color: rgb(246, 114, 205);
+}
+.wp_sel{
+  width: auto;
+  color: white;
+  text-align: center;
+  background-color: rgb(161, 114, 246);
+}
+
 .width_auto{
   box-sizing: content-box;
   width: auto;
@@ -214,8 +227,75 @@ li{
   background-color: white;
 }
 
+.height_parent{
+  height: 300px;
+}
+
+.height_smpcontain50{
+  width: 50%;
+  height: 280px;
+  float: left;
+}
+
+.height_smpcontain25{
+  width: 25%;
+  height: 280px;
+  text-align: center;
+  float: left;
+}
+
+.height_50per{
+  height: 50%;
+  text-align: center;
+  background-color: red;
+}
+
+.height_30per{
+  height: 30%;
+  text-align: center;
+  background-color: green;
+}
+
+.height_20per{
+  height: 20%;
+  text-align: center;
+  background-color: blue;
+}
+
+.height_100per{
+  height: 100%;
+  padding: 20px 0;
+  color: white;
+  background-color: rgb(240, 135, 48);
+}
+
+.hp_sel_contain{
+  height: 80%;
+  padding: 10% 0;
+  box-sizing: content-box;
+  background-color: rgb(246, 114, 205);
+}
+
+.hp_sel{
+  height: 100%;
+  color: white;
+  text-align: center;
+  background-color: rgb(161, 114, 246);
+}
+
+.content_box{
+  box-sizing: content-box;
+  background-color: rgb(86, 210, 38)
+}
+
 .sampleimg{
   text-align: center;
+}
+
+.paddingtop{
+  text-align: center;
+  padding: 25% 0;
+  background-color: pink;
 }
 
 .bg0{
