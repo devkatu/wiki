@@ -261,8 +261,11 @@
   crossorigin="anonymous"></script>
   <!-- jqueryそのものを読込んでから処理を記述する -->
   <!-- 基本的にはcssと同じ感じでセレクタを書いてそれに対するメソッドでcssのプロパティを設定していくイメージ -->
+  <!-- セレクタはjQuery('')の括弧内シングルクォート内に書く。もしくは省略できて$('') -->
   <script>
   //一番外側の()は$(document).ready(function(){});と同じ。省略記法
+  //もっと丁寧に書くとjQuery(document).ready(function(){});
+
   $(function(){
     // ハンバーガーメニュー
     $('.Toggle').click(function(){
@@ -319,6 +322,20 @@
     $('.accordion_arrow').click(function(){
       $(this).toggleClass('open');
     });
+
+
+    // 動的な要素のイベント処理について
+    // ページが読込まれた後に動的にDOM要素が追加されたとき、そのDOM要素にはまだ
+    // イベント処理が追加されていない。そこで下記を追加する
+    var div = $('<div id="div1" style="background-color: pink;text-align: center;">jqueryで後から追加した箱です</div>');
+    var counter = 0;
+    $('body').on('click','#div1',function(){
+      counter++;
+      console.log(counter);
+      $('#div1').text('clickcounter = ' + counter);
+    });
+    div.appendTo('body');
+
 
   });
   </script>
