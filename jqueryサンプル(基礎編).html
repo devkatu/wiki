@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
+  <title>Document</title>
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body h1, h2{
+      text-align: center;
+      margin-top: 40px;
+    }
+    body > p{
+      text-align: center;
+    }
+    .title{
+      width: 40%;
+      margin: 30px auto 0;
+    }
+    .desc{
+      font-size: 12px;
+    }
+    .outer{
+      width: 40%;
+      margin: 10px auto 0;
+      background-color: #E6ECF2;
+      padding: 10px;
+    }
+    .inner{
+      background-color: #EEF2F6;
+      border: 1px solid white;
+      position: relative;
+    }
+
+    .box{
+      width: 100px;
+      height: 100px;
+      margin: 0 auto;
+      background-color: pink;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>基本</h1>
+  <div class="title">
+    <h3>clickイベント;</h3>
+    <p class="desc">あ</p>
+  </div>
+  <div class="outer">
+    <div class="inner">
+      <div class="box" id="box1">
+        click me!
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <!-- jqueryの読み込み body要素の閉じタグの前でかつscript記述前に行う-->
+  <!-- jqueryの読み込みに時間がかかるため -->
+  <script
+  src="https://code.jquery.com/jquery-1.12.4.min.js"
+  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+  crossorigin="anonymous"></script>
+
+  <script type="text/javascript">
+    //トップレベルの$(function(){});はdocument.ready(function(){});と同義
+    // jQuery はとてもよく使うので $ でも代用できる！
+    jQuery(function(){
+
+      // $('セレクタ')の中にcssとほぼ同様の方法でセレクタを指定すると、
+      // 指定されたDOM要素を探しに行き、jqueryオブジェクトに変換される。
+      // (なのでID指定でやったほうが高速になる)
+      // そのjqueryオブジェクトで各種の便利なメソッドを利用したりできる！
+      $('#box1').css('color', 'blue');
+      // これをjavascriptのみでやると
+      // document.getElementsById() してから style.color = blue;みたい
+      // な感じでめんどい
+
+
+
+      $('.box').click(function(){
+        alert('clicked box!');
+      });
+
+    });
+  </script>
+</body>
+</html>
+
+<!--
+セレクタの指定とフィルタ
+トラバース
+
+jqueryの各メソッド
+css関係
+toggle等
+text,html,val,remove,empty
+イベント　click,mouse*,focus,blur,change,on
+要素の追加各種
+
+
+アニメーション
+animate
+stop
+que（同時に動くのと順番に動くの）
+transition
+イベントのバブリングとreturn　false
+
+ajax -->
