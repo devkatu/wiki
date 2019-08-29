@@ -252,20 +252,22 @@
   <!-- jqueryで出現させる上へ戻るボタン -->
   <div id="back" style="position:fixed;right:5px;bottom:5px;font-size:100px;font-weight:bold;color:blue;"><a href="#">↑</a></div>
   <!-- デバッグ用のdiv　スクロール位置を表示する -->
-  <div id="pos" style="position:fixed;left:5px;top:5px;font-size:50px;"></div>
+  <div id="pos" style="position:fixed;right:5px;bottom:150px;font-size:50px;"></div>
 
   <!-- jqueryの読み込み基本はbody閉じタグの前に読込む(html読み込み時間短縮) -->
+  <!-- jqueryそのものを読込んでから処理を記述する -->
+  <!-- 基本的にはcssと同じ感じでセレクタを書いてそれに対するメソッドでcssのプロパティを設定していくイメージ -->
+  <!-- セレクタはjQuery('')の括弧内シングルクォート内に書く。もしくは省略できて$('') -->
   <script
   src="https://code.jquery.com/jquery-1.12.4.min.js"
   integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
   crossorigin="anonymous"></script>
-  <!-- jqueryそのものを読込んでから処理を記述する -->
-  <!-- 基本的にはcssと同じ感じでセレクタを書いてそれに対するメソッドでcssのプロパティを設定していくイメージ -->
-  <!-- セレクタはjQuery('')の括弧内シングルクォート内に書く。もしくは省略できて$('') -->
-  <script>
-  //一番外側の()は$(document).ready(function(){});と同じ。省略記法
-  //もっと丁寧に書くとjQuery(document).ready(function(){});
 
+  <script>
+  //一番外側の$(function(){})は$(document).ready(function(){});と同じ。省略記法
+  //もっと丁寧に書くとjQuery(document).ready(function(){});
+  //jQuery()または$()はカッコ内のオブジェクトやDOM要素をjqueryオブジェクトに変換する
+  //ための構文。これを付けずに.syntaxで記述してjavascript本来のメソッドとして使用することも可。
   $(function(){
     // ハンバーガーメニュー
     $('.Toggle').click(function(){

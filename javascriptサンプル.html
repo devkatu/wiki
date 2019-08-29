@@ -26,7 +26,9 @@
     }
   }
   /*
-  // 誤り。これはクロージャになっておらず、for文終了後のi…4にアクセスしてしまう
+  // 誤り。これはクロージャになっておらず、onclickメソッドはfor文終了後のi…4にアクセスしてしまう
+  // for文ループ時の変数iのコピーを渡せるようなクロージャとする必要がある。
+  // オブジェクトとにている。。。
   var add_the_handlers = function (nodes) {
   var i;
   for (i = 0; i < nodes.length; i += 1) {
@@ -48,11 +50,12 @@ var add_the_handlers = function (nodes) {
       return function (e) {
         alert(i);  //ここがイベントハンドラとなる。
       };
-    })(i);  //即時関数を定義してその場で実行している
+    })(i);  //即時関数を定義してその場で変数iを渡し実行している
   }
 };
 
 //パターン2
+// パターン1の即時関数をhelperというデリゲートに代入して実行するパターン
 var add_the_handlers = function (nodes) {
   var helper = function (i) {
     return function (e) {
@@ -66,6 +69,9 @@ var add_the_handlers = function (nodes) {
 };
 
 //パターン3
+// javascriptでオセロのやつで使ってたパターン
+// パターン1を変形し、ローカル変数jを新たに定義し、変数iを代入、
+// onclickメソッドはこのjが記憶されるのでここにアクセスする。
 var add_the_handlers = function (nodes) {
   var i;
   for (i = 0; i < nodes.length; i += 1) {
@@ -79,6 +85,8 @@ var add_the_handlers = function (nodes) {
 };
 
 //パターン4
+// 1,3を合わせたような形。パターン3のような新たにローカル変数を
+// 作らずに引数にiを渡して即時関数を実行し、コピーを渡している
 var add_the_handlers = function (nodes) {
   var i;
   for (i = 0; i < nodes.length; i += 1) {
@@ -90,9 +98,14 @@ var add_the_handlers = function (nodes) {
   }
 };
 
+
 // 変数のスコープと巻き上げ
-// javascriptの変数スコープは基本的には他言語と同じだがifやfor文の時のブロックスコープが無く、関数内でのスコープのみ
-// 加えて内部の関数の途中で定義した変数はその関数内の全てで有効となり一行上のcosole.logでは未定義となり出力不可となる。これを変数の巻き上げといい、関数内で使用する変数は関数の最初に定義しておくとよい
+// javascriptの変数スコープは基本的には他言語と同じくスコープチェーン(ある変数を参照するとき
+// 自分のブロックで定義されているか確認し、なければその親のブロックへと続く)であるが、
+// ifやfor文の時のブロックスコープが無く、 関数ブロックでのみスコープのみが分かれる。
+// 加えて内部の関数の途中で定義した変数はその関数内の全てで有効となり一行上のcosole.logでは
+// 未定義となり出力不可となる。これを変数の巻き上げといい、関数内で使用する変数は関数の
+// 最初に定義しておくとよい
 (function(){
   var val = "global";
   (function(){
