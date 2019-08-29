@@ -6,73 +6,220 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
   <title>Document</title>
   <style>
-    *{
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+  *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-    body h1, h2{
-      text-align: center;
-      margin-top: 40px;
-    }
-    body > p{
-      text-align: center;
-    }
-    .title{
-      width: 40%;
-      margin: 30px auto 0;
-    }
-    .desc{
-      font-size: 12px;
-    }
-    .outer{
-      width: 40%;
-      margin: 10px auto 0;
-      background-color: #E6ECF2;
-      padding: 10px;
-    }
-    .inner{
-      background-color: #EEF2F6;
-      border: 1px solid white;
-      position: relative;
-    }
+  body h1, h2{
+    text-align: center;
+    margin-top: 40px;
+  }
+  body > p{
+    text-align: center;
+  }
+  .title{
+    width: 40%;
+    margin: 30px auto 0;
+  }
+  .desc{
+    font-size: 12px;
+  }
+  .desc2{
+    font-size: 12px;
+    font-weight: bold;
+    word-break:break-all;
+  }
+  .outer{
+    width: 40%;
+    margin: 10px auto 0;
+    background-color: #E6ECF2;
+    padding: 10px;
+    display: table;
+  }
+  .inner{
+    background-color: #EEF2F6;
+    padding:10px;
+    border: 1px solid white;
+    position: relative;
+  }
 
-    .box{
-      width: 100px;
-      height: 100px;
-      margin: 0 auto;
-      background-color: pink;
-    }
+  .box{
+    width: 100px;
+    height: 100px;
+    border: solid 1px black;
+    background-color: pink;
+  }
+
+  .t_c{
+    display: table-cell;
+    padding: 10px;
+  }
 
   </style>
 </head>
 <body>
 
-  <h1>基本</h1>
+  <h1>セレクタ、フィルタについて</h1>
+
   <div class="title">
-    <h3>clickイベント;</h3>
-    <p class="desc">あ</p>
-  </div>
-  <div class="outer">
-    <div class="inner">
-      <div class="box" id="box1">
-        click me!
+    <h3>クラス、ID等のcss的な指定</h3>
+    <p class="desc">クラス、ID等はcssと同様に指定できる。
+      クラスは . IDは # を先頭に付ける。
+      しかしcssで言う疑似クラス(:nth-childとか)はjqueryではフィルタとなっており、表現の仕方が若干違う。
+      フィルタのセレクタとフィルタ
+      の:(コロン)の間をあけないように！！開けるとスペースと
+      なるのでその下の要素とみなされるよ!!</p>
+      <p class="desc">' '(スペース) : その下層の要素すべて</p>
+      <p class="desc">'>' : その直下の要素のみ</p>
+      <p class="desc">':eq(<i>n</i>)' : その層の<i>n</i>番目の要素</p>
+      <p class="desc">':gt(<i>n</i>)' : その層の<i>n</i>番より後の要素(自分を含まない)</p>
+      <p class="desc">':lt(<i>n</i>)' : その層の<i>n</i>番より前の要素(自分を含まない)</p>
+      <p class="desc2">$('.box_chg').css('background-color','green');</p>
+      <p class="desc2">$('#box1-1').css('background-color','blue');</p>
+      <p class="desc2">$('#section1 > div > div:eq(2)').css('background-color','purple');</p>
+      <p class="desc2">$('#section1 > div > div:gt(2)').css('background-color','orange');</p>
+      <p class="desc2">$('#section1 > div > div:lt(2) p').css('background-color','yellow');</p>
+    </div>
+    <div class="outer" id="section1">
+      <div class="inner">
+        <div class="box box_chg t_c">
+          <p class="desc2">class="box_chg"</p>
+        </div>
+        <div class="box t_c" id="box1-1">
+          <p class="desc2">id="box1-1"</p>
+        </div>
+        <div class="box t_c">
+          <p class="desc2">普通のbox</p>
+        </div>
+        <div class="box t_c">
+          <p class="desc2">普通のbox</p>
+        </div>
+        <div class="box t_c">
+          <p class="desc2">普通のbox</p>
+        </div>
       </div>
     </div>
-  </div>
+
+  <div class="title">
+    <h3>上の続き</h3>
+    <p class="desc">':even' : その層の偶数番の要素</p>
+    <p class="desc">':odd'  : その層の奇数番の要素</p>
+    <p class="desc">':contains('<i>key</i>')' : コンテンツに<i>key</i>を含む要素</p>
+    <p class="desc">':first'  : その層の最初の要素</p>
+    <p class="desc">':last'   : その層の最後の要素</p>
+      <p class="desc2">$('#section2 > div > div:even ').css('background-color','lime');</p>
+      <p class="desc2">$('#section2 > div > div:odd ').css('background-color','aqua');</p>
+      <p class="desc2">$("#section2 > div > div :contains('flg')").css('background-color','red');</p>
+      <p class="desc2">$('#section2 > div > div:first p').css('background-color','orange');</p>
+      <p class="desc2">$('#section2 > div > div:last p').css('background-color','yellow');</p>
+    </div>
+    <div class="outer" id="section2">
+      <div class="inner">
+        <div class="box t_c">
+          <p class="desc2">普通のbox</p>
+        </div>
+        <div class="box t_c">
+          <p class="desc2">普通のbox</p>
+        </div>
+        <div class="box t_c">
+          <p class="desc2">flg</p>
+        </div>
+        <div class="box t_c">
+          <p class="desc2">普通のboxだよ～flg</p>
+        </div>
+        <div class="box t_c">
+          <p class="desc2">普通のbox</p>
+        </div>
+      </div>
+    </div>
+
+  <div class="title">
+    <h3>メソッドによるDOM要素の指定(トラバース)</h3>
+    <p class="desc">'parent()' : セレクタの親要素</p>
+    <p class="desc">'children()'  : セレクタの子要素</p>
+    <p class="desc">'next()' : セレクタの次の要素</p>
+    <p class="desc">'prev()'  : セレクタの前の要素</p>
+    <p class="desc">'siblings()'   : セレクタの兄弟の要素</p>
+      <p class="desc2">$('#section2 > div > div:even ').css('background-color','lime');</p>
+      <p class="desc2">$('#section2 > div > div:odd ').css('background-color','aqua');</p>
+      <p class="desc2">$("#section2 > div > div :contains('flg')").css('background-color','red');</p>
+      <p class="desc2">$('#section2 > div > div:first p').css('background-color','orange');</p>
+      <p class="desc2">$('#section2 > div > div:last p').css('background-color','yellow');</p>
+    </div>
+    <div class="outer" id="section2">
+      <div class="inner">
+        <div class="box t_c">
+          <p class="desc2">普通のbox</p>
+        </div>
+        <div class="box t_c">
+          <p class="desc2">普通のbox</p>
+        </div>
+        <div class="box t_c">
+          <p class="desc2">flg</p>
+        </div>
+        <div class="box t_c">
+          <p class="desc2">普通のboxだよ～flg</p>
+        </div>
+        <div class="box t_c">
+          <p class="desc2">普通のbox</p>
+        </div>
+      </div>
+    </div>
 
 
 
 
-  <!-- jqueryの読み込み body要素の閉じタグの前でかつscript記述前に行う-->
-  <!-- jqueryの読み込みに時間がかかるため -->
-  <script
-  src="https://code.jquery.com/jquery-1.12.4.min.js"
-  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
-  crossorigin="anonymous"></script>
 
-  <script type="text/javascript">
+
+
+
+    <h1>基本</h1>
+    <div class="title">
+      <h3>clickイベント;</h3>
+      <p class="desc">あ</p>
+    </div>
+    <div class="outer">
+      <div class="inner">
+        <div class="box" id="box1">
+          click me!
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+    <h1>基本</h1>
+    <div class="title">
+      <h3>clickイベント;</h3>
+      <p class="desc">あ</p>
+    </div>
+    <div class="outer">
+      <div class="inner">
+        <div class="box" id="box1">
+          click me!
+        </div>
+      </div>
+    </div>
+
+
+
+
+    <!-- jqueryの読み込み body要素の閉じタグの前でかつscript記述前に行う-->
+    <!-- jqueryの読み込みに時間がかかるため -->
+    <script
+    src="https://code.jquery.com/jquery-1.12.4.min.js"
+    integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+    crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
     //トップレベルの$(function(){});はdocument.ready(function(){});と同義
     // jQuery はとてもよく使うので $ でも代用できる！
     jQuery(function(){
@@ -86,6 +233,17 @@
       // document.getElementsById() してから style.color = blue;みたい
       // な感じでめんどい
 
+      $('.box_chg').css('background-color','green');
+      $('#box1-1').css('background-color','blue');
+      $('#section1 > div > div:eq(2)').css('background-color','purple');
+      $('#section1 > div > div:gt(2)').css('background-color','orange');
+      $('#section1 > div > div:lt(2) p').css('background-color','yellow');
+
+      $('#section2 > div > div:even ').css('background-color','lime');
+      $('#section2 > div > div:odd ').css('background-color','aqua');
+      $("#section2 > div > div :contains('flg')").css('background-color','red');
+      $('#section2 > div > div:first p').css('background-color','orange');
+      $('#section2 > div > div:last p').css('background-color','yellow');
 
 
       $('.box').click(function(){
@@ -93,27 +251,27 @@
       });
 
     });
-  </script>
-</body>
-</html>
+    </script>
+  </body>
+  </html>
 
-<!--
-セレクタの指定とフィルタ
-トラバース
+  <!--
+  セレクタの指定とフィルタ
+  トラバース
 
-jqueryの各メソッド
-css関係
-toggle等
-text,html,val,remove,empty
-イベント　click,mouse*,focus,blur,change,on
-要素の追加各種
+  jqueryの各メソッド
+  css関係
+  toggle等
+  text,html,val,remove,empty
+  イベント　click,mouse*,focus,blur,change,on
+  要素の追加各種
 
 
-アニメーション
-animate
-stop
-que（同時に動くのと順番に動くの）
-transition
-イベントのバブリングとreturn　false
+  アニメーション
+  animate
+  stop
+  que（同時に動くのと順番に動くの）
+  transition
+  イベントのバブリングとreturn　false
 
-ajax -->
+  ajax -->
