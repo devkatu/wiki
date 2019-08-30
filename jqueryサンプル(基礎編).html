@@ -43,6 +43,7 @@
     padding:10px;
     border: 1px solid white;
     position: relative;
+
   }
 
   .box{
@@ -50,11 +51,21 @@
     height: 100px;
     border: solid 1px black;
     background-color: pink;
+    word-break:break-all;
   }
 
   .t_c{
     display: table-cell;
     padding: 10px;
+  }
+
+  ul{
+    margin-left:20px;
+  }
+
+  .add{
+    border-radius: 50%;
+    background-color: blue;
   }
 
   </style>
@@ -102,93 +113,160 @@
       </div>
     </div>
 
-  <div class="title">
-    <h3>上の続き</h3>
-    <p class="desc">':even' : その層の偶数番の要素</p>
-    <p class="desc">':odd'  : その層の奇数番の要素</p>
-    <p class="desc">':contains('<i>key</i>')' : コンテンツに<i>key</i>を含む要素</p>
-    <p class="desc">':first'  : その層の最初の要素</p>
-    <p class="desc">':last'   : その層の最後の要素</p>
-      <p class="desc2">$('#section2 > div > div:even ').css('background-color','lime');</p>
-      <p class="desc2">$('#section2 > div > div:odd ').css('background-color','aqua');</p>
-      <p class="desc2">$("#section2 > div > div :contains('flg')").css('background-color','red');</p>
-      <p class="desc2">$('#section2 > div > div:first p').css('background-color','orange');</p>
-      <p class="desc2">$('#section2 > div > div:last p').css('background-color','yellow');</p>
-    </div>
-    <div class="outer" id="section2">
-      <div class="inner">
-        <div class="box t_c">
-          <p class="desc2">普通のbox</p>
-        </div>
-        <div class="box t_c">
-          <p class="desc2">普通のbox</p>
-        </div>
-        <div class="box t_c">
-          <p class="desc2">flg</p>
-        </div>
-        <div class="box t_c">
-          <p class="desc2">普通のboxだよ～flg</p>
-        </div>
-        <div class="box t_c">
-          <p class="desc2">普通のbox</p>
-        </div>
-      </div>
-    </div>
-
-  <div class="title">
-    <h3>メソッドによるDOM要素の指定(トラバース)</h3>
-    <p class="desc">'parent()' : セレクタの親要素</p>
-    <p class="desc">'children()'  : セレクタの子要素</p>
-    <p class="desc">'next()' : セレクタの次の要素</p>
-    <p class="desc">'prev()'  : セレクタの前の要素</p>
-    <p class="desc">'siblings()'   : セレクタの兄弟の要素</p>
-      <p class="desc2">$('#section2 > div > div:even ').css('background-color','lime');</p>
-      <p class="desc2">$('#section2 > div > div:odd ').css('background-color','aqua');</p>
-      <p class="desc2">$("#section2 > div > div :contains('flg')").css('background-color','red');</p>
-      <p class="desc2">$('#section2 > div > div:first p').css('background-color','orange');</p>
-      <p class="desc2">$('#section2 > div > div:last p').css('background-color','yellow');</p>
-    </div>
-    <div class="outer" id="section2">
-      <div class="inner">
-        <div class="box t_c">
-          <p class="desc2">普通のbox</p>
-        </div>
-        <div class="box t_c">
-          <p class="desc2">普通のbox</p>
-        </div>
-        <div class="box t_c">
-          <p class="desc2">flg</p>
-        </div>
-        <div class="box t_c">
-          <p class="desc2">普通のboxだよ～flg</p>
-        </div>
-        <div class="box t_c">
-          <p class="desc2">普通のbox</p>
-        </div>
-      </div>
-    </div>
-
-
-
-
-
-
-
-
-    <h1>基本</h1>
     <div class="title">
-      <h3>clickイベント;</h3>
-      <p class="desc">あ</p>
+      <h3>上の続き</h3>
+      <p class="desc">':even' : その層の偶数番の要素</p>
+      <p class="desc">':odd'  : その層の奇数番の要素</p>
+      <p class="desc">':contains('<i>key</i>')' : コンテンツに<i>key</i>を含む要素</p>
+      <p class="desc">':first'  : その層の最初の要素</p>
+      <p class="desc">':last'   : その層の最後の要素</p>
+      <p class="desc2">$('#section2 > div > div:even ').css('background-color','lime');</p>
+      <p class="desc2">$('#section2 > div > div:odd ').css('background-color','aqua');</p>
+      <p class="desc2">$("#section2 > div > div :contains('flg')").css('background-color','red');</p>
+      <p class="desc2">$('#section2 > div > div:first p').css('background-color','orange');</p>
+      <p class="desc2">$('#section2 > div > div:last p').css('background-color','yellow');</p>
+    </div>
+    <div class="outer" id="section2">
+      <div class="inner">
+        <div class="box t_c">
+          <p class="desc2">普通のbox</p>
+        </div>
+        <div class="box t_c">
+          <p class="desc2">普通のbox</p>
+        </div>
+        <div class="box t_c">
+          <p class="desc2">flg</p>
+        </div>
+        <div class="box t_c">
+          <p class="desc2">普通のboxだよ～flg</p>
+        </div>
+        <div class="box t_c">
+          <p class="desc2">普通のbox</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="title">
+      <h3>メソッドによるDOM要素の指定(トラバース)</h3>
+      <p class="desc">'parent()' : セレクタの親要素</p>
+      <p class="desc">'children()'  : セレクタの子要素</p>
+      <p class="desc">'next()' : セレクタの次の要素</p>
+      <p class="desc">'prev()'  : セレクタの前の要素</p>
+      <p class="desc">'siblings()'   : セレクタの兄弟の要素</p>
+      <p class="desc2">$('#bsli').parent().css('border','solid 5px pink');</p>
+      <p class="desc2">$('#bsli').children().css('border','dotted 2px blue');</p>
+      <p class="desc2">$('#bsli').next().css('border','double 3px red');</p>
+      <p class="desc2">$('#bsli').prev().css('border','dashed 2px black');</p>
+      <p class="desc2">$('#bsli').siblings().css('background','yellow');</p>
+    </div>
+    <div class="outer" id="section2">
+      <div class="inner">
+        <div style="width:50%;margin: 0 auto;min-width:300px;">
+          <ul>
+            <li>1 (兄弟要素)</li>
+            <li>2 (前要素、兄弟要素)</li>
+            <li id="bsli">
+              3(id="bsli" ここを基点にトラバース)
+              <ul>
+                <li>3-1 (子要素)</li>
+                <li>3-2 (子要素)</li>
+                <li>3-3 (子要素)</li>
+              </ul>
+            </li>
+            <li>4 (次要素、兄弟要素)</li>
+            <li>5 (兄弟要素)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+
+
+    <h1>メソッドいろいろ</h1>
+    <div class="title">
+      <h3>styleをいじくる</h3>
+      <pre class="desc2"><code>
+$('#css').click(function(){
+  $(this).css('border-radius','20px').css('background-color','red');
+});
+
+$('#addClass').click(function(){
+  $(this).addClass('add');
+});
+
+$('#removeClass').click(function(){
+  $(this).removeClass('box');
+});
+
+$('#toggleClass').click(function(){
+  $(this).toggleClass('t_c');
+});
+      </code></pre>
     </div>
     <div class="outer">
       <div class="inner">
-        <div class="box" id="box1">
-          click me!
+        <div class="box t_c" id="css">
+          <p>css</p>
+        </div>
+        <div class="box t_c" id="addClass">
+          <p>addClass</p>
+        </div>
+        <div class="box t_c" id="removeClass">
+          <p>removeClass</p>
+        </div>
+        <div class="box t_c" id="toggleClass">
+          <p>toggleClass</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="title">
+      <h3>コンテンツをいじくる</h3>
+      <pre class="desc2"><code>
+$('#text').click(function(){
+  $(this).text('just clicked!');
+});
+
+$('#html').click(function(){
+  $(this).html('&lt;a href="#"&gt;click?&lt;/a&gt;');
+});
+
+$('#val').click(function(){
+  $(this input).val('value set');
+});
+
+$('#empty').click(function(){
+  $(this).empty();
+});
+
+$('#remove').click(function(){
+  $(this).remove();
+});
+      </code></pre>
+    </div>
+    <div class="outer">
+      <div class="inner">
+        <div class="box t_c" id="text">
+          <p>click!</p>
+        </div>
+        <div class="box t_c" id="html">
+          <p>click!</p>
+        </div>
+        <div class="box t_c" id="val">
+          <input type="text" style="width:100px;"/>
+        </div>
+        <div class="box t_c" id="empty">
+          <p>click!</p>
+        </div>
+        <div class="box t_c" id="remove">
+          <p>click!</p>
         </div>
       </div>
     </div>
 
 
+<!-- emmet用！ -->
+<!-- div.outer>div.inner>div.box.t_c*5>p -->
 
 
 
@@ -223,7 +301,6 @@
     //トップレベルの$(function(){});はdocument.ready(function(){});と同義
     // jQuery はとてもよく使うので $ でも代用できる！
     jQuery(function(){
-
       // $('セレクタ')の中にcssとほぼ同様の方法でセレクタを指定すると、
       // 指定されたDOM要素を探しに行き、jqueryオブジェクトに変換される。
       // (なのでID指定でやったほうが高速になる)
@@ -233,31 +310,78 @@
       // document.getElementsById() してから style.color = blue;みたい
       // な感じでめんどい
 
+      // セレクタ、フィルタ
       $('.box_chg').css('background-color','green');
       $('#box1-1').css('background-color','blue');
       $('#section1 > div > div:eq(2)').css('background-color','purple');
       $('#section1 > div > div:gt(2)').css('background-color','orange');
       $('#section1 > div > div:lt(2) p').css('background-color','yellow');
 
+      // セレクタ、フィルタのつづき
       $('#section2 > div > div:even ').css('background-color','lime');
       $('#section2 > div > div:odd ').css('background-color','aqua');
       $("#section2 > div > div :contains('flg')").css('background-color','red');
       $('#section2 > div > div:first p').css('background-color','orange');
       $('#section2 > div > div:last p').css('background-color','yellow');
 
+      // めっそどによるDOM要素指定
+      $('#bsli').parent().css('border','solid 5px pink');
+      $('#bsli').children().css('border','dotted 2px blue');
+      $('#bsli').next().css('border','double 3px red');
+      $('#bsli').prev().css('border','dashed 2px black');
+      $('#bsli').siblings().css('background','yellow');
 
-      $('.box').click(function(){
-        alert('clicked box!');
+      // styleをいじくる
+      $('#css').click(function(){
+        $(this).css('border-radius','20px').css('background-color','red');
       });
+      $('#addClass').click(function(){
+        $(this).addClass('add');
+      });
+      $('#removeClass').click(function(){
+        $(this).removeClass('box');
+      });
+      $('#toggleClass').click(function(){
+        $(this).toggleClass('t_c');
+      });
+
+      // コンテンツをいじくる
+      $('#text').click(function(){
+        $(this).text('just clicked!');
+      });
+      $('#html').click(function(){
+        $(this).html('<a href="#">click?</a>');
+      });
+      $('#val').click(function(){
+        $(this).children().val('value set');
+      });
+      $('#empty').click(function(){
+        $(this).empty();
+      });
+      $('#remove').click(function(){
+        $(this).remove();
+      });
+
+
+
+
 
     });
     </script>
   </body>
   </html>
 
+
   <!--
 
-  トラバース
+  before/after
+  insertBefore/insertAfter
+  prepend/append
+  prependTo/appendTo
+
+  hide/show
+  fadeOut/fadeIn
+  toggle
 
   jqueryの各メソッド
   css関係
