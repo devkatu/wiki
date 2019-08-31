@@ -63,10 +63,18 @@
     margin-left:20px;
   }
 
+  .listbox{
+    width: 50%;
+    margin: 0 auto;
+    min-width: 300px;
+  }
+
   .add{
     border-radius: 50%;
     background-color: blue;
   }
+
+
 
   </style>
 </head>
@@ -161,7 +169,7 @@
     </div>
     <div class="outer" id="section2">
       <div class="inner">
-        <div style="width:50%;margin: 0 auto;min-width:300px;">
+        <div class="listbox">
           <ul>
             <li>1 (兄弟要素)</li>
             <li>2 (前要素、兄弟要素)</li>
@@ -183,8 +191,9 @@
 
 
     <h1>メソッドいろいろ</h1>
+
     <div class="title">
-      <h3>styleをいじくる</h3>
+      <h3>styleをいじくる,取得する</h3>
       <pre class="desc2"><code>
 $('#css').click(function(){
   $(this).css('border-radius','20px').css('background-color','red');
@@ -200,6 +209,10 @@ $('#removeClass').click(function(){
 
 $('#toggleClass').click(function(){
   $(this).toggleClass('t_c');
+});
+
+$('#hasClass').click(function(){
+  if($(this).hasClass('box')) alert('this box has class "box"!');
 });
       </code></pre>
     </div>
@@ -217,31 +230,34 @@ $('#toggleClass').click(function(){
         <div class="box t_c" id="toggleClass">
           <p>toggleClass</p>
         </div>
+        <div class="box t_c" id="hasClass">
+          <p>hasClass</p>
+        </div>
       </div>
     </div>
 
     <div class="title">
       <h3>コンテンツをいじくる</h3>
       <pre class="desc2"><code>
-$('#text').click(function(){
-  $(this).text('just clicked!');
-});
+        $('#text').click(function(){
+          $(this).text('just clicked!');
+        });
 
-$('#html').click(function(){
-  $(this).html('&lt;a href="#"&gt;click?&lt;/a&gt;');
-});
+        $('#html').click(function(){
+          $(this).html('&lt;a href="#"&gt;click?&lt;/a&gt;');
+        });
 
-$('#val').click(function(){
-  $(this input).val('value set');
-});
+        $('#val').click(function(){
+          $(this input).val('value set');
+        });
 
-$('#empty').click(function(){
-  $(this).empty();
-});
+        $('#empty').click(function(){
+          $(this).empty();
+        });
 
-$('#remove').click(function(){
-  $(this).remove();
-});
+        $('#remove').click(function(){
+          $(this).remove();
+        });
       </code></pre>
     </div>
     <div class="outer">
@@ -264,9 +280,157 @@ $('#remove').click(function(){
       </div>
     </div>
 
+    <div class="title">
+      <h3>要素の挿入</h3>
+      <p class="desc"></p>
+      <pre class="desc2"><code>
+$('#before').click(function(){
+  var elm = $('&lt;ul&gt;&lt;li&gt;1-1-1&lt;/li&gt;&lt;/ul&gt;').css('color','red');
+  $('#elm1_2').before(elm);
+});
 
-<!-- emmet用！ -->
-<!-- div.outer>div.inner>div.box.t_c*5>p -->
+$('#after').click(function(){
+  var elm = $('&lt;ul&gt;&lt;li&gt;1-2-1&lt;/li&gt;&lt;/ul&gt;').css('color','red');
+  $('#elm1_2').after(elm);
+});
+
+$('#ibefore').click(function(){
+  var elm = $('&lt;ul&gt;&lt;li&gt;2-1-1&lt;/li&gt;&lt;/ul&gt;').css('color','red');
+  elm.insertBefore('#elm2_2');
+});
+
+$('#iafter').click(function(){
+  var elm = $('&lt;ul&gt;&lt;li&gt;2-2-1&lt;/li&gt;&lt;/ul&gt;').css('color','red');
+  elm.insertAfter('#elm2_2');
+});
+
+$('#prepend').click(function(){
+  var elm = $('&lt;li&gt;').text('3-0').css('color','red');
+  $('#elm3').prepend(elm);
+});
+
+$('#append').click(function(){
+  var elm = $('&lt;li&gt;').text('3-4').css('color','red');
+  $('#elm3').append(elm);
+});
+
+$('#prependto').click(function(){
+  var elm = $('&lt;li&gt;').text('4-0').css('color','red');
+  elm.prependTo('#elm4');
+});
+
+$('#appendto').click(function(){
+  var elm = $('&lt;li&gt;').text('4-4').css('color','red');
+  elm.appendTo('#elm4');
+});
+      </code></pre>
+    </div>
+    <div class="outer">
+      <div class="inner">
+        <div class="listbox">
+          <ul id="addelm">
+            <li>1
+              <ul>
+                <li>1-1</li>
+                <li id="elm1_2">1-2</li>
+                <li>1-3</li>
+              </ul>
+            </li>
+            <li>2
+              <ul>
+                <li>2-1</li>
+                <li id="elm2_2">2-2</li>
+                <li>2-3</li>
+              </ul>
+            </li>
+            <li>3
+              <ul id="elm3">
+                <li>3-1</li>
+                <li>3-2</li>
+                <li>3-3</li>
+              </ul>
+            </li>
+            <li>4
+              <ul id="elm4">
+                <li>4-1</li>
+                <li>4-2</li>
+                <li>4-3</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <button id="before">li 1-2<br />before</button>
+        <button id="after">li 1-2<br />after</button>
+        <button id="ibefore">li 2-2<br />insert_before</button>
+        <button id="iafter">li 2-2<br />insert_after</button>
+        <button id="prepend">li 3<br />prepend</button>
+        <button id="append">li 3<br />append</button>
+        <button id="prependto">li 4<br />prependto</button>
+        <button id="appendto">li 4<br />appendto</button>
+      </div>
+    </div>
+
+    <div class="title">
+      <h3>表示、非表示</h3>
+      <p class="desc"></p>
+      <pre class="desc2"><code>
+$('#hide').click(function(){
+  $('#hide_show').hide();
+});
+$('#show').click(function(){
+  $('#hide_show').show();
+});
+$('#fadeOut').click(function(){
+  $('#fadein_out').fadeOut();
+});
+$('#fadeIn').click(function(){
+  $('#fadein_out').fadeIn();
+});
+$('#toggle').click(function(){
+  $('#togglebox').toggle();
+});
+$('#toggleSlide').click(function(){
+  $('#toggleslidebox &gt; p').slideToggle();
+});
+      </code></pre>
+    </div>
+    <div class="outer">
+      <div class="inner">
+        <div class="box t_c" id="hide_show">
+          <p>No1</p>
+        </div>
+        <div class="box t_c" id="fadein_out">
+          <p>No2</p>
+        </div>
+        <div class="box t_c" id="togglebox">
+          <p>No3</p>
+        </div>
+        <div class="box t_c" id="toggleslidebox">
+          <p>No4</p>
+        </div>
+        <div class="box t_c">
+          <p></p>
+        </div>
+        <button id="hide">No1<br />hide</button>
+        <button id="show">No1<br />show</button>
+        <button id="fadeOut">No2<br />fadeOut</button>
+        <button id="fadeIn">No2<br />fadeIn</button>
+        <button id="toggle">No3<br />toggle</button>
+        <button id="toggleSlide">No4 > p<br />slideToggle</button>
+      </div>
+    </div>
+
+
+
+<!-- event -->
+
+<!-- anime -->
+
+<!-- ajax -->
+
+    <!-- emmet用！ -->
+    <!-- div.title>h3+p.desc+pre.desc2>code -->
+    <!-- div.outer>div.inner>div.box.t_c*5>p -->
 
 
 
@@ -344,6 +508,9 @@ $('#remove').click(function(){
       $('#toggleClass').click(function(){
         $(this).toggleClass('t_c');
       });
+      $('#hasClass').click(function(){
+        if($(this).hasClass('box')) alert('this box has class "box"!');
+      });
 
       // コンテンツをいじくる
       $('#text').click(function(){
@@ -362,9 +529,61 @@ $('#remove').click(function(){
         $(this).remove();
       });
 
+      // 要素の挿入
+      $('#before').click(function(){
+        // 新しい要素を追加したいときはタグごと記述してjqueryオブジェクトに変換$()
+        // var elm = $('<li>') のように閉じタグ無くてもOK
+        var elm = $('<ul><li>1-1-1</li></ul>').css('color','red');
+        $('#elm1_2').before(elm);
+      });
+      $('#after').click(function(){
+        var elm = $('<ul><li>1-2-1</li></ul>').css('color','red');
+        $('#elm1_2').after(elm);
+      });
+      $('#ibefore').click(function(){
+        var elm = $('<ul><li>2-1-1</li></ul>').css('color','red');
+        elm.insertBefore('#elm2_2');
+      });
+      $('#iafter').click(function(){
+        var elm = $('<ul><li>2-2-1</li></ul>').css('color','red');
+        elm.insertAfter('#elm2_2');
+      });
+      $('#prepend').click(function(){
+        var elm = $('<li>').text('3-0').css('color','red');
+        $('#elm3').prepend(elm);
+      });
+      $('#append').click(function(){
+        var elm = $('<li>').text('3-4').css('color','red');
+        $('#elm3').append(elm);
+      });
+      $('#prependto').click(function(){
+        var elm = $('<li>').text('4-0').css('color','red');
+        elm.prependTo('#elm4');
+      });
+      $('#appendto').click(function(){
+        var elm = $('<li>').text('4-4').css('color','red');
+        elm.appendTo('#elm4');
+      });
 
-
-
+      // 表示、非表示
+      $('#hide').click(function(){
+        $('#hide_show').hide();
+      });
+      $('#show').click(function(){
+        $('#hide_show').show();
+      });
+      $('#fadeOut').click(function(){
+        $('#fadein_out').fadeOut();
+      });
+      $('#fadeIn').click(function(){
+        $('#fadein_out').fadeIn();
+      });
+      $('#toggle').click(function(){
+        $('#togglebox').toggle();
+      });
+      $('#toggleSlide').click(function(){
+        $('#toggleslidebox > p').slideToggle();
+      });
 
     });
     </script>
