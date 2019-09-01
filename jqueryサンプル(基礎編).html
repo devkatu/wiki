@@ -195,25 +195,25 @@
     <div class="title">
       <h3>styleをいじくる,取得する</h3>
       <pre class="desc2"><code>
-$('#css').click(function(){
-  $(this).css('border-radius','20px').css('background-color','red');
-});
+        $('#css').click(function(){
+          $(this).css('border-radius','20px').css('background-color','red');
+        });
 
-$('#addClass').click(function(){
-  $(this).addClass('add');
-});
+        $('#addClass').click(function(){
+          $(this).addClass('add');
+        });
 
-$('#removeClass').click(function(){
-  $(this).removeClass('box');
-});
+        $('#removeClass').click(function(){
+          $(this).removeClass('box');
+        });
 
-$('#toggleClass').click(function(){
-  $(this).toggleClass('t_c');
-});
+        $('#toggleClass').click(function(){
+          $(this).toggleClass('t_c');
+        });
 
-$('#hasClass').click(function(){
-  if($(this).hasClass('box')) alert('this box has class "box"!');
-});
+        $('#hasClass').click(function(){
+          if($(this).hasClass('box')) alert('this box has class "box"!');
+        });
       </code></pre>
     </div>
     <div class="outer">
@@ -269,7 +269,7 @@ $('#hasClass').click(function(){
           <p>click!</p>
         </div>
         <div class="box t_c" id="val">
-          <input type="text" style="width:100px;"/>
+          <input type="text" style="width:70px;"/>
         </div>
         <div class="box t_c" id="empty">
           <p>click!</p>
@@ -281,48 +281,52 @@ $('#hasClass').click(function(){
     </div>
 
     <div class="title">
-      <h3>要素の挿入</h3>
+      <h3>要素の挿入、挿入された要素に対するイベントハンドラ設定、属性の設定</h3>
       <p class="desc"></p>
       <pre class="desc2"><code>
-$('#before').click(function(){
-  var elm = $('&lt;ul&gt;&lt;li&gt;1-1-1&lt;/li&gt;&lt;/ul&gt;').css('color','red');
-  $('#elm1_2').before(elm);
-});
+        $('#before').click(function(){
+          var elm = $('&lt;ul&gt;&lt;li&gt;1-1-1&lt;/li&gt;&lt;/ul&gt;').css('color','red');
+          $('#elm1_2').before(elm);
+        });
 
-$('#after').click(function(){
-  var elm = $('&lt;ul&gt;&lt;li&gt;1-2-1&lt;/li&gt;&lt;/ul&gt;').css('color','red');
-  $('#elm1_2').after(elm);
-});
+        $('#after').click(function(){
+          var elm = $('&lt;ul&gt;&lt;li&gt;1-2-1&lt;/li&gt;&lt;/ul&gt;').css('color','red');
+          $('#elm1_2').after(elm);
+        });
 
-$('#ibefore').click(function(){
-  var elm = $('&lt;ul&gt;&lt;li&gt;2-1-1&lt;/li&gt;&lt;/ul&gt;').css('color','red');
-  elm.insertBefore('#elm2_2');
-});
+        $('#ibefore').click(function(){
+          var elm = $('&lt;ul&gt;&lt;li&gt;2-1-1&lt;/li&gt;&lt;/ul&gt;').css('color','red');
+          elm.insertBefore('#elm2_2');
+        });
 
-$('#iafter').click(function(){
-  var elm = $('&lt;ul&gt;&lt;li&gt;2-2-1&lt;/li&gt;&lt;/ul&gt;').css('color','red');
-  elm.insertAfter('#elm2_2');
-});
+        $('#iafter').click(function(){
+          var elm = $('&lt;ul&gt;&lt;li&gt;2-2-1&lt;/li&gt;&lt;/ul&gt;').css('color','red');
+          elm.insertAfter('#elm2_2');
+        });
 
-$('#prepend').click(function(){
-  var elm = $('&lt;li&gt;').text('3-0').css('color','red');
-  $('#elm3').prepend(elm);
-});
+        $('#prepend').click(function(){
+          var elm = $('&lt;li&gt;').text('3-0').css('color','red');
+          $('#elm3').prepend(elm);
+        });
 
-$('#append').click(function(){
-  var elm = $('&lt;li&gt;').text('3-4').css('color','red');
-  $('#elm3').append(elm);
-});
+        $('#append').click(function(){
+          var elm = $('&lt;li&gt;').text('3-4').css('color','red');
+          $('#elm3').append(elm);
+        });
 
-$('#prependto').click(function(){
-  var elm = $('&lt;li&gt;').text('4-0').css('color','red');
-  elm.prependTo('#elm4');
-});
+        $('#prependto').click(function(){
+          var elm = $('&lt;li&gt;').text('4-0').css('color','red');
+          elm.prependTo('#elm4');
+        });
 
-$('#appendto').click(function(){
-  var elm = $('&lt;li&gt;').text('4-4').css('color','red');
-  elm.appendTo('#elm4');
-});
+        $('#appendto').click(function(){
+          var elm = $('&lt;li&gt;').text('4-4').css('color','red').attr('id','elm4last');
+          elm.appendTo('#elm4');
+        });
+
+        $('body').on('click','#elm4last',function(){
+          alert('this element was added by "on" method!!');
+        });
       </code></pre>
     </div>
     <div class="outer">
@@ -367,6 +371,7 @@ $('#appendto').click(function(){
         <button id="append">li 3<br />append</button>
         <button id="prependto">li 4<br />prependto</button>
         <button id="appendto">li 4<br />appendto</button>
+        <p>li4-4をクリックしてね！！</p>
       </div>
     </div>
 
@@ -374,41 +379,41 @@ $('#appendto').click(function(){
       <h3>表示、非表示</h3>
       <p class="desc"></p>
       <pre class="desc2"><code>
-$('#hide').click(function(){
-  $('#hide_show').hide();
-});
+        $('#hide').click(function(){
+          $('#hide_show').hide();
+        });
 
-$('#show').click(function(){
-  $('#hide_show').show();
-});
+        $('#show').click(function(){
+          $('#hide_show').show();
+        });
 
-$('#toggle').click(function(){
-  $('#togglebox').toggle();
-});
+        $('#toggle').click(function(){
+          $('#togglebox').toggle();
+        });
 
-$('#fadeOut').click(function(){
-  $('#fadein_out').fadeOut();
-});
+        $('#fadeOut').click(function(){
+          $('#fadein_out').fadeOut();
+        });
 
-$('#fadeIn').click(function(){
-  $('#fadein_out').fadeIn();
-});
+        $('#fadeIn').click(function(){
+          $('#fadein_out').fadeIn();
+        });
 
-$('#fadeToggle').click(function(){
-  $('#fadetogglebox').fadeToggle();
-});
+        $('#fadeToggle').click(function(){
+          $('#fadetogglebox').fadeToggle();
+        });
 
-$('#toggleUp').click(function(){
-  $('#toggleup_down &gt; p').slideUp();
-});
+        $('#toggleUp').click(function(){
+          $('#toggleup_down &gt; p').slideUp();
+        });
 
-$('#toggleDown').click(function(){
-  $('#toggleup_down &gt; p').slideDown();
-});
+        $('#toggleDown').click(function(){
+          $('#toggleup_down &gt; p').slideDown();
+        });
 
-$('#toggleSlide').click(function(){
-  $('#toggleslidebox &gt; p').slideToggle();
-});
+        $('#toggleSlide').click(function(){
+          $('#toggleslidebox &gt; p').slideToggle();
+        });
       </code></pre>
     </div>
     <div class="outer">
@@ -447,18 +452,39 @@ $('#toggleSlide').click(function(){
 
     <h1>イベントいろいろ</h1>
 
-<div class="title">
-      <h3>表示、非表示</h3>
+    <div class="title">
+      <h3>UIに関するイベント</h3>
       <p class="desc"></p>
       <pre class="desc2"><code>
-$('clickbox').click(function(){
-  alert('clicked box!');
-});
+        $('#clickbox').click(function(){
+          alert('clicked box!');
+        });
 
-$('hoverbox').hover(function(){
-  alert('hovered!');
-});
+        $('#hoverbox').hover(function(){
+          $(this).text('hover!!').css('background-color','yellow');
+        },function(){
+          $(this).text('not hover!').css('background-color','pink');
+        });
 
+        $('#mouseenter_leave').mouseenter(function(){
+          $(this).text('just entered!').css('color','red');
+        }).mouseleave(function(){
+          $(this).text('just leaved!').css('color','black');
+        });
+
+        $('#mousemove').mousemove(function(e){
+          $(this).text('x : ' + e.pageX + 'y : ' + e.pageY);
+        });
+
+        $('#focus_blur').focus(function(){
+          $(this).val('just focused!').css('color','red');
+        }).blur(function(){
+          $(this).val('just blured!').css('color','black');
+        });
+
+        $('#change').change(function(){
+          alert($('option:selected').text() + ' selected!');
+        });
       </code></pre>
     </div>
     <div class="outer">
@@ -469,15 +495,31 @@ $('hoverbox').hover(function(){
         <div class="box t_c" id="hoverbox">
           mouse hover me!
         </div>
+        <div class="box t_c" id="mouseenter_leave">
+          mouse enter&leave me!
+        </div>
+        <div class="box t_c" id="mousemove">
+          mousemove on me!
+        </div>
+        <div class="box t_c">
+          <input type="text" id="focus_blur" value="focus??" style="width:70px;"/>
+        </div>
+        <div class="box t_c">
+          <select id="change" style="width:70px;">
+            <option value="large">large</option>
+            <option value="middle">middle</option>
+            <option value="small">small</option>
+          </select>
+        </div>
       </div>
     </div>
 
 
 
 
-<!-- anime -->
+    <!-- anime -->
 
-<!-- ajax -->
+    <!-- ajax -->
 
     <!-- emmet用！ -->
     <!-- div.title>h3+p.desc+pre.desc2>code -->
@@ -485,22 +527,6 @@ $('hoverbox').hover(function(){
 
 
 
-
-
-
-
-    <h1>基本</h1>
-    <div class="title">
-      <h3>clickイベント;</h3>
-      <p class="desc">あ</p>
-    </div>
-    <div class="outer">
-      <div class="inner">
-        <div class="box" id="box1">
-          click me!
-        </div>
-      </div>
-    </div>
 
 
 
@@ -612,8 +638,11 @@ $('hoverbox').hover(function(){
         elm.prependTo('#elm4');
       });
       $('#appendto').click(function(){
-        var elm = $('<li>').text('4-4').css('color','red');
+        var elm = $('<li>').text('4-4').css('color','red').attr('id','elm4last');;
         elm.appendTo('#elm4');
+      });
+      $('body').on('click','#elm4last',function(){
+        alert('this element was added by "on" method!!');
       });
 
       // 表示、非表示
@@ -650,9 +679,26 @@ $('hoverbox').hover(function(){
         alert('clicked box!');
       });
       $('#hoverbox').hover(function(){
-        $(this).css('background-color','red');
+        $(this).text('hover!!').css('background-color','yellow');
+      },function(){
+        $(this).text('not hover!').css('background-color','pink');
       });
-
+      $('#mouseenter_leave').mouseenter(function(){
+        $(this).text('just entered!').css('color','red');
+      }).mouseleave(function(){
+        $(this).text('just leaved!').css('color','black');
+      });
+      $('#mousemove').mousemove(function(e){
+        $(this).text('x : ' + e.pageX + 'y : ' + e.pageY);
+      });
+      $('#focus_blur').focus(function(){
+        $(this).val('just focused!').css('color','red');
+      }).blur(function(){
+        $(this).val('just blured!').css('color','black');
+      });
+      $('#change').change(function(){
+        alert($('option:selected').text() + ' selected!');
+      });
 
     });
     </script>
@@ -665,8 +711,7 @@ $('hoverbox').hover(function(){
 
   scrollTop
 
-
-  イベント　click,mouse*,focus,blur,change,on
+  バブルイベント　mouseover_mouseout,focusin_out,on return false
 
   アニメーション
   animate
@@ -675,5 +720,5 @@ $('hoverbox').hover(function(){
   transition
   イベントのバブリングとreturn　false
 
-  フォーム　元機能のキャンセルも
+  フォーム　元機能のキャンセルも　nameも
   ajax -->
