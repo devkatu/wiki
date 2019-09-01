@@ -377,18 +377,35 @@ $('#appendto').click(function(){
 $('#hide').click(function(){
   $('#hide_show').hide();
 });
+
 $('#show').click(function(){
   $('#hide_show').show();
 });
-$('#fadeOut').click(function(){
-  $('#fadein_out').fadeOut();
-});
-$('#fadeIn').click(function(){
-  $('#fadein_out').fadeIn();
-});
+
 $('#toggle').click(function(){
   $('#togglebox').toggle();
 });
+
+$('#fadeOut').click(function(){
+  $('#fadein_out').fadeOut();
+});
+
+$('#fadeIn').click(function(){
+  $('#fadein_out').fadeIn();
+});
+
+$('#fadeToggle').click(function(){
+  $('#fadetogglebox').fadeToggle();
+});
+
+$('#toggleUp').click(function(){
+  $('#toggleup_down &gt; p').slideUp();
+});
+
+$('#toggleDown').click(function(){
+  $('#toggleup_down &gt; p').slideDown();
+});
+
 $('#toggleSlide').click(function(){
   $('#toggleslidebox &gt; p').slideToggle();
 });
@@ -399,30 +416,64 @@ $('#toggleSlide').click(function(){
         <div class="box t_c" id="hide_show">
           <p>No1</p>
         </div>
-        <div class="box t_c" id="fadein_out">
+        <div class="box t_c" id="togglebox">
           <p>No2</p>
         </div>
-        <div class="box t_c" id="togglebox">
+        <div class="box t_c" id="fadein_out">
           <p>No3</p>
         </div>
-        <div class="box t_c" id="toggleslidebox">
+        <div class="box t_c" id="fadetogglebox">
           <p>No4</p>
         </div>
-        <div class="box t_c">
-          <p></p>
+        <div class="box t_c" id="toggleup_down">
+          <p>No5</p>
+        </div>
+        <div class="box t_c" id="toggleslidebox">
+          <p>No6</p>
         </div>
         <button id="hide">No1<br />hide</button>
         <button id="show">No1<br />show</button>
-        <button id="fadeOut">No2<br />fadeOut</button>
-        <button id="fadeIn">No2<br />fadeIn</button>
-        <button id="toggle">No3<br />toggle</button>
-        <button id="toggleSlide">No4 > p<br />slideToggle</button>
+        <button id="toggle">No2<br />toggle</button>
+        <button id="fadeOut">No3<br />fadeOut</button>
+        <button id="fadeIn">No3<br />fadeIn</button>
+        <button id="fadeToggle">No4<br />fadeToggle</button>
+        <button id="toggleUp">No5 > p<br />slideUp</button>
+        <button id="toggleDown">No5 > p<br />slideDown</button>
+        <button id="toggleSlide">No6 > p<br />slideToggle</button>
       </div>
     </div>
 
 
 
-<!-- event -->
+    <h1>イベントいろいろ</h1>
+
+<div class="title">
+      <h3>表示、非表示</h3>
+      <p class="desc"></p>
+      <pre class="desc2"><code>
+$('clickbox').click(function(){
+  alert('clicked box!');
+});
+
+$('hoverbox').hover(function(){
+  alert('hovered!');
+});
+
+      </code></pre>
+    </div>
+    <div class="outer">
+      <div class="inner">
+        <div class="box t_c" id="clickbox">
+          click me!
+        </div>
+        <div class="box t_c" id="hoverbox">
+          mouse hover me!
+        </div>
+      </div>
+    </div>
+
+
+
 
 <!-- anime -->
 
@@ -572,18 +623,36 @@ $('#toggleSlide').click(function(){
       $('#show').click(function(){
         $('#hide_show').show();
       });
+      $('#toggle').click(function(){
+        $('#togglebox').toggle();
+      });
       $('#fadeOut').click(function(){
         $('#fadein_out').fadeOut();
       });
       $('#fadeIn').click(function(){
         $('#fadein_out').fadeIn();
       });
-      $('#toggle').click(function(){
-        $('#togglebox').toggle();
+      $('#fadeToggle').click(function(){
+        $('#fadetogglebox').fadeToggle();
+      });
+      $('#toggleUp').click(function(){
+        $('#toggleup_down > p').slideUp();
+      });
+      $('#toggleDown').click(function(){
+        $('#toggleup_down > p').slideDown();
       });
       $('#toggleSlide').click(function(){
         $('#toggleslidebox > p').slideToggle();
       });
+
+      //イベント各種
+      $('#clickbox').click(function(){
+        alert('clicked box!');
+      });
+      $('#hoverbox').hover(function(){
+        $(this).css('background-color','red');
+      });
+
 
     });
     </script>
@@ -594,7 +663,6 @@ $('#toggleSlide').click(function(){
   <!--
   jqueryの各メソッド
 
-  slideUp
   scrollTop
 
 
