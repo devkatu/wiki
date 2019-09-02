@@ -514,7 +514,27 @@
       </div>
     </div>
 
-
+    <div class="title">
+      <h3>続き</h3>
+      <p class="desc"></p>
+      <pre class="desc2"><code>
+$('#mouseover').mouseover(function(){
+  alert('mouse over!! \nthis color is ' + $(this).css('background-color'));
+});
+$('#mouseenter').mouseenter(function(){
+  alert('mouse enter!!\nthis color is ' + $(this).css('background-color'));
+});
+      </code></pre>
+    </div>
+    <div class="outer">
+      <div class="inner">
+        <div class="t_c" id="mouseover" style="width:200px;height:200px;padding:50px 0 0 50px;background:aqua;">
+          <div style="width:100px;height:100px;background:orange;"></div>
+        </div>
+        <div class="t_c" id="mouseenter" style="width:200px;height:200px;padding:50px 0 0 50px;background:pink;">
+          <div style="width:100px;height:100px;background:red;"></div>
+      </div>
+    </div>
 
 
     <!-- anime -->
@@ -698,6 +718,14 @@
       });
       $('#change').change(function(){
         alert($('option:selected').text() + ' selected!');
+      });
+
+      //イベント続き
+      $('#mouseover').mouseover(function(){
+        alert('mouse over!! \nthis color is ' + $(this).css('background-color'));
+      });
+      $('#mouseenter').mouseenter(function(){
+        alert('mouse enter!!\nthis color is ' + $(this).css('background-color'));
       });
 
     });
