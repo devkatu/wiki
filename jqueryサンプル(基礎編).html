@@ -74,6 +74,18 @@
     background-color: blue;
   }
 
+  .eventlayero{
+    width:200px;
+    height:200px;
+    position:relative;
+  }
+
+  .eventlayeri{
+    width:100px;
+    height:100px;
+    position:absolute;
+    top:50px;left:50px;
+  }
 
 
   </style>
@@ -325,7 +337,7 @@
         });
 
         $('body').on('click','#elm4last',function(){
-          alert('this element was added by "on" method!!');
+          alert('this elements click event was added by "on" method!!');
         });
       </code></pre>
     </div>
@@ -371,7 +383,7 @@
         <button id="append">li 3<br />append</button>
         <button id="prependto">li 4<br />prependto</button>
         <button id="appendto">li 4<br />appendto</button>
-        <p>li4-4をクリックしてね！！</p>
+        <p><b>li4-4をクリックしてね！！</b></p>
       </div>
     </div>
 
@@ -516,25 +528,88 @@
 
     <div class="title">
       <h3>続き</h3>
-      <p class="desc"></p>
+      <p class="desc">各種イベントはバブルイベントになっているものが多い。
+      →子要素にイベントが発生すると親要素に伝搬していくもの。<b>子要素で発生したイベントを
+    親要素に伝搬させたくなければ子要素のイベントハンドラにreturn false;を最後に追加</b>する
+    のが手っ取り早い。ただし子要素になにもハンドラを追加しない場合はこの手段が使えない
+    (わざわざハンドラを追加するなら別だが)ので、<b>自分の子要素で発生したイベントは受け取らない
+    、専用のイベントが用意されている。</b>
+    mouseenter , mouseleaveにカーソルを合わせる、外すするとイベントが発生し、その子要素に
+    カーソルを合わせる、外すしてもmouseenter , mouseleaveにはイベントが伝搬していないのがわかる</p>
       <pre class="desc2"><code>
-$('#mouseover').mouseover(function(){
-  alert('mouse over!! \nthis color is ' + $(this).css('background-color'));
+// バブリングするclickイベント
+$('#click_o,#click_i').click(function(){
+  alert('just clicked! on ' + this.id);
 });
-$('#mouseenter').mouseenter(function(){
-  alert('mouse enter!!\nthis color is ' + $(this).css('background-color'));
+
+// 子要素のハンドラに return false; としてバブリング防止
+$('#click2_o,#click2_i').click(function(){
+  alert('just clicked! on ' + this.id);
+  return false;
+});
+
+// バブリングするmouseoverイベント
+$('#mouseover_o').mouseover(function(){
+  alert('mouse over!! on ' + this.id);
+});
+
+// mouseenterイベントに変更すれば自分の子要素からのイベントを受け取らない
+$('#mouseenter_o').mouseenter(function(){
+  alert('mouse enter!! on ' + this.id);
+});
+
+// バブリングするmouseoutベント
+$('#mouseout_o').mouseout(function(){
+  alert('mouse out!! on ' + this.id);
+});
+
+// mouseleaveイベントに変更すれば自分の子要素からのイベントを受け取らない
+$('#mouseleave_o').mouseleave(function(){
+  alert('mouse leave!! on ' + this.id);
 });
       </code></pre>
     </div>
     <div class="outer">
       <div class="inner">
-        <div class="t_c" id="mouseover" style="width:200px;height:200px;padding:50px 0 0 50px;background:aqua;">
-          <div style="width:100px;height:100px;background:orange;"></div>
+        <div class="eventlayero t_c" id="click_o" style="background:lime;">
+          <p class="desc">id:click_o (parent)</p>
+          <div class="eventlayeri" id="click_i" style="background:green;">
+            <p class="desc">id:click_i (child)</p>
+          </div>
         </div>
-        <div class="t_c" id="mouseenter" style="width:200px;height:200px;padding:50px 0 0 50px;background:pink;">
-          <div style="width:100px;height:100px;background:red;"></div>
+        <div class="eventlayero t_c" id="click2_o" style="background:#45d1fc;">
+          <p class="desc">id:click2_o (parent)</p>
+          <div class="eventlayeri" id="click2_i" style="background:#396ef7;">
+            <p class="desc">id:click2_i (child)</p>
+          </div>
+        </div>
+        <br />
+        <div class="eventlayero t_c" id="mouseover_o" style="background:aqua;">
+          <p class="desc">id:mouseover_o (parent)</p>
+          <div class="eventlayeri" style="background:orange;">
+            <p class="desc"> (child)</p>
+          </div>
+        </div>
+        <div class="eventlayero t_c" id="mouseenter_o" style="background:pink;">
+          <p class="desc">id:mouseenter_o (parent)</p>
+          <div class="eventlayeri" style="background:red;">
+            <p class="desc"> (child)</p>
+          </div>
+        </div>
+        <br />
+        <div class="eventlayero t_c" id="mouseout_o" style="background:#f29386;">
+          <p class="desc">id:mouseout_o (parent)</p>
+          <div class="eventlayeri" style="background:#ad450a;">
+            <p class="desc"> (child)</p>
+          </div>
+        </div>
+        <div class="eventlayero t_c" id="mouseleave_o" style="background:#4bf6dc;">
+          <p class="desc">id:mouseleave_o (parent)</p>
+          <div class="eventlayeri" style="background:#11b968;">
+            <p class="desc"> (child)</p>
+          </div>
+        </div>
       </div>
-    </div>
 
 
     <!-- anime -->
@@ -662,7 +737,7 @@ $('#mouseenter').mouseenter(function(){
         elm.appendTo('#elm4');
       });
       $('body').on('click','#elm4last',function(){
-        alert('this element was added by "on" method!!');
+        alert('this elements click event was added by "on" method!!');
       });
 
       // 表示、非表示
@@ -721,12 +796,29 @@ $('#mouseenter').mouseenter(function(){
       });
 
       //イベント続き
-      $('#mouseover').mouseover(function(){
-        alert('mouse over!! \nthis color is ' + $(this).css('background-color'));
+      $('#click_o,#click_i').click(function(){
+        alert('just clicked! on ' + this.id);
       });
-      $('#mouseenter').mouseenter(function(){
-        alert('mouse enter!!\nthis color is ' + $(this).css('background-color'));
+      $('#click2_o,#click2_i').click(function(){
+        alert('just clicked! on ' + this.id);
+        return false;
       });
+      $('#mouseover_o').mouseover(function(){
+        alert('mouse over!! on ' + this.id);
+      });
+      $('#mouseenter_o').mouseenter(function(){
+        alert('mouse enter!! on ' + this.id);
+      });
+      $('#mouseout_o').mouseout(function(){
+        alert('mouse out!! on ' + this.id);
+      });
+      $('#mouseleave_o').mouseleave(function(){
+        alert('mouse leave!! on ' + this.id);
+      });
+
+
+
+
 
     });
     </script>
@@ -739,9 +831,7 @@ $('#mouseenter').mouseenter(function(){
 
   scrollTop
 
-  バブルイベント　mouseover_mouseout,focusin_out,on return false
-
-  アニメーション
+    アニメーション
   animate
   stop
   que（同時に動くのと順番に動くの）
