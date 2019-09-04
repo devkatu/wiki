@@ -610,8 +610,76 @@ $('#mouseleave_o').mouseleave(function(){
           </div>
         </div>
       </div>
+    </div>
 
 
+
+    <h1>アニメーション</h1>
+
+    <div class="title">
+      <h3>animate</h3>
+      <p class="desc"></p>
+      <pre class="desc2"><code>
+
+$('#animate1').hover(function(){
+  $(this).animate({
+    width: "200px" ,
+    height: "200px" ,
+    background: "yellow"
+  },1000,"swing");
+},function(){
+  $(this).animate({
+    width: "100px" ,
+    height: "100px" ,
+    background: "orange"
+  },1000,"swing");
+});
+
+$('#animate2').hover(function(){
+  $(this).animate({
+    left: "+=100px"
+  },1000,"swing");
+},function(){
+  $(this).animate({
+    left: "-=100px"
+  },1000,"swing");
+});
+
+$('#animate1').hover(function(){
+  $(this).animate({
+    width: "200px" ,
+    height: "200px" ,
+    background: "yellow"
+  },1000,"swing");
+},function(){
+  $(this).animate({
+    width: "100px" ,
+    height: "100px" ,
+    background: "orange"
+  },1000,"swing");
+});
+
+      </code></pre>
+    </div>
+    <div class="outer">
+      <div class="inner">
+        <div class="box" id="animate1">
+          <p class="desc">id:animate1</p>
+        </div>
+        <div style="width:300px;">
+          <p id="move" style="background:aqua;color:white;">movestart</p>
+          <div class="box" id="animate2" style="position:relative;">
+            <p class="desc">id:animate2</p>
+          </div>
+          <div class="box" id="animate3" style="position:relative;">
+            <p class="desc">id:animate3</p>
+          </div>
+        </div>
+      </div>
+    </div>
+      
+      
+      
     <!-- anime -->
 
     <!-- ajax -->
@@ -816,7 +884,33 @@ $('#mouseleave_o').mouseleave(function(){
         alert('mouse leave!! on ' + this.id);
       });
 
-
+      //アニメーション
+      $('#animate1').hover(function(){
+        $(this).animate({
+          width: "300px" ,
+          background: "yellow"
+        },1000,"swing");
+      },function(){
+        $(this).animate({
+          width: "100px" ,
+          background: "blue"
+        },1000,"swing");
+      });
+      $('#move').hover(function(){
+        $('#animate2').animate({
+          left: "+=200px"
+        },2000,"swing");
+        $('#animate3').animate({
+          left: "+=200px"
+        },2000,"linear");
+      },function(){
+        $('#animate2').animate({
+          left: "-=200px"
+        },2000,"swing");
+        $('#animate3').animate({
+          left: "-=200px"
+        },2000,"linear");
+      });
 
 
 
