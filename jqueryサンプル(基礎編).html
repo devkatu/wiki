@@ -87,6 +87,67 @@
     top:50px;left:50px;
   }
 
+  /* transition */
+  .div_transition{
+    width: 100px;
+    height: 100px;
+    border: solid 3px black;
+    background-color:#bbf6e1;
+    transition: width 3s;  //動かしたいプロパティをここで設定する
+    /* 以下でも同じ */
+    // transition-property: width;
+    // transition-duration: 3s;
+  }
+  .div_transition:hover{
+    width: 200px;
+  }
+
+  /* transform */
+  .div_transform{
+    width: 100px;
+    height: 100px;
+    border: solid 3px black;
+    background-color:#f5bbf6;
+    transition: transform 3s;
+  }
+  .div_transform:hover{
+    /* transformプロパティは一行内で書くこと */
+    /* 複数行に書いても最後のやつしか実行されないよ */
+    transform: translate(200px,0px) rotate(360deg);
+  }
+
+  /* animation */
+  .div_anime{
+    width: 100px;
+    height: 100px;
+    border: solid 3px black;
+    background-color:#f3f6bb;
+  }
+  .div_anime:hover{
+    animation: anime 3s;  //animation に設定したいものを設定する
+    //ここではanimeの中にアニメーションの仕方が設定されている
+    /* 以下でも同じ */
+    // animation-name: anime;
+    // animation-duration: 3s;
+  }
+  @keyframes anime{
+    0% {width:100px;}
+    25% {width:50px;}
+    50% {width:90px;}
+    75% {width:180px;}
+    85% {width:90px;}
+    100% {width:200px;}
+  }
+
+
+  /* jquery & transition */
+  .div_jqueryTransition{
+    width: 100px;
+    height: 100px;
+    border: solid 3px black;
+    background-color:#b6aef7;
+    transition: transform 0.8s;
+  }
 
   </style>
 </head>
@@ -741,34 +802,97 @@ $('#animate6').click(function(){
     </div>
 
     <div class="title">
-      <h3>アニメーション続き</h3>
-      <p class="desc"></p>
+      <h3>アニメーション続き(css含む)</h3>
+      <p class="desc">
+        cssだけでもリッチなアニメーションを簡単に作れる。<br>
+        一つめはtransitionプロパティによるもので単純な動きに使う。 <br>
+        二つめはtransitionプロパティ+transformプロパティで要素の動きを使いやすくしたもの <br>
+        三つめはanimetionプロパティによるもので複雑なアニメーションで使える <br>
+        cssでクラスを用意しtransitionやanimationを定義しておいてjqueryからaddclassしてもよい <br>
+        四つめはjqueryにて動的にtransitionの値を設定している
+      </p>
       <pre class="desc2"><code>
+/* transition */
+  .div_transition{
+    width: 100px;
+    height: 100px;
+    border: solid 3px black;
+    background-color:#bbf6e1;
+    transition: width 3s;  //動かしたいプロパティをここで設定する
+    /* 以下でも同じ */
+    // transition-property: width;
+    // transition-duration: 3s;
+  }
+  .div_transition:hover{
+    width: 200px;
+  }
 
-        
+/* transform */
+  .div_transform{
+    width: 100px;
+    height: 100px;
+    border: solid 3px black;
+    background-color:#f5bbf6;
+    transition: transform 3s;
+  }
+  .div_transform:hover{
+    /* transformプロパティは一行内で書くこと */
+    /* 複数行に書いても最後のやつしか実行されないよ */
+    transform: translate(200px,0px) rotate(360deg);
+  }
+
+/* animation */
+  .div_anime{
+    width: 100px;
+    height: 100px;
+    border: solid 3px black;
+    background-color:#f3f6bb;
+  }
+  .div_anime:hover{
+    animation: anime 3s;  //animation に設定したいものを設定する
+                          //ここではanimeの中にアニメーションの仕方が設定されている
+    /* 以下でも同じ */
+    // animation-name: anime;
+    // animation-duration: 3s;
+  }
+  @keyframes anime{
+    0% {width:100px;}
+    25% {width:50px;}
+    50% {width:90px;}
+    75% {width:180px;}
+    85% {width:90px;}
+    100% {width:200px;}
+  }
+
+var jo = $('.div_jqueryTransition').position();  //positionはグローバルにしておく。translateが初期位置を基準にとるためここで保存しておかなかればならないため
+$('#anibox').click(function(e){
+  var x = e.offsetX - jo.left;
+  var y = e.offsetY - jo.top;
+  // onメソッドで指定しているイベントはtransitionが終わったときに発生するイベントである
+  $('.div_jqueryTransition').css("transform","translate(" + x + "px," + y + "px)").on("webkitTransitionEnd",function(){
+    $(this).css('background','#fc5d91');
+  });
+});
       </code></pre>
     </div>
     <div class="outer">
-      <div class="inner">
-        <div class="box t_c">
-          <p></p>
+      <div class="inner" id="anibox">
+        id="anibox"
+        <div class="div_transition">
+          hover!<br />transition by css
         </div>
-        <div class="box t_c">
-          <p></p>
+        <div class="div_transform">
+          hover!<br />transform by css
         </div>
-        <div class="box t_c">
-          <p></p>
+        <div class="div_anime">
+          hover!<br />animation by css
         </div>
-        <div class="box t_c">
-          <p></p>
+        <div class="div_jqueryTransition">
+          click!<br />jquery & transition
         </div>
-        <div class="box t_c">
-          <p></p>
-        </div>
+        <img alt="位置情報について" src="event時の位置情報.gif" />
       </div>
     </div>
-
-
 
     <!-- ajax -->
 
@@ -1061,6 +1185,15 @@ $('#animate6').click(function(){
       });
 
       // アニメーションつづき
+      var jo = $('.div_jqueryTransition').position();  //positionはグローバルにしておく。translateが初期位置を基準にとるためここで保存しておかなかればならないため
+      $('#anibox').click(function(e){
+        var x = e.offsetX - jo.left;
+        var y = e.offsetY - jo.top;
+        // onメソッドで指定しているイベントはtransitionが終わったときに発生するイベントである
+        $('.div_jqueryTransition').css("transform","translate(" + x + "px," + y + "px)").on("webkitTransitionEnd",function(){
+          $(this).css('background','#fc5d91');
+        });
+      });
 
     });
     </script>
