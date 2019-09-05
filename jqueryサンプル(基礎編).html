@@ -592,7 +592,7 @@
       <p class="desc">各種イベントはバブルイベントになっているものが多い。
       →子要素にイベントが発生すると親要素に伝搬していくもの。<b>子要素で発生したイベントを
     親要素に伝搬させたくなければ子要素のイベントハンドラにreturn false;を最後に追加</b>する
-    のが手っ取り早い。ただし子要素になにもハンドラを追加しない場合はこの手段が使えない
+    のが手っ取り早い。(e.stopPropagation()でもできるけど記述が楽だしe.prevntDefault()(a要素とかsubmitとかのDOM要素がもともと持つ機能を殺すもの)の機能も return false; だけでOKののでこれでよい)ただし子要素になにもハンドラを追加しない場合はこの手段が使えない
     (わざわざハンドラを追加するなら別だが)ので、<b>自分の子要素で発生したイベントは受け取らない
     、専用のイベントが用意されている。</b>
     mouseenter , mouseleaveにカーソルを合わせる、外すするとイベントが発生し、その子要素に
@@ -606,7 +606,7 @@ $('#click_o,#click_i').click(function(){
 // 子要素のハンドラに return false; としてバブリング防止
 $('#click2_o,#click2_i').click(function(){
   alert('just clicked! on ' + this.id);
-  return false;
+  return false;  // これだけで stopPropagation preventDefault の両方の機能！
 });
 
 // バブリングするmouseoverイベント
@@ -1081,7 +1081,7 @@ $('#anibox').click(function(e){
       });
       $('#click2_o,#click2_i').click(function(){
         alert('just clicked! on ' + this.id);
-        return false;
+        return false;  // これだけで stopPropagation preventDefault の両方の機能！
       });
       $('#mouseover_o').mouseover(function(){
         alert('mouse over!! on ' + this.id);
