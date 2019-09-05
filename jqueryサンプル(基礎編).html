@@ -618,69 +618,157 @@ $('#mouseleave_o').mouseleave(function(){
 
     <div class="title">
       <h3>animate</h3>
-      <p class="desc"></p>
+      <p class="desc">left,topなどの属性を弄るときは該当の要素にposition:relattive等static以外の
+      値を設定すること</p>
       <pre class="desc2"><code>
-
 $('#animate1').hover(function(){
   $(this).animate({
-    width: "200px" ,
-    height: "200px" ,
+    width: "300px" ,
     background: "yellow"
   },1000,"swing");
 },function(){
   $(this).animate({
     width: "100px" ,
-    height: "100px" ,
-    background: "orange"
+    background: "blue"
   },1000,"swing");
 });
-
-$('#animate2').hover(function(){
+$('#animate1a').hover(function(){
+  $(this).stop();
   $(this).animate({
-    left: "+=100px"
-  },1000,"swing");
-},function(){
-  $(this).animate({
-    left: "-=100px"
-  },1000,"swing");
-});
-
-$('#animate1').hover(function(){
-  $(this).animate({
-    width: "200px" ,
-    height: "200px" ,
+    width: "300px" ,
     background: "yellow"
   },1000,"swing");
 },function(){
+  $(this).stop();
   $(this).animate({
     width: "100px" ,
-    height: "100px" ,
-    background: "orange"
+    background: "blue"
   },1000,"swing");
 });
-
+$('#move').hover(function(){
+  $('#animate2').stop();
+  $('#animate3').stop();
+  $('#animate2').animate({
+    left: "+=200px"
+  },2000,"swing");
+  $('#animate3').animate({
+    left: "+=200px"
+  },2000,"linear");
+},function(){
+  $('#animate2').stop();
+  $('#animate3').stop();
+  $('#animate2').animate({
+    left: "-=200px"
+  },2000,"swing");
+  $('#animate3').animate({
+    left: "-=200px"
+  },2000,"linear");
+});
+$('#animate4').click(function(){
+  $(this).animate({left: "+=100px"});
+  $(this).animate({top: "+=100px"});
+  $(this).animate({top: "-=100px"});
+  $(this).animate({left: "-=100px"},function(){
+    alert('移動完了しました');
+  });
+});
+$('#animate5').click(function(){
+  $(this).animate({left: "+=100px"});
+  $(this).animate({top: "+=100px"},{queue:false});  //この方法も使えるけどこのあとに順番に動かしたいときに困りそうだし分かりづらいので下のほうがいい
+  $(this).animate({top: "-=100px",left:"-=100px"});
+  // $(this).animate({left: "-=100px"});
+});
+$('#animate6').click(function(){
+  $(this).animate(
+    {left:"+=200px"},
+    {
+      duration: 5000,
+      easing: "swing",
+      queue: true,
+      step:function(){
+        var x = $(this).css("left");
+        $(this).text(x);
+      }
+    }
+  );
+  $(this).animate(
+    {left:"-=200px"},
+    {
+      duration: 2000,
+      easing: "swing",
+      queue: true,
+      step:function(){
+        var x = $(this).css("left");
+        $(this).text(x);
+      },
+      complete:function(){
+        alert('全行程完了');
+      }
+    }
+  );
+});
       </code></pre>
     </div>
     <div class="outer">
       <div class="inner">
         <div class="box" id="animate1">
-          <p class="desc">id:animate1</p>
+          <p class="desc">id:animate1<br />途中停止なし<br />hover!</p>
+        </div>
+        <div class="box" id="animate1a">
+          <p class="desc">id:animate1a<br />途中停止あり<br />hover!</p>
         </div>
         <div style="width:300px;">
-          <p id="move" style="background:aqua;color:white;">movestart</p>
+          <p id="move" style="background:aqua;color:white;">movestart<br />hover!</p>
           <div class="box" id="animate2" style="position:relative;">
-            <p class="desc">id:animate2</p>
+            <p class="desc">id:animate2<br />イージング swing</p>
           </div>
           <div class="box" id="animate3" style="position:relative;">
-            <p class="desc">id:animate3</p>
+            <p class="desc">id:animate3<br />イージング linear</p>
+          </div>
+          <div class="box" id="animate4" style="position:relative;">
+            <p class="desc">id:animate4<br />順番動作+call back付<br />click!</p>
+          </div>
+          <div>
+            <div class="box" id="animate5" style="position:relative;">
+              <p class="desc">id:animate5<br />同時動作<br />click!</p>
+            </div>
+            <div class="box" id="animate6" style="position:relative;">
+              <p class="desc">id:animate6<br />全部object指定+step function<br />click!</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-      
-      
-      
-    <!-- anime -->
+
+    <div class="title">
+      <h3>アニメーション続き</h3>
+      <p class="desc"></p>
+      <pre class="desc2"><code>
+
+        
+      </code></pre>
+    </div>
+    <div class="outer">
+      <div class="inner">
+        <div class="box t_c">
+          <p></p>
+        </div>
+        <div class="box t_c">
+          <p></p>
+        </div>
+        <div class="box t_c">
+          <p></p>
+        </div>
+        <div class="box t_c">
+          <p></p>
+        </div>
+        <div class="box t_c">
+          <p></p>
+        </div>
+      </div>
+    </div>
+
+
 
     <!-- ajax -->
 
@@ -896,7 +984,22 @@ $('#animate1').hover(function(){
           background: "blue"
         },1000,"swing");
       });
+      $('#animate1a').hover(function(){
+        $(this).stop();
+        $(this).animate({
+          width: "300px" ,
+          background: "yellow"
+        },1000,"swing");
+      },function(){
+        $(this).stop();
+        $(this).animate({
+          width: "100px" ,
+          background: "blue"
+        },1000,"swing");
+      });
       $('#move').hover(function(){
+        $('#animate2').stop();
+        $('#animate3').stop();
         $('#animate2').animate({
           left: "+=200px"
         },2000,"swing");
@@ -904,6 +1007,8 @@ $('#animate1').hover(function(){
           left: "+=200px"
         },2000,"linear");
       },function(){
+        $('#animate2').stop();
+        $('#animate3').stop();
         $('#animate2').animate({
           left: "-=200px"
         },2000,"swing");
@@ -911,8 +1016,51 @@ $('#animate1').hover(function(){
           left: "-=200px"
         },2000,"linear");
       });
+      $('#animate4').click(function(){
+        $(this).animate({left: "+=100px"});
+        $(this).animate({top: "+=100px"});
+        $(this).animate({top: "-=100px"});
+        $(this).animate({left: "-=100px"},function(){
+          alert('移動完了しました');
+        });
+      });
+      $('#animate5').click(function(){
+        $(this).animate({left: "+=100px"});
+        $(this).animate({top: "+=100px"},{queue:false});  //この方法も使えるけどこのあとに順番に動かしたいときに困りそうだし分かりづらいので下のほうがいい
+        $(this).animate({top: "-=100px",left:"-=100px"});
+        // $(this).animate({left: "-=100px"});
+      });
+      $('#animate6').click(function(){
+        $(this).animate(
+          {left:"+=200px"},
+          {
+            duration: 5000,
+            easing: "swing",
+            queue: true,
+            step:function(){
+              var x = $(this).css("left");
+              $(this).text(x);
+            }
+          }
+        );
+        $(this).animate(
+          {left:"-=200px"},
+          {
+            duration: 2000,
+            easing: "swing",
+            queue: true,
+            step:function(){
+              var x = $(this).css("left");
+              $(this).text(x);
+            },
+            complete:function(){
+              alert('全行程完了');
+            }
+          }
+        );
+      });
 
-
+      // アニメーションつづき
 
     });
     </script>
@@ -926,9 +1074,7 @@ $('#animate1').hover(function(){
   scrollTop
 
     アニメーション
-  animate
-  stop
-  que（同時に動くのと順番に動くの）
+
   transition
   イベントのバブリングとreturn　false
 
