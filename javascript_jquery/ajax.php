@@ -1,5 +1,7 @@
 <?php
-echo htmlspecialchars($_GET['txt'] . " との入力を受け付けました" , ENT_QUOTES , "utf-8");
+if ($_SERVER['REQUEST_METHOD'] === 'GET'){
+  echo htmlspecialchars($_GET['txt'] . " との入力を受け付けました" , ENT_QUOTES , "utf-8");
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

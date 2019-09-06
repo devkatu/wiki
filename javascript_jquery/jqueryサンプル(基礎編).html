@@ -1220,10 +1220,15 @@ $('#anibox').click(function(e){
         });
       });
       $('#get').click(function(){
+        var t = $(this);
+        // ここがajax jquery.getメソッド
+        // 引数1 対象のhtmlやphpのパス
+        // 引数2 対象ファイルに渡す引数 getならurlの後ろに?arg1=val1&arg2=val2...みたいな感じになる
+        // 引数3 コールバック関数を指定
         $.get('ajax.php',{
           txt: $('#txt').val()
         },function(data){
-          $(this).next().html(data);
+          t.next().html(data);
         });
       });
 
