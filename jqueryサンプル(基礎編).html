@@ -894,7 +894,23 @@ $('#anibox').click(function(e){
       </div>
     </div>
 
-    <!-- ajax -->
+    <h1>ajax</h1>
+    <div class="title">
+      <h3>ajax</h3>
+      <p class="desc"><i>object</i>.load()は<i>object</i>内にloadメソッドで指定したhtmlやphpの全てを読込む<br>
+      </p>
+      <pre class="desc2"><code></code></pre>
+    </div>
+    <div class="outer">
+      <div class="inner">
+        <button id="load">.load</button>
+        <div></div>
+        <input type="text" id="txt" />
+        <button id="get">$.get</button>
+        <div></div>
+      </div>
+    </div>
+
 
     <!-- emmet用！ -->
     <!-- div.title>h3+p.desc+pre.desc2>code -->
@@ -1194,6 +1210,23 @@ $('#anibox').click(function(e){
           $(this).css('background','#fc5d91');
         });
       });
+
+      // ajax
+      // load()第二引数にコールバック関数を指定できる
+      $('#load').click(function(){
+        $(this).next().load('ajax.php',function(){
+          $(this).css('color','red');
+          alert('load完了しました');
+        });
+      });
+      $('#get').click(function(){
+        $.get('ajax.php',{
+          txt: $('#txt').val()
+        },function(data){
+          $(this).next().html(data);
+        });
+      });
+
 
     });
     </script>
