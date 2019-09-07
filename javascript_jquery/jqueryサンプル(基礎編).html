@@ -240,8 +240,9 @@
       <p class="desc2">$('#bsli').prev().css('border','dashed 2px black');</p>
       <p class="desc2">$('#bsli').siblings().css('background','yellow');</p>
     </div>
-    <div class="outer" id="section2">
+    <div class="outer" id="section3">
       <div class="inner">
+        <button id="enum" >list enumelate</button>
         <div class="listbox">
           <ul>
             <li>1 (兄弟要素)</li>
@@ -966,6 +967,11 @@ $('#anibox').click(function(e){
       $('#bsli').next().css('border','double 3px red');
       $('#bsli').prev().css('border','dashed 2px black');
       $('#bsli').siblings().css('background','yellow');
+      $('#enum').click(function(){
+        $.each($('#section3 li'),function(s,e){
+          alert($(e).text());
+        });
+      });
 
       // styleをいじくる
       $('#css').click(function(){
@@ -1254,11 +1260,8 @@ $('#anibox').click(function(e){
 
 
   <!--
-  jqueryの各メソッド
-  ajax
-  .eachとか
-  フォーム　nameも
 
-
+  ajax　残り
+  フォーム　button等の入力関係nameも
 
 -->
