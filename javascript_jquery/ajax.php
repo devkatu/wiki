@@ -1,19 +1,24 @@
 <?php
-if ($_SERVER['REQUEST_METHOD'] === 'GET'){
-  echo htmlspecialchars($_GET['txt'] . " との入力を受け付けました" , ENT_QUOTES , "utf-8");
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['txt1'])){
+
+  $r = array(
+    'mes' => htmlspecialchars($_GET['txt1'] , ENT_QUOTES , "utf-8"),
+    'len' => strlen($_GET['txt1']),
+    'rtn' => 'GETされました'
+  );
+  header('Content-Type: application/json; charset=utf-8');
+  echo json_encode($r);
+
+}else if($_SERVER['REQUEST_METHOD'] === 'POST'){
+  $rtn = htmlspecialchars($_POST['txt2'] , ENT_QUOTES , "utf-8");
+  echo '<div class="box">';
+  echo '<p class="desc">'. $rtn . '</p>';
+  echo '</div>';
+  echo 'POSTされました';
+}else {
+  echo '<div class="box">';
+  echo '<p class="desc"></p>';
+  echo '</div>';
+  echo 'ページをロードしました';
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
-  <title>Document</title>
-</head>
-<body>
-  <div class="box">
-    <p>message</p>
-  </div>
-</body>
-</html>

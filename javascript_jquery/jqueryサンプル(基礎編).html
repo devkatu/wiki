@@ -897,7 +897,8 @@ $('#anibox').click(function(e){
     <h1>ajax</h1>
     <div class="title">
       <h3>ajax</h3>
-      <p class="desc"><i>object</i>.load()は<i>object</i>内にloadメソッドで指定したhtmlやphpの全てを読込む<br>
+      <p class="desc"><i>object</i>.load()は<i>object</i>内にloadメソッドで指定したhtmlやphpを単純に読込むだけ<br>
+        $.getや$.postは第二引数に指定するオブジェクトをパラメータとして渡すことができる
       </p>
       <pre class="desc2"><code></code></pre>
     </div>
@@ -905,8 +906,11 @@ $('#anibox').click(function(e){
       <div class="inner">
         <button id="load">.load</button>
         <div></div>
-        <input type="text" id="txt" />
+        <input type="text" id="txt1" />
         <button id="get">$.get</button>
+        <div></div>
+        <input type="text" id="txt2" />
+        <button id="post">$.post</button>
         <div></div>
       </div>
     </div>
@@ -1226,11 +1230,21 @@ $('#anibox').click(function(e){
         // 引数2 対象ファイルに渡す引数 getならurlの後ろに?arg1=val1&arg2=val2...みたいな感じになる
         // 引数3 コールバック関数を指定
         $.get('ajax.php',{
-          txt: $('#txt').val()
+          txt1: $('#txt1').val()
+        },function(data){
+          // t.next().append(data);
+          t.next().append(data.mes + ' (' + data.len + ') :' + data.rtn);
+        });
+      });
+      $('#post').click(function(){
+        var t = $(this);
+        $.post('ajax.php',{
+          txt2: $('#txt2').val()
         },function(data){
           t.next().html(data);
         });
       });
+
 
 
     });
