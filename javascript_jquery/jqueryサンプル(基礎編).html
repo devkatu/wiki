@@ -917,6 +917,49 @@ $('#anibox').click(function(e){
     </div>
 
 
+
+    <h1>form関連</h1>
+    <div class="title">
+      <h3>まずはform関連のまとめ</h3>
+      <p class="desc"></p>
+      <pre class="desc2"><code></code></pre>
+    </div>
+    <div class="outer">
+      <div class="inner">
+        <div style="background:#f2d9b9;">
+          <form action="" method="post">
+            <p>サイトURL<input type="text" value="http://" size="10"></p>
+            <p>メールアドレス<input type="email" name="email"></p>
+            <p>パスワード<input type="password" name="password"></p>
+            <p>名前:<input type="text" name="username" placeholder="名前を10文字以内で入力してください" maxlength="10"></p>
+            <p>性別:
+              <input id="man" type="radio" name="sex" value="man" checked><label for="man">男</label>
+              <input id="women" type="radio" name="sex" value="women"><label for="women">女</label>
+              <input id="other" type="radio" name="sex" value="other"><label for="other">その他</label>
+            </p>
+            <p>生年月日<input type="date" name="birth"></p>
+            <p>年齢<input type="number" name="age"></p>
+            <p>持ち物
+              <input id="saifu" type="checkbox" name="has" checked><label for="saifu">財布</label>
+              <input id="hphone" type="checkbox" name="has"><label for="hphone">携帯電話</label>
+              <input id="key" type="checkbox" name="has"><label for="key">鍵</label>
+            </p>
+            <p><select name="職業" id="job" size="3">
+                <option value="kaisya" checked>会社員！</option>
+                <option value="jiei">自営業！</option>
+                <option value="koumu">公務員！</option>
+                <option value="yakuza">やくざ！</option>
+                <option value="sonota">その他！</option>
+              </select></p>
+              <textarea name="comment" id="comment" cols="30" rows="5">コメントを入力してください</textarea><br>
+              <input type="submit" value="送信">
+              <input type="reset" value="リセット">
+          </form>
+        </div>
+      </div>
+    </div>
+
+
     <!-- emmet用！ -->
     <!-- div.title>h3+p.desc+pre.desc2>code -->
     <!-- div.outer>div.inner>div.box.t_c*5>p -->
