@@ -93,10 +93,10 @@
     height: 100px;
     border: solid 3px black;
     background-color:#bbf6e1;
-    transition: width 3s;  //動かしたいプロパティをここで設定する
+    transition: width 3s;  /*動かしたいプロパティをここで設定する*/
     /* 以下でも同じ */
-    // transition-property: width;
-    // transition-duration: 3s;
+    /* transition-property: width; */
+    /* transition-duration: 3s; */
   }
   .div_transition:hover{
     width: 200px;
@@ -124,11 +124,11 @@
     background-color:#f3f6bb;
   }
   .div_anime:hover{
-    animation: anime 3s;  //animation に設定したいものを設定する
-    //ここではanimeの中にアニメーションの仕方が設定されている
+    animation: anime 3s;  /*animation に設定したいものを設定する*/
+    /* ここではanimeの中にアニメーションの仕方が設定されている */
     /* 以下でも同じ */
-    // animation-name: anime;
-    // animation-duration: 3s;
+    /* animation-name: anime; */
+    /* animation-duration: 3s; */
   }
   @keyframes anime{
     0% {width:100px;}
@@ -195,7 +195,7 @@
     </div>
 
     <div class="title">
-      <h3>上の続き</h3>
+      <h3>上の続き 疑似クラス</h3>
       <p class="desc">':even' : その層の偶数番の要素</p>
       <p class="desc">':odd'  : その層の奇数番の要素</p>
       <p class="desc">':contains('<i>key</i>')' : コンテンツに<i>key</i>を含む要素</p>
@@ -223,6 +223,26 @@
         </div>
         <div class="box t_c">
           <p class="desc2">普通のbox</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="title">
+      <h3>まだ続き 属性セレクタ</h3>
+      <pre class="desc2"><code>
+$('[value=button]').after($('&lt;span&gt;valueがbuttonです(完全一致)&lt;/span&gt;'));
+$('[href^="https"]').after($('&lt;span&gt;httpsで始まります(前方一致)&lt;/span&gt;'));
+$('[href$="com"]').after($('&lt;span&gt;comで終わります(後方一致)&lt;/span&gt;'));      
+$('[href*="yahoo"]').after($('&lt;span&gt;yahooを含みます(部分一致)&lt;/span&gt;'));
+      </code></pre>
+    </div>
+    <div class="outer">
+      <div class="inner">
+        <div>
+          <input type="button" value="button"><br>
+          <a href="http://yahoo.co.jp">Yahoo!</a><br>
+          <a href="http://google.com">google</a><br>  
+          <a href="https://microsoft.co.jp">microsoft</a><br>
         </div>
       </div>
     </div>
@@ -926,25 +946,33 @@ $('#anibox').click(function(e){
     </div>
     <div class="outer">
       <div class="inner">
-        <div style="background:#f2d9b9;">
+        <div style="background:#f2d9b9;" id="jform">
           <form action="" method="post">
-            <p>サイトURL<input type="text" value="http://" size="10"></p>
-            <p>メールアドレス<input type="email" name="email"></p>
-            <p>パスワード<input type="password" name="password"></p>
-            <p>名前:<input type="text" name="username" placeholder="名前を10文字以内で入力してください" maxlength="10"></p>
+            <p>サイトURL<input type="text" id="url" value="http://" size="10"></p>
+            <p>メールアドレス<input type="email" id="email" name="email"></p>
+            <p>パスワード<input type="password" id="password" name="password"></p>
+            <p>名前:<input type="text" id="username" name="username" placeholder="名前を10文字以内で入力してください" maxlength="10"></p>
             <p>性別:
-              <input id="man" type="radio" name="sex" value="man" checked><label for="man">男</label>
+              <!-- checked属性を書くだけでデフォでチェックが入る -->
+              <!-- <input id="man" type="radio" name="sex" value="man" checked><label for="man">男</label> -->
+              <input id="man" type="radio" name="sex" value="man"><label for="man">男</label>
               <input id="women" type="radio" name="sex" value="women"><label for="women">女</label>
               <input id="other" type="radio" name="sex" value="other"><label for="other">その他</label>
             </p>
-            <p>生年月日<input type="date" name="birth"></p>
-            <p>年齢<input type="number" name="age"></p>
+            <p>生年月日<input type="date" id="date" name="birth"></p>
+            <p>年齢<input type="number" id="age" name="age"></p>
             <p>持ち物
-              <input id="saifu" type="checkbox" name="has" checked><label for="saifu">財布</label>
-              <input id="hphone" type="checkbox" name="has"><label for="hphone">携帯電話</label>
-              <input id="key" type="checkbox" name="has"><label for="key">鍵</label>
+              <input type="checkbox" name="has" id="all"><label for="all">全て選択/解除</label>
+              <input id="saifu" type="checkbox" name="has" value="saifu" checked><label for="saifu">財布</label>
+              <input id="hphone" type="checkbox" name="has" value="hphone"><label for="hphone">携帯電話</label>
+              <input id="key" type="checkbox" name="has" value="key"><label for="key">鍵</label>
+              <input type="button" id="allcheck" value="全てチェック">
+              <input type="button" id="allerase" value="全て外す">
             </p>
-            <p><select name="職業" id="job" size="3">
+            <p>
+            <!-- size属性を設定するとselectの欄の数が固定される -->
+            <!-- <select name="職業" id="job" size="3"> -->
+              <select name="職業" id="job">
                 <option value="kaisya" checked>会社員！</option>
                 <option value="jiei">自営業！</option>
                 <option value="koumu">公務員！</option>
@@ -952,7 +980,7 @@ $('#anibox').click(function(e){
                 <option value="sonota">その他！</option>
               </select></p>
               <textarea name="comment" id="comment" cols="30" rows="5">コメントを入力してください</textarea><br>
-              <input type="submit" value="送信">
+              <input type="submit" id="submit" name="submit" value="送信">
               <input type="reset" value="リセット">
           </form>
         </div>
@@ -1003,6 +1031,12 @@ $('#anibox').click(function(e){
       $("#section2 > div > div :contains('flg')").css('background-color','red');
       $('#section2 > div > div:first p').css('background-color','orange');
       $('#section2 > div > div:last p').css('background-color','yellow');
+
+      // セレクタ、フィルタの続き
+      $('[value=button]').after($('<span>valueがbuttonです(完全一致)</span>'));
+      $('[href^="https"]').after($('<span>httpsで始まります(前方一致)</span>'));
+      $('[href$="com"]').after($('<span>comで終わります(後方一致)</span>'));      
+      $('[href*="yahoo"]').after($('<span>yahooを含みます(部分一致)</span>'));
 
       // めっそどによるDOM要素指定
       $('#bsli').parent().css('border','solid 5px pink');
@@ -1293,6 +1327,72 @@ $('#anibox').click(function(e){
           t.next().html(data);
         });
       });
+
+      // form関係
+
+      $('#all').change(function(){
+        // allのcheckboxの値をname=hasのみんなにpropしてあげる
+        $('[name=has]').prop('checked',$(this).prop('checked'));
+      });
+      
+      $('#allcheck').click(function(){
+        $('[name=has]').prop('checked',true);
+        // 特定のものだけチェックしたいときはこちら
+        // valに配列でvalue値をいれてあげる
+        // $('[name=has]').val(["saifu","key"]);
+      });
+      $('#allerase').click(function(){
+        $('[name=has]').prop('checked',false);
+      });
+
+
+      $('#submit').click(function(){
+        // 取得した値を表示するbox作成
+        var elm = $('<div>').addClass('box').css('width','100%').css('height','100%');
+        elm.append('送信結果<br>');
+
+
+        elm.append('url: ' + $('#url').val() + '<br>');
+        elm.append('email: ' + $('#email').val() + '<br>');
+        // propはattrと似たような動作だが、こちらは動的にプロパティ値を取得する
+        if($('[name=sex]').prop('checked')){
+          elm.append('sex(val): ' + $('[name=sex]:checked').val() + '<br>');  //radioが何もチェックされていないとundefinedになる注意
+          elm.append('sex(text): ' + $('[name=sex]:checked').next('label').text() + '<br>');
+        }else{
+          elm.append('性別が選択されていません<br>');
+        }
+
+        elm.append('birth: ' + $('#date').val() + '<br>');
+
+        if($('[name=has]').prop('checked')){
+          // checkboxの場合は複数のチェックを判定しなきゃなので以下のように.mapか$.eachでまわす
+          // どちらも引数に設定する関数のなかで要素を列挙して処理できる
+          // (どちらも戻り値を使わなければ大した違いはない…とおもう。eachはメソッド内で変更したものは
+          // 戻り値には含まないがmapはメソッド内での変更を戻り値に含める)
+          // $('[name=has]:checked').map(function(){
+          //   elm.append('has(val): ' + $(this).val() + '<br>');
+          //   elm.append('has(text): ' + $(this).next('label').text() + '<br>');          
+          // })
+          $.each($('[name=has]:checked'),function(){
+            elm.append('has(val): ' + $(this).val() + '<br>');
+            elm.append('has(text): ' + $(this).next('label').text() + '<br>');          
+          });
+        }else{
+          elm.append('持ち物が選択されていません<br>');
+        }
+        elm.append('job(val):' +  $('#job').val() + '<br>');
+        elm.append('job(text):' +  $('#job option:checked').text() + '<br>');
+        // $('#job').val("jiei"); とか
+        // $('#job option:[value=jiei]').prop('selected',true)  とかで値の設定もできる！
+        // $('#job option:first').prop('selected',true);  で初期位置へ設定
+
+        $('#jform').append(elm);
+        return false; //submitを防止するために必要
+                      //formチェックとかしてからget,postするなら 
+                      //ここから上でフォームチェック、NGならNG処理してreturn false;
+                      //OKならajaxとかでget,postかreturn false;せずにそのままsubmitすればOKかな？
+      });
+
 
 
 
