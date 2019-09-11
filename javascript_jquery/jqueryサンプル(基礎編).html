@@ -149,6 +149,20 @@
     transition: transform 0.8s;
   }
 
+  #switch{
+    width: 200px;
+    height: 50px;
+    /* background: url(switch.gif) bottom center; */
+    background: url(switch.gif);
+  }
+  /* #switch:hover{
+    background-position: top center;
+  } */
+
+  .active{
+    background-position: bottom center;
+  }
+
   </style>
 </head>
 <body>
@@ -988,6 +1002,21 @@ $('#anibox').click(function(e){
     </div>
 
 
+
+    <div class="title">
+      <h3>実用編</h3>
+      <pre class="desc2"><code>
+
+      </code></pre>
+    </div>
+    <div class="outer">
+      <div class="inner">
+          <div id="switch"></div>
+      </div>
+    </div>
+
+
+
     <!-- emmet用！ -->
     <!-- div.title>h3+p.desc+pre.desc2>code -->
     <!-- div.outer>div.inner>div.box.t_c*5>p -->
@@ -1393,7 +1422,10 @@ $('#anibox').click(function(e){
                       //OKならajaxとかでget,postかreturn false;せずにそのままsubmitすればOKかな？
       });
 
-
+      // 実用編
+      $('#switch').click(function(){
+        $(this).addClass('active');
+      });
 
 
     });
