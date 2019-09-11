@@ -19,6 +19,11 @@
   body > p{
     text-align: center;
   }
+  .clr_fix::after{
+    content:"";
+    display: block;
+    clear:both;
+  }
   .title{
     width: 40%;
     margin: 30px auto 0;
@@ -152,16 +157,63 @@
   #switch{
     width: 200px;
     height: 50px;
-    /* background: url(switch.gif) bottom center; */
-    background: url(switch.gif);
+    background-image: url(switch.gif);
   }
   /* #switch:hover{
-    background-position: top center;
+    background-position: bottom center;
   } */
-
+  /* toggleClassで付け替えするクラス
+    もとのスタイルでbackground-positionを設定
+    しているとうまくいかない…優先順位あるみたい */
   .active{
     background-position: bottom center;
   }
+
+  #switch2{
+    width:200px;
+    height:150px;
+    padding:0;
+    position:relative;
+    float:left;
+    border:1px solid pink;
+  }
+  #switch2>div{
+    width:200px;
+    height:50px;
+    position:absolute;
+    top:50px;
+    border:1px black solid;
+  }
+  #switch2>div::before{
+    content: "";
+    display: block;
+    width: 200px;
+    height: 50px;
+    position: absolute;
+    top: -50px;
+    background-color: black;
+    opacity: 0.5;
+  }
+  #switch2>div::after{
+    content: "";
+    display: block;
+    width: 200px;
+    height: 50px;
+    position: absolute;
+    top: 50px;
+    background-color: black;
+    opacity: 0.5;
+  }
+  #switch2>img{
+    position: relative;
+    top:50px;
+  }
+  .sw2{
+    top: 0px !important;
+  }
+  /* #switch2>img:hover{
+    top: 0px;
+  } */
 
   </style>
 </head>
@@ -246,7 +298,7 @@
       <pre class="desc2"><code>
 $('[value=button]').after($('&lt;span&gt;valueがbuttonです(完全一致)&lt;/span&gt;'));
 $('[href^="https"]').after($('&lt;span&gt;httpsで始まります(前方一致)&lt;/span&gt;'));
-$('[href$="com"]').after($('&lt;span&gt;comで終わります(後方一致)&lt;/span&gt;'));      
+$('[href$="com"]').after($('&lt;span&gt;comで終わります(後方一致)&lt;/span&gt;'));
 $('[href*="yahoo"]').after($('&lt;span&gt;yahooを含みます(部分一致)&lt;/span&gt;'));
       </code></pre>
     </div>
@@ -255,7 +307,7 @@ $('[href*="yahoo"]').after($('&lt;span&gt;yahooを含みます(部分一致)&lt;
         <div>
           <input type="button" value="button"><br>
           <a href="http://yahoo.co.jp">Yahoo!</a><br>
-          <a href="http://google.com">google</a><br>  
+          <a href="http://google.com">google</a><br>
           <a href="https://microsoft.co.jp">microsoft</a><br>
         </div>
       </div>
@@ -1010,8 +1062,13 @@ $('#anibox').click(function(e){
       </code></pre>
     </div>
     <div class="outer">
-      <div class="inner">
-          <div id="switch"></div>
+      <div class="inner clr_fix">
+          <div id="switch" style="float:left;"></div>
+          <div id="switch2">
+            <img src="switch.gif" alt="switch.gif" />
+            <div>
+            </div>
+          </div>
       </div>
     </div>
 
@@ -1064,7 +1121,7 @@ $('#anibox').click(function(e){
       // セレクタ、フィルタの続き
       $('[value=button]').after($('<span>valueがbuttonです(完全一致)</span>'));
       $('[href^="https"]').after($('<span>httpsで始まります(前方一致)</span>'));
-      $('[href$="com"]').after($('<span>comで終わります(後方一致)</span>'));      
+      $('[href$="com"]').after($('<span>comで終わります(後方一致)</span>'));
       $('[href*="yahoo"]').after($('<span>yahooを含みます(部分一致)</span>'));
 
       // めっそどによるDOM要素指定
@@ -1363,7 +1420,7 @@ $('#anibox').click(function(e){
         // allのcheckboxの値をname=hasのみんなにpropしてあげる
         $('[name=has]').prop('checked',$(this).prop('checked'));
       });
-      
+
       $('#allcheck').click(function(){
         $('[name=has]').prop('checked',true);
         // 特定のものだけチェックしたいときはこちら
@@ -1400,11 +1457,11 @@ $('#anibox').click(function(e){
           // 戻り値には含まないがmapはメソッド内での変更を戻り値に含める)
           // $('[name=has]:checked').map(function(){
           //   elm.append('has(val): ' + $(this).val() + '<br>');
-          //   elm.append('has(text): ' + $(this).next('label').text() + '<br>');          
+          //   elm.append('has(text): ' + $(this).next('label').text() + '<br>');
           // })
           $.each($('[name=has]:checked'),function(){
             elm.append('has(val): ' + $(this).val() + '<br>');
-            elm.append('has(text): ' + $(this).next('label').text() + '<br>');          
+            elm.append('has(text): ' + $(this).next('label').text() + '<br>');
           });
         }else{
           elm.append('持ち物が選択されていません<br>');
@@ -1417,16 +1474,18 @@ $('#anibox').click(function(e){
 
         $('#jform').append(elm);
         return false; //submitを防止するために必要
-                      //formチェックとかしてからget,postするなら 
+                      //formチェックとかしてからget,postするなら
                       //ここから上でフォームチェック、NGならNG処理してreturn false;
                       //OKならajaxとかでget,postかreturn false;せずにそのままsubmitすればOKかな？
       });
 
       // 実用編
       $('#switch').click(function(){
-        $(this).addClass('active');
+        $(this).toggleClass('active');
       });
-
+      $('#switch2>div').click(function(){
+        $(this).siblings().toggleClass('sw2');
+      });
 
     });
     </script>
