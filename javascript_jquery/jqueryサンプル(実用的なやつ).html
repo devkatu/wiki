@@ -147,6 +147,26 @@
     opacity: 0.7;
   }
 
+  ul.tab_menu>li{
+    float: left;
+    padding: 0 10px;
+    border-left: 1px solid #999;
+    border-top: 1px solid #999;
+    border-right: 1px solid #999;
+    border-radius: 20% 20% 0 0 ;
+    background-color: #fff;
+    list-style: none;
+    cursor: pointer;
+  }
+  ul.tab_menu>li.select{
+    background-color: #ccc;
+    cursor: default;
+  }
+  div.tab_textarea{
+    width: auto;
+    height: 100px;
+    border: 1px solid #999;
+  }
 
   /* ハンバーガーメニュー用css */
   /*ナビメニューのスタイルを指定*/
@@ -264,7 +284,8 @@
   <!-- emmet用 -->
   div.title>h3+pre.desc2>code
   div.outer>div.inner>div
-
+  タブメニュー、カテゴリ切替…(jquerystudyより)
+ロールオーバー、スライドショー、ツールチップ
 
 
   <h1>部品系</h1>
@@ -312,12 +333,44 @@ $('.cap').hover(function(){
     <div class="outer">
       <div class="inner">
         <div class="cap">
-          <img src="A.gif" alt="A">
+          <img src="A.gif" alt="A" style="vertical-align:bottom;">
           <p class="desc">caption</p>
         </div>
         <p class="desc">
           キャプションを表示する
         </p>
+      </div>
+    </div>
+
+    <div class="title">
+      <h3>タブメニュー</h3>
+      <pre class="desc2"><code>
+$('.tab_menu>li').click(function(){
+  $('.tab_menu>li.select').removeClass('select');
+  $(this).addClass('select');
+  var i = $('.tab_menu>li').index(this);
+  var elm = $('.tab_textarea>div').eq(i);
+  $('.tab_textarea>div').not(elm).hide();
+  $(elm).show();
+});
+      </code></pre>
+    </div>
+    <div class="outer">
+      <div class="inner">
+        <ul class="tab_menu clr_fix">
+          <li class="select">A</li>
+          <li>B</li>
+          <li>C</li>
+          <li>D</li>
+          <li>E</li>
+        </ul>
+        <div class="tab_textarea">
+          <div style="display:block;">Aのテキストです</div>
+          <div style="display:none;">Bのテキストです</div>
+          <div style="display:none;">Cのテキストです</div>
+          <div style="display:none;">Dのテキストです</div>
+          <div style="display:none;">Eのテキストです</div>
+        </div>
       </div>
     </div>
 
@@ -342,17 +395,24 @@ function goTop(){
   },500);
   return false;
 }
+
+$('a[href^="#"]').click(function(){
+  var href = $(this).attr('href');
+  var pos = $(href).offset().top;
+  $('body,html').animate({scrollTop:pos},1000);
+  return false;
+});
       </code></pre>
     </div>
     <div class="outer">
       <div class="inner">
-        <p>これ→<a href="#" class="scrollTop">上へ戻る</a>でも上に戻れるよ！</p>
         <p class="desc">初期状態では#back(上へ戻るボタン…画面右下に
           固定で出るようにしている)は隠しておき、ある程度スクロール
           したら出現させるようにwindwo.scrollイベントで 定義しておく。</p>
           <br>
-          <p>または<a href="#switch">前のセクションへ</a></p>
-          
+          <p>これ→<a href="#" class="scrollTop">上へ戻る</a>でも上に戻れるよ！</p>
+          <br>
+          <p>また、基本のaタグっぽく使いたいときは→<a href="#switch">前のセクションへ</a></p>
       </div>
     </div>
     <!-- jqueryで出現させる上へ戻るボタン -->
@@ -577,6 +637,18 @@ nav.NavMenu.active{
               },300);
             });
 
+            // タブメニュー
+            $('.tab_menu>li').click(function(){
+              // 選択されたタブ以外からselectクラスを外し、選択されたタブをselectクラスにする
+              $('.tab_menu>li.select').removeClass('select');
+              $(this).addClass('select');
+              // 選択されたタブのindexと同じdivを表示し、他のdivは非表示にする
+              var i = $('.tab_menu>li').index(this);
+              var elm = $('.tab_textarea>div').eq(i);
+              $('.tab_textarea>div').not(elm).hide();
+              $(elm).show();
+            });
+
             // 上へ戻るボタン処理
             // #backを隠す
             $('#back').hide();
@@ -607,7 +679,7 @@ nav.NavMenu.active{
             $('a[href^="#"]').click(function(){
               var href = $(this).attr('href');
               var pos = $(href).offset().top;
-              $('body,html').animate({scrollTop:pos},1000);              
+              $('body,html').animate({scrollTop:pos},1000);
               return false;
             });
 
