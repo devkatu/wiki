@@ -154,67 +154,6 @@
     transition: transform 0.8s;
   }
 
-  #switch{
-    width: 200px;
-    height: 50px;
-    background-image: url(switch.gif);
-  }
-  /* #switch:hover{
-    background-position: bottom center;
-  } */
-  /* toggleClassで付け替えするクラス
-    もとのスタイルでbackground-positionを設定
-    しているとうまくいかない…優先順位あるみたい */
-  .active{
-    background-position: bottom center;
-  }
-
-  #switch2{
-    width:200px;
-    height:150px;
-    padding:0;
-    position:relative;
-    float:left;
-    border:1px solid pink;
-  }
-  #switch2>div{
-    width:200px;
-    height:50px;
-    position:absolute;
-    top:50px;
-    border:1px black solid;
-  }
-  #switch2>div::before{
-    content: "";
-    display: block;
-    width: 200px;
-    height: 50px;
-    position: absolute;
-    top: -50px;
-    background-color: black;
-    opacity: 0.5;
-  }
-  #switch2>div::after{
-    content: "";
-    display: block;
-    width: 200px;
-    height: 50px;
-    position: absolute;
-    top: 50px;
-    background-color: black;
-    opacity: 0.5;
-  }
-  #switch2>img{
-    position: relative;
-    top:50px;
-  }
-  .sw2{
-    top: 0px !important;
-  }
-  /* #switch2>img:hover{
-    top: 0px;
-  } */
-
   </style>
 </head>
 <body>
@@ -483,7 +422,9 @@ $('[href*="yahoo"]').after($('&lt;span&gt;yahooを含みます(部分一致)&lt;
           var elm = $('&lt;li&gt;').text('4-4').css('color','red').attr('id','elm4last');
           elm.appendTo('#elm4');
         });
-
+        // ページが読込まれた後に動的にDOM要素が追加されたとき、そのDOM要素にはまだ
+        // イベント処理が追加されていない。以下のように書くと後から追加された要素にも
+        // イベントハンドラを追加することができる
         $('body').on('click','#elm4last',function(){
           alert('this elements click event was added by "on" method!!');
         });
@@ -1053,36 +994,9 @@ $('#anibox').click(function(e){
       </div>
     </div>
 
-
-
-    <div class="title">
-      <h3>実用編</h3>
-      <pre class="desc2"><code>
-
-      </code></pre>
-    </div>
-    <div class="outer">
-      <div class="inner clr_fix">
-          <div id="switch" style="float:left;"></div>
-          <div id="switch2">
-            <img src="switch.gif" alt="switch.gif" />
-            <div>
-            </div>
-          </div>
-      </div>
-    </div>
-
-
-
     <!-- emmet用！ -->
     <!-- div.title>h3+p.desc+pre.desc2>code -->
     <!-- div.outer>div.inner>div.box.t_c*5>p -->
-
-
-
-
-
-
 
     <!-- jqueryの読み込み body要素の閉じタグの前でかつscript記述前に行う-->
     <!-- jqueryの読み込みに時間がかかるため -->
@@ -1205,6 +1119,9 @@ $('#anibox').click(function(e){
         var elm = $('<li>').text('4-4').css('color','red').attr('id','elm4last');;
         elm.appendTo('#elm4');
       });
+      // ページが読込まれた後に動的にDOM要素が追加されたとき、そのDOM要素にはまだ
+      // イベント処理が追加されていない。以下のように書くと後から追加された要素にも
+      // イベントハンドラを追加することができる
       $('body').on('click','#elm4last',function(){
         alert('this elements click event was added by "on" method!!');
       });
@@ -1479,15 +1396,7 @@ $('#anibox').click(function(e){
                       //OKならajaxとかでget,postかreturn false;せずにそのままsubmitすればOKかな？
       });
 
-      // 実用編
-      $('#switch').click(function(){
-        $(this).toggleClass('active');
-      });
-      $('#switch2>div').click(function(){
-        $(this).siblings().toggleClass('sw2');
-      });
-
-    });
+    });  //document.ready(function(){});おわり
     </script>
   </body>
   </html>

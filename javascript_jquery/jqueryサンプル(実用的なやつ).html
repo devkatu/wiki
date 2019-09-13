@@ -30,6 +30,7 @@
   }
   .desc{
     font-size: 12px;
+    margin-top: 20px;
   }
   .desc2{
     font-size: 12px;
@@ -67,6 +68,86 @@
     margin-left:20px;
   }
 
+  /* switch用css */
+  #switch{
+    width: 200px;
+    height: 50px;
+    background-image: url(switch.gif);
+    float: left;
+  }
+  /* #switch:hover{
+  background-position: bottom center;
+  } */
+  /* toggleClassで付け替えするクラス
+  もとのスタイルでbackground-positionを設定
+  しているとうまくいかない…優先順位あるみたい */
+  .active{
+    background-position: bottom center;
+  }
+
+/* switch用css */
+  #switch2{
+    width:200px;
+    height:150px;
+    padding:0;
+    margin-left: 30px;
+    position:relative;
+    float:left;
+    border:1px solid pink;
+  }
+  #switch2>div{
+    width:200px;
+    height:50px;
+    position:absolute;
+    top:50px;
+    border:1px black solid;
+  }
+  #switch2>div::before{
+    content: "";
+    display: block;
+    width: 200px;
+    height: 50px;
+    position: absolute;
+    top: -50px;
+    background-color: black;
+    opacity: 0.5;
+  }
+  #switch2>div::after{
+    content: "";
+    display: block;
+    width: 200px;
+    height: 50px;
+    position: absolute;
+    top: 50px;
+    background-color: black;
+    opacity: 0.5;
+  }
+  #switch2>img{
+    position: relative;
+    top:50px;
+  }
+  .sw2_active{
+    top: 0px !important;
+  }
+
+  /* caption用css */
+  .cap{
+    width: 100px;
+    height: 100px;
+    position: relative;
+    overflow: hidden;
+    /* overflow:visible; */
+  }
+  .cap>p{
+    height: 100px;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    background-color: gray;
+    opacity: 0.7;
+  }
+
+
   /* ハンバーガーメニュー用css */
   /*ナビメニューのスタイルを指定*/
   nav.NavMenu{
@@ -81,14 +162,12 @@
     transform: translateY(-100%); /*ナビを上に隠す*/
     transition: all 0.6s; /*アニメーションの時間を指定*/
   }
-
   nav.NavMenu ul{
     background: #ccc; /*背景をグレーにする*/
     width: 100%;
     margin: 0 auto;
     padding: 0;
   }
-
   nav.NavMenu ul li{
     font-size: 1.1em;
     list-style-type: none;
@@ -96,23 +175,19 @@
     width: 100%;
     border-bottom: 1px dotted #333;
   }
-
   nav.NavMenu ul li:last-child{
     padding-bottom: 0;
     border-bottom: none; /*最後のメニュー項目のみ下線を消す*/
   }
-
   nav.NavMenu ul li a{
     display: block; /*クリックできる領域を広げる*/
     color: #000;
     padding: 1em 0;
   }
-
   /*トグルボタンが押されたときに付与するクラス*/
   nav.NavMenu.active{
     transform: translateY(0%);
   }
-
   /*トグルボタンのスタイルを指定*/
   .Toggle {
     display: block;
@@ -124,7 +199,6 @@
     cursor: pointer;
     z-index: 3;
   }
-
   .Toggle span {
     display: block;
     position: absolute;
@@ -135,19 +209,15 @@
     transition: .35s ease-in-out;			/*変化の速度を指定*/
     left: 6px;
   }
-
   .Toggle span:nth-child(1) {
     top: 9px;
   }
-
   .Toggle span:nth-child(2) {
     top: 18px;
   }
-
   .Toggle span:nth-child(3) {
     top: 27px;
   }
-
   /* 最初のspanをマイナス45度に */
   .Toggle.active span:nth-child(1) {
     top: 18px;
@@ -156,7 +226,6 @@
     -moz-transform: rotate(-45deg);
     transform: rotate(-45deg);
   }
-
   /* 2番目と3番目のspanを45度に */
   .Toggle.active span:nth-child(2),
   .Toggle.active span:nth-child(3) {
@@ -166,10 +235,10 @@
     transform: rotate(45deg);
   }
 
-
   /* アコーディオンメニューcss */
   .accordion_menu_1,.accordion_menu_2{
-    color:blue;
+    color:#09b1c8;
+    text-decoration: underline;
     cursor:pointer;
   }
 
@@ -192,81 +261,123 @@
   </style>
 </head>
 <body>
-  <!-- ハンバーガーメニュー -->
-  <div class="Toggle">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
-  <!-- ハンバーガーメニューをクリックした時に出すナビゲーション -->
-  <nav class="NavMenu">
-    <ul>
-      <li><a href="#">Menu1</a></li>
-      <li><a href="#">Menu1</a></li>
-      <li><a href="#">Menu1</a></li>
-      <li><a href="#">Menu1</a></li>
-      <li><a href="#">Menu1</a></li>
-    </ul>
-  </nav>
+  <!-- emmet用 -->
+  div.title>h3+pre.desc2>code
+  div.outer>div.inner>div
 
+
+
+  <h1>部品系</h1>
 
   <div class="title">
     <h3>スイッチ</h3>
     <pre class="desc2"><code>
-
+      $('#switch').click(function(){
+        $(this).toggleClass('active');
+      });
+      $('#switch2>div').click(function(){
+        $(this).siblings().toggleClass('sw2_active');
+      });
     </code></pre>
   </div>
   <div class="outer">
     <div class="inner">
-      <div id="switch" style="float:left;"></div>
-      <div id="switch2">
-        <img src="switch.gif" alt="switch.gif" />
-        <div>
+      <div class="clr_fix">
+        <div id="switch"></div>
+        <div id="switch2">
+          <img src="switch.gif" alt="switch.gif" />
+          <div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-
-
-  <div>
-    <h1>上へ戻るボタン</h1>
-    <div class="outer">
-      <div class="inner">
-
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
-        <p>要素</p>
+      <p class="desc">左の画像スイッチはON/OFFの画像を切り替えているわけではなく、予めON/OFFの繋がった画像を用意しておき、divの中にどちらか片方のみが表示されるようにしている。clickされると画像の表示位置を変えてON/OFF画像が切り替わったように見せている。画像の切替だと読み込みに時間が掛かるがこれなら短時間ですむ。
+        右の画像はそのイメージ</p>
       </div>
     </div>
-    <h1>アコーディオンメニュー</h1>
+
+    <div class="title">
+      <h3>キャプション</h3>
+      <pre class="desc2"><code>
+$('.cap').hover(function(){
+  $(this).children('p').stop().animate({
+    top: -100
+  },300);
+},function(){
+  $(this).children('p').stop().animate({
+    top: 0
+  },300);
+});
+      </code></pre>
+    </div>
+    <div class="outer">
+      <div class="inner">
+        <div class="cap">
+          <img src="A.gif" alt="A">
+          <p class="desc">caption</p>
+        </div>
+        <p class="desc">
+          キャプションを表示する
+        </p>
+      </div>
+    </div>
+
+    <div class="title">
+      <h3>上へスクロールして戻るボタン</h3>
+      <pre class="desc2"><code>
+$('#back').hide();
+$(window).scroll(function(){
+  $('#pos').text($(this).scrollTop());
+  if($(this).scrollTop() > 60){
+    // $('#back').show();
+    $('#back').fadeIn();
+  }else{
+    $('#back').fadeOut();
+  }
+});
+$('#back a').click(goTop);
+$('.scrollTop').click(goTop);
+function goTop(){
+  $('body,html').animate({  // bodyだけ、htmlだけでも効くけどブラウザによるので注意
+    scrollTop:0
+  },500);
+  return false;
+}
+      </code></pre>
+    </div>
+    <div class="outer">
+      <div class="inner">
+        <p>これ→<a href="#" class="scrollTop">上へ戻る</a>でも上に戻れるよ！</p>
+        <p class="desc">初期状態では#back(上へ戻るボタン…画面右下に
+          固定で出るようにしている)は隠しておき、ある程度スクロール
+          したら出現させるようにwindwo.scrollイベントで 定義しておく。</p>
+      </div>
+    </div>
+    <!-- jqueryで出現させる上へ戻るボタン -->
+    <div id="back" style="position:fixed;right:5px;bottom:5px;font-size:100px;font-weight:bold;color:blue;"><a href="#">↑</a></div>
+    <!-- デバッグ用のdiv　スクロール位置を表示する -->
+    <div id="pos" style="position:fixed;right:5px;bottom:150px;font-size:15px;"></div>
+
     <div class="title">
       <h3>アコーディオンメニュー</h3>
       <pre class="desc2"><code>
+// アコーディオンメニューその１　複数開閉
+$('.accordion_menu_1').click(function(){
+  //クリックした要素の次にある要素をスライド表示・消去する
+  $(this).next().slideToggle();
+});
 
+// アコーディオンメニューその２　複数から択一
+$('.accordion_menu_2 li').click(function(){
+  //クリックした要素の次にある要素をスライド表示・消去する
+  $(this).next().slideToggle();
+  // 自分以外のli要素の次にあるul要素をslideUpする
+  $('.accordion_menu_2 li').not($(this)).next('.accordion_menu_2 ul').slideUp();
+});
+
+// 矢印を付けたり消したり
+$('.accordion_arrow').click(function(){
+  $(this).toggleClass('open');
+});
       </code></pre>
     </div>
     <div class="outer">
@@ -342,102 +453,184 @@
             </div>
           </div>
 
-          <h1>ハンバーガーメニュー</h1>
+          <div class="title">
+            <h3>ハンバーガーメニュー</h3>
+            <pre class="desc2"><code>
+// ハンバーガーメニュー
+$('.Toggle').click(function(){
+  $(this).toggleClass('active');
+  // .Toggleにactiveクラスが付いているかで分岐
+  if($(this).hasClass('active')){
+    $('.NavMenu').addClass('active');
+  }else{
+    $('.NavMenu').removeClass('active');
+  }
+});
 
-        </div>
-        <!-- jqueryで出現させる上へ戻るボタン -->
-        <div id="back" style="position:fixed;right:5px;bottom:5px;font-size:100px;font-weight:bold;color:blue;"><a href="#">↑</a></div>
-        <!-- デバッグ用のdiv　スクロール位置を表示する -->
-        <div id="pos" style="position:fixed;right:5px;bottom:150px;font-size:50px;"></div>
+/* ハンバーガーメニュー用css */
+/*ナビメニューのスタイルを指定*/
+nav.NavMenu{
+  position: fixed; /*表示位置を固定*/
+  z-index: 2; /*重ね順を変更*/
+  top: 0; /*表示位置を指定*/
+  left: 0; /*表示位置を指定*/
+  background: #fff;/*背景を白にする*/
+  color: #000; /*文字色を黒にする*/
+  text-align: center; /*テキストを中央揃え*/
+  width: 100%; /*全幅表示*/
+  transform: translateY(-100%); /*ナビを上に隠す*/
+  transition: all 0.6s; /*アニメーションの時間を指定*/
+}
+nav.NavMenu ul{
+  background: #ccc; /*背景をグレーにする*/
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+}
+nav.NavMenu ul li{
+  font-size: 1.1em;
+  list-style-type: none;
+  padding: 0;
+  width: 100%;
+  border-bottom: 1px dotted #333;
+}
+nav.NavMenu ul li:last-child{
+  padding-bottom: 0;
+  border-bottom: none; /*最後のメニュー項目のみ下線を消す*/
+}
+nav.NavMenu ul li a{
+  display: block; /*クリックできる領域を広げる*/
+  color: #000;
+  padding: 1em 0;
+}
+/*トグルボタンが押されたときに付与するクラス*/
+nav.NavMenu.active{
+  transform: translateY(0%);
+}
 
-        <!-- jqueryの読み込み基本はbody閉じタグの前に読込む(html読み込み時間短縮) -->
-        <!-- jqueryそのものを読込んでから処理を記述する -->
-        <!-- 基本的にはcssと同じ感じでセレクタを書いてそれに対するメソッドでcssのプロパティを設定していくイメージ -->
-        <!-- セレクタはjQuery('')の括弧内シングルクォート内に書く。もしくは省略できて$('') -->
-        <script
-        src="https://code.jquery.com/jquery-1.12.4.min.js"
-        integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
-        crossorigin="anonymous"></script>
+            </code></pre>
+          </div>
+          <div class="outer">
+            <div class="inner">
+                <p class="desc">ハンバーガー</p>
+                <div class="Toggle" style="position:relative !important;">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+            </div>
+          </div>
+          <!-- ハンバーガーメニュー -->
+          <div class="Toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <!-- ハンバーガーメニューをクリックした時に出すナビゲーション -->
+          <nav class="NavMenu">
+            <ul>
+              <li><a href="#">Menu1</a></li>
+              <li><a href="#">Menu1</a></li>
+              <li><a href="#">Menu1</a></li>
+              <li><a href="#">Menu1</a></li>
+              <li><a href="#">Menu1</a></li>
+            </ul>
+          </nav>
 
-        <script>
-        //一番外側の$(function(){})は$(document).ready(function(){});と同じ。省略記法
-        //もっと丁寧に書くとjQuery(document).ready(function(){});
-        //jQuery()または$()はカッコ内のオブジェクトやDOM要素をjqueryオブジェクトに変換する
-        //ための構文。これを付けずに.syntaxで記述してjavascript本来のメソッドとして使用することも可。
-        $(function(){
-          // ハンバーガーメニュー
-          $('.Toggle').click(function(){
-            $(this).toggleClass('active');
-            // .Toggleにactiveクラスが付いているかで分岐
-            if($(this).hasClass('active')){
-              $('.NavMenu').addClass('active');
-            }else{
-              $('.NavMenu').removeClass('active');
+
+
+          <!-- jqueryの読み込み基本はbody閉じタグの前に読込む(html読み込み時間短縮) -->
+          <!-- jqueryそのものを読込んでから処理を記述する -->
+          <!-- 基本的にはcssと同じ感じでセレクタを書いてそれに対するメソッドでcssのプロパティを設定していくイメージ -->
+          <!-- セレクタはjQuery('')の括弧内シングルクォート内に書く。もしくは省略できて$('') -->
+          <script
+          src="https://code.jquery.com/jquery-1.12.4.min.js"
+          integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+          crossorigin="anonymous"></script>
+
+          <script>
+          //一番外側の$(function(){})は$(document).ready(function(){});と同じ。省略記法
+          //もっと丁寧に書くとjQuery(document).ready(function(){});
+          //jQuery()または$()はカッコ内のオブジェクトやDOM要素をjqueryオブジェクトに変換する
+          //ための構文。これを付けずに.syntaxで記述してjavascript本来のメソッドとして使用することも可。
+          $(function(){
+
+            // スイッチ
+            $('#switch').click(function(){
+              $(this).toggleClass('active');
+            });
+            $('#switch2>div').click(function(){
+              $(this).siblings().toggleClass('sw2_active');
+            });
+
+            // キャプション
+            $('.cap').hover(function(){
+              $(this).children('p').stop().animate({
+                top: -100
+              },300);
+            },function(){
+              $(this).children('p').stop().animate({
+                top: 0
+              },300);
+            });
+
+            // 上へ戻るボタン処理
+            // #backを隠す
+            $('#back').hide();
+            // windowがスクロールしたときのイベント
+            // スクロール量がある程度行くと#backを表示
+            $(window).scroll(function(){
+              $('#pos').text('window scroll: ' + $(this).scrollTop());
+              if($(this).scrollTop() > 60){
+                // $('#back').show();
+                $('#back').fadeIn();
+              }else{
+                $('#back').fadeOut();
+              }
+            });
+            // clickメソッドを作る
+            $('#back a').click(goTop);
+            $('.scrollTop').click(goTop);
+            function goTop(){
+              $('body,html').animate({  // bodyだけ、htmlだけでも効くけどブラウザによるので注意
+                scrollTop:0
+              },500);
+              return false;
             }
+
+            // アコーディオンメニューその１　複数開閉
+            $('.accordion_menu_1').click(function(){
+              //クリックした要素の次にある要素をスライド表示・消去する
+              $(this).next().slideToggle();
+            });
+            // アコーディオンメニューその２　複数から択一
+            $('.accordion_menu_2 li').click(function(){
+              //クリックした要素の次にある要素をスライド表示・消去する
+              $(this).next().slideToggle();
+              // 自分以外のli要素の次にあるul要素をslideUpする
+              $('.accordion_menu_2 li').not($(this)).next('.accordion_menu_2 ul').slideUp();
+            });
+            // 矢印を付けたり消したり
+            $('.accordion_arrow').click(function(){
+              $(this).toggleClass('open');
+            });
+
+            // ハンバーガーメニュー
+            $('.Toggle').click(function(){
+              $(this).toggleClass('active');
+              // .Toggleにactiveクラスが付いているかで分岐
+              if($(this).hasClass('active')){
+                $('.NavMenu').addClass('active');
+              }else{
+                $('.NavMenu').removeClass('active');
+              }
+            });
+
+
+
+
+
           });
-
-          // 上へ戻るボタン処理
-          // #backを隠す
-          $('#back').hide();
-          // windowがスクロールしたときのイベント
-          // スクロール量がある程度行くと#backを表示
-          $(window).scroll(function(){
-            $('#pos').text($(this).scrollTop());
-            if($(this).scrollTop() > 60){
-              // $('#back').show();
-              $('#back').fadeIn();
-            }else{
-              $('#back').fadeOut();
-            }
-          });
-
-          // clickメソッドを作る
-          $('#back a').click(function(){
-            // $('body').animate({  //chromeだと効かなかった！！
-            $('html').animate({
-              scrollTop:0
-            },500);
-
-            return false;
-          });
-
-
-          // アコーディオンメニューその１　複数開閉
-          $('.accordion_menu_1').click(function(){
-            //クリックした要素の次にある要素をスライド表示・消去する
-            $(this).next().slideToggle();
-          });
-
-          // アコーディオンメニューその２　複数から択一
-          $('.accordion_menu_2 li').click(function(){
-            //クリックした要素の次にある要素をスライド表示・消去する
-            $(this).next().slideToggle();
-            // 自分以外のli要素の次にあるul要素をslideUpする
-            $('.accordion_menu_2 li').not($(this)).next('.accordion_menu_2 ul').slideUp();
-          });
-
-          // 矢印を付けたり消したり
-          $('.accordion_arrow').click(function(){
-            $(this).toggleClass('open');
-          });
-
-
-          // 動的な要素のイベント処理について
-          // ページが読込まれた後に動的にDOM要素が追加されたとき、そのDOM要素にはまだ
-          // イベント処理が追加されていない。そこで下記を追加する
-          var div = $('<div id="div1" style="background-color: pink;text-align: center;">jqueryで後から追加した箱です</div>');
-          var counter = 0;
-          $('body').on('click','#div1',function(){
-            counter++;
-            console.log(counter);
-            $('#div1').text('clickcounter = ' + counter);
-          });
-          div.appendTo('body');
-
-
-
-
-        });
-        </script>
-      </body>
-      </html>
+          </script>
+        </body>
+        </html>
