@@ -322,7 +322,7 @@ $('.cap').hover(function(){
     </div>
 
     <div class="title">
-      <h3>上へスクロールして戻るボタン</h3>
+      <h3>上、他方向へスクロールして戻るボタン</h3>
       <pre class="desc2"><code>
 $('#back').hide();
 $(window).scroll(function(){
@@ -350,6 +350,9 @@ function goTop(){
         <p class="desc">初期状態では#back(上へ戻るボタン…画面右下に
           固定で出るようにしている)は隠しておき、ある程度スクロール
           したら出現させるようにwindwo.scrollイベントで 定義しておく。</p>
+          <br>
+          <p>または<a href="#switch">前のセクションへ</a></p>
+          
       </div>
     </div>
     <!-- jqueryで出現させる上へ戻るボタン -->
@@ -597,6 +600,16 @@ nav.NavMenu.active{
               },500);
               return false;
             }
+            // 他セクションへのリンク
+            // aタグを出来るだけそのまま使ってｽｸﾛｰﾙ移動するようにする
+            // aタグからhref属性を取り出してその位置を割出しｽｸﾛｰﾙ
+            // 最後にreturn false;すればaタグ自体のリンク機能は働かない
+            $('a[href^="#"]').click(function(){
+              var href = $(this).attr('href');
+              var pos = $(href).offset().top;
+              $('body,html').animate({scrollTop:pos},1000);              
+              return false;
+            });
 
             // アコーディオンメニューその１　複数開閉
             $('.accordion_menu_1').click(function(){
