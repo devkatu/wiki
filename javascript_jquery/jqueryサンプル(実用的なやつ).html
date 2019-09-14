@@ -168,6 +168,27 @@
     border: 1px solid #999;
   }
 
+  /* カテゴリ切替 */
+  #newsMenu>li{
+    float: left;
+    padding: 5px 20px;
+    background: #cbcdcd;
+    border: 1px solid #8b8b8b;
+    border-radius: 20% 20% 0 0 ;
+    list-style: none;
+  }
+  #newsArticle{
+    position: relative;
+  }
+  #newsArticle>div{
+    width: 80%;
+    height: 30px;
+    position: absolute;
+    border-bottom: 1px solid #8b8b8b;
+    background: #ffc7f9;
+  }
+
+
   /* ハンバーガーメニュー用css */
   /*ナビメニューのスタイルを指定*/
   nav.NavMenu{
@@ -373,6 +394,44 @@ $('.tab_menu>li').click(function(){
         </div>
       </div>
     </div>
+
+    <div class="title">
+      <h3>カテゴリ切替</h3>
+      <pre class="desc2"><code>
+
+      </code></pre>
+    </div>
+    <div class="outer">
+      <div class="inner" style="height:500px;">
+        <nav>
+          <ul id="newsMenu" class="clr_fix">
+            <li id="btn_all">all</li>
+            <li id="btn_blog">blog</li>
+            <li id="btn_pickup">pickup</li>
+            <li id="btn_seminer">seminer</li>
+            <li id="btn_project">project</li>
+          </ul>
+        </nav>
+        <div id="newsArticle">
+          <div class="pickup">pickup</div>
+          <div class="seminer">seminer</div>
+          <div class="blog">blog</div>
+          <div class="seminer">seminer</div>
+          <div class="project">project</div>
+          <div class="pickup">pickup</div>
+          <div class="seminer">seminer</div>
+          <div class="blog">blog</div>
+          <div class="seminer">seminer</div>
+          <div class="project">project</div>
+          <div class="pickup">pickup</div>
+          <div class="seminer">seminer</div>
+          <div class="blog">blog</div>
+          <div class="seminer">seminer</div>
+          <div class="project">project</div>
+        </div>
+      </div>
+    </div>
+
 
     <div class="title">
       <h3>上、他方向へスクロールして戻るボタン</h3>
@@ -647,6 +706,33 @@ nav.NavMenu.active{
               var elm = $('.tab_textarea>div').eq(i);
               $('.tab_textarea>div').not(elm).hide();
               $(elm).show();
+            });
+
+            // カテゴリ切替
+            // var y = 0;
+            // $('#newsArticle>div.' + cat).each(function(i,e){
+            //   var myY = y * 30 + "px";
+            //   $(e).animate({
+            //     top:myY
+            //   },300);
+            //   y++;
+            // });
+            function showNews(cat){
+              var y = 0;
+              $('#newsArticle>div.' + cat).each(function(i,e){
+                $(e).show();
+                var myY = y * 30 + "px";
+                $(e).animate({
+                  top:myY
+                },300);
+                y++;
+              });
+            }
+            showNews('pickup');
+            $('#newsMenu>li').click(function(){
+              var atr = ($(this).attr('id')).split('_')[1];
+              $('#newsArticle>div').not('#newsArticle>div.' + atr).hide();
+              showNews(atr);
             });
 
             // 上へ戻るボタン処理
