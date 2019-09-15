@@ -171,11 +171,18 @@
   /* カテゴリ切替 */
   #newsMenu>li{
     float: left;
-    padding: 5px 20px;
+    margin: 5px 5px;
+    padding: 5px 10px;
     background: #cbcdcd;
     border: 1px solid #8b8b8b;
-    border-radius: 20% 20% 0 0 ;
+    border-radius: 5px;
+    font-size: 12px;
     list-style: none;
+    cursor: pointer;
+  }
+  #newsMenu>li:before{
+    content: "▶";
+    display: inline;
   }
   #newsArticle{
     position: relative;
@@ -185,7 +192,7 @@
     height: 30px;
     position: absolute;
     border-bottom: 1px solid #8b8b8b;
-    background: #ffc7f9;
+    background: #fed991;
   }
 
 
@@ -305,7 +312,6 @@
   <!-- emmet用 -->
   div.title>h3+pre.desc2>code
   div.outer>div.inner>div
-  タブメニュー、カテゴリ切替…(jquerystudyより)
 ロールオーバー、スライドショー、ツールチップ
 
 
@@ -402,7 +408,8 @@ $('.tab_menu>li').click(function(){
       </code></pre>
     </div>
     <div class="outer">
-      <div class="inner" style="height:500px;">
+      <div class="inner" style="height:550px;">
+        <p class="desc">タブメニューをクリックすると該当する情報のみを表示する</p>
         <nav>
           <ul id="newsMenu" class="clr_fix">
             <li id="btn_all">all</li>
@@ -709,31 +716,33 @@ nav.NavMenu.active{
             });
 
             // カテゴリ切替
-            // var y = 0;
-            // $('#newsArticle>div.' + cat).each(function(i,e){
-            //   var myY = y * 30 + "px";
-            //   $(e).animate({
-            //     top:myY
-            //   },300);
-            //   y++;
-            // });
             function showNews(cat){
               var y = 0;
-              $('#newsArticle>div.' + cat).each(function(i,e){
-                $(e).show();
-                var myY = y * 30 + "px";
-                $(e).animate({
-                  top:myY
-                },300);
-                y++;
+              var article = $('#newsArticle>div');
+              article.each(function(i,e){
+                if($(e).attr('class') == cat || cat == 'all'){
+                  $(e).show();
+                  var myY = y * 30 + 'px';
+                  $(e).animate({top:myY},800);
+                  y++;
+                }else{
+                  $(e).css('top','0').hide();
+                }
               });
             }
-            showNews('pickup');
             $('#newsMenu>li').click(function(){
               var atr = ($(this).attr('id')).split('_')[1];
-              $('#newsArticle>div').not('#newsArticle>div.' + atr).hide();
+              $(this).css({
+                cursor: 'default',
+                background: '#fed991'
+              });
+              $('#newsMenu>li').not(this).css({
+                cursor: 'pointer',
+                background: '#cbcdcd'
+              });
               showNews(atr);
             });
+            $('#btn_all').trigger('click');
 
             // 上へ戻るボタン処理
             // #backを隠す
