@@ -154,21 +154,28 @@
     border-top: 1px solid #999;
     border-right: 1px solid #999;
     border-radius: 20% 20% 0 0 ;
-    background-color: #fff;
+    background-color: #ccc;
     list-style: none;
     cursor: pointer;
   }
   ul.tab_menu>li.select{
-    background-color: #ccc;
+    background-color: #fff;
     cursor: default;
   }
   div.tab_textarea{
     width: auto;
     height: 100px;
+    background: white;
     border: 1px solid #999;
+    position: relative;
+    top: -1px;
+    z-index: -1;
   }
 
   /* カテゴリ切替 */
+  #newsMenu{
+    margin-left: 0;
+  }
   #newsMenu>li{
     float: left;
     margin: 5px 5px;
@@ -179,6 +186,10 @@
     font-size: 12px;
     list-style: none;
     cursor: pointer;
+  }
+  #newsMenu>li.select{
+    cursor: default;
+    background: #fed991;
   }
   #newsMenu>li:before{
     content: "▶";
@@ -306,13 +317,14 @@
     -webkit-transform: rotate(-45deg);
     transform: rotate(-45deg);
   }
+
   </style>
 </head>
 <body>
   <!-- emmet用 -->
   div.title>h3+pre.desc2>code
   div.outer>div.inner>div
-ロールオーバー、スライドショー、ツールチップ
+スライドショー、ツールチップ
 
 
   <h1>部品系</h1>
@@ -383,7 +395,7 @@ $('.tab_menu>li').click(function(){
       </code></pre>
     </div>
     <div class="outer">
-      <div class="inner">
+      <div class="inner" style="z-index: 1;">
         <ul class="tab_menu clr_fix">
           <li class="select">A</li>
           <li>B</li>
@@ -436,6 +448,28 @@ $('.tab_menu>li').click(function(){
           <div class="seminer">seminer</div>
           <div class="project">project</div>
         </div>
+      </div>
+    </div>
+
+    <div class="title">
+      <h3>ロールオーバー(画像の差替)</h3>
+      <pre class="desc2"><code>
+$('a>img').each(function(i,e){
+  var off = $(e).attr('src');
+  var on = off.replace(/^(.+)-off(\.[^\.]+)$/, '$1-on$2');
+  $(e).hover(function(){
+    $(this).attr('src',on);
+  },function(){
+    $(this).attr('src',off);
+  });
+});
+      </code></pre>
+    </div>
+    <div class="outer">
+      <div class="inner">
+        <p class="desc">cssのhoverではimgタグの切替は不可。
+        (background-imageとかはできるけど)</p>
+        <a><img src="btn-off.png" alt="btn" width="100px"></a>
       </div>
     </div>
 
@@ -718,12 +752,11 @@ nav.NavMenu.active{
             // カテゴリ切替
             function showNews(cat){
               var y = 0;
-              var article = $('#newsArticle>div');
-              article.each(function(i,e){
+              $('#newsArticle>div').each(function(i,e){
                 if($(e).attr('class') == cat || cat == 'all'){
                   $(e).show();
                   var myY = y * 30 + 'px';
-                  $(e).animate({top:myY},800);
+                  $(e).stop().animate({top:myY},800);
                   y++;
                 }else{
                   $(e).css('top','0').hide();
@@ -732,17 +765,30 @@ nav.NavMenu.active{
             }
             $('#newsMenu>li').click(function(){
               var atr = ($(this).attr('id')).split('_')[1];
-              $(this).css({
-                cursor: 'default',
-                background: '#fed991'
-              });
-              $('#newsMenu>li').not(this).css({
-                cursor: 'pointer',
-                background: '#cbcdcd'
-              });
+              // $(this).css({
+              //   cursor: 'default',
+              //   background: '#fed991'
+              // });
+              // $('#newsMenu>li').not(this).css({
+              //   cursor: 'pointer',
+              //   background: '#cbcdcd'
+              // });
+              $('#newsMenu>li').removeClass('select');
+              $(this).addClass('select');
               showNews(atr);
             });
             $('#btn_all').trigger('click');
+
+            // ロールオーバー
+            $('a>img').each(function(i,e){
+              var off = $(e).attr('src');
+              var on = off.replace(/^(.+)-off(\.[^\.]+)$/, '$1-on$2');
+              $(e).hover(function(){
+                $(this).attr('src',on);
+              },function(){
+                $(this).attr('src',off);
+              });
+            });
 
             // 上へ戻るボタン処理
             // #backを隠す
