@@ -30,7 +30,6 @@
   }
   .desc{
     font-size: 12px;
-    margin-top: 20px;
   }
   .desc2{
     font-size: 12px;
@@ -206,6 +205,24 @@
     background: #fed991;
   }
 
+  /* ロールオーバー */
+  a>img{
+    border-radius: 40px;
+    box-shadow: 5px 5px 5px #656565;
+    transition: box-shadow 0.5s;
+  }
+  a>img:hover{
+    box-shadow: 0 0 0;
+  }
+
+  /* スライドショー(slick) */
+  .single-item{
+    width: 400px;
+    margin-left: 30px;
+    text-align: center;
+    background: white;
+  }
+
 
   /* ハンバーガーメニュー用css */
   /*ナビメニューのスタイルを指定*/
@@ -319,6 +336,9 @@
   }
 
   </style>
+  <!-- slick用 -->
+  <link rel="stylesheet" href="../slick-1.8.1/slick/slick.css">
+  <link rel="stylesheet" href="../slick-1.8.1/slick/slick-theme.css">
 </head>
 <body>
   <!-- emmet用 -->
@@ -473,6 +493,43 @@ $('a>img').each(function(i,e){
       </div>
     </div>
 
+    <div class="title">
+      <h3>スライドショー</h3>
+      <pre class="desc2"><code>
+&lt;link rel="stylesheet" href="../slick-1.8.1/slick/slick.css"&gt;
+&lt;link rel="stylesheet" href="../slick-1.8.1/slick/slick-theme.css"&gt;
+&lt;script src="../slick-1.8.1/slick/slick.js"&gt;&lt;/script&gt;
+$('.single-item').slick({
+  accessibility: true,
+  autoplay: true,
+  autoplaySpeed: 1000,
+  dots: true,
+  fade: true
+});
+      </code></pre>
+    </div>
+    <div class="outer">
+      <div class="inner">
+        <p class="desc">事前にslick.css slick-theme.css slick.jsを読込んでおくこと！それだけでslick()すれば簡単にできる</p>
+        <div class="single-item" style="width:400px;">
+          <div>
+            <h3>slide1</h3>
+          </div>
+          <div>
+            <h3>slide2</h3>
+          </div>
+          <div>
+            <h3>slide3</h3>
+          </div>
+          <div>
+            <h3>slide4</h3>
+          </div>
+          <div>
+            <h3>slide5</h3>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="title">
       <h3>上、他方向へスクロールして戻るボタン</h3>
@@ -710,7 +767,8 @@ nav.NavMenu.active{
           src="https://code.jquery.com/jquery-1.12.4.min.js"
           integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
           crossorigin="anonymous"></script>
-
+          <!-- slick用 -->
+          <script src="../slick-1.8.1/slick/slick.js"></script>
           <script>
           //一番外側の$(function(){})は$(document).ready(function(){});と同じ。省略記法
           //もっと丁寧に書くとjQuery(document).ready(function(){});
@@ -788,6 +846,15 @@ nav.NavMenu.active{
               },function(){
                 $(this).attr('src',off);
               });
+            });
+
+            // スライドショー
+            $('.single-item').slick({
+              accessibility: true,
+              autoplay: true,
+              autoplaySpeed: 1000,
+              dots: true,
+              fade: true
             });
 
             // 上へ戻るボタン処理
