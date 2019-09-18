@@ -222,6 +222,10 @@
     text-align: center;
     background: white;
   }
+  .single-item>div{
+    width: 32px;
+    margin: 0 auto;
+  }
 
 
   /* ハンバーガーメニュー用css */
@@ -336,9 +340,17 @@
   }
 
   </style>
-  <!-- slick用 -->
-  <link rel="stylesheet" href="../slick-1.8.1/slick/slick.css">
-  <link rel="stylesheet" href="../slick-1.8.1/slick/slick-theme.css">
+  <!-- slick用(ダウンロードしたもの用) -->
+  <!-- <link rel="stylesheet" href="../slick-1.8.1/slick/slick.css">
+  <link rel="stylesheet" href="../slick-1.8.1/slick/slick-theme.css"> -->
+<!-- slick用(cdn用) -->
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css"/>
+
+<!-- jqueryUI用 -->
+<link type="text/css" rel="stylesheet"
+  href="http://code.jquery.com/ui/1.10.3/themes/cupertino/jquery-ui.min.css" />
+
 </head>
 <body>
   <!-- emmet用 -->
@@ -496,9 +508,9 @@ $('a>img').each(function(i,e){
     <div class="title">
       <h3>スライドショー</h3>
       <pre class="desc2"><code>
-&lt;link rel="stylesheet" href="../slick-1.8.1/slick/slick.css"&gt;
-&lt;link rel="stylesheet" href="../slick-1.8.1/slick/slick-theme.css"&gt;
-&lt;script src="../slick-1.8.1/slick/slick.js"&gt;&lt;/script&gt;
+&lt;link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css"/&gt;
+&lt;link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css"/&gt;
+&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"&gt;&lt;/script&gt;
 $('.single-item').slick({
   accessibility: true,
   autoplay: true,
@@ -513,20 +525,86 @@ $('.single-item').slick({
         <p class="desc">事前にslick.css slick-theme.css slick.jsを読込んでおくこと！それだけでslick()すれば簡単にできる</p>
         <div class="single-item" style="width:400px;">
           <div>
-            <h3>slide1</h3>
+            <!-- <h3>slide1</h3> -->
+            <img src="1.png" alt="1">
           </div>
           <div>
-            <h3>slide2</h3>
+            <!-- <h3>slide2</h3> -->
+            <img src="2.png" alt="2">
           </div>
           <div>
-            <h3>slide3</h3>
+            <!-- <h3>slide3</h3> -->
+            <img src="3.png" alt="3">
           </div>
           <div>
-            <h3>slide4</h3>
+            <!-- <h3>slide4</h3> -->
+            <img src="4.png" alt="4">
           </div>
-          <div>
-            <h3>slide5</h3>
+          <!-- <div> -->
+            <!-- <h3>slide5</h3> -->
+          <!-- </div> -->
+        </div>
+      </div>
+    </div>
+
+    <div class="title">
+      <h3>ツールチップ等jqueryUIのもの</h3>
+      <pre class="desc2"><code>
+
+&lt;link type="text/css" rel="stylesheet"
+href="http://code.jquery.com/ui/1.10.3/themes/cupertino/jquery-ui.min.css" /&gt;
+&lt;script type="text/javascript"
+  src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"&gt;&lt;/script&gt;
+$('#tooltip').tooltip({
+  show: false,
+  hide: {
+    delay: 500,
+    duration: 1000
+  },
+  position:{
+    my: 'left top',
+    at: 'right bottom',
+    collision: 'none'
+  }
+});
+// タブ
+$('#tabs').tabs({
+  heightStyle: 'content'
+})
+// dateピッカー
+$('#date').datepicker({
+  dateFormat: 'yy/mm/dd'
+});
+      </code></pre>
+    </div>
+    <div class="outer">
+      <div class="inner">
+        <p class="desc">title属性を設定しておくとそこに記述したものがツールチップとして表示されるよ！</p>
+        <div id="tooltip">
+          <a href="#" title="説明文です">ここにマウスを合わせてください</a>
+        </div>
+        <br>
+        <p class="desc">jqueryUIによるタブメニュー</p>
+        <div id="tabs">
+          <ul>
+            <li><a href="#tab_A">tab A</a></li>
+            <li><a href="#tab_B">tab B</a></li>
+            <li><a href="#tab_C">tab C</a></li>
+          </ul>
+          <div id="tab_A">
+            <p>A の内容が表示されます</p>
           </div>
+          <div id="tab_B">
+            <p>B の内容が表示されます</p>
+          </div>
+          <div id="tab_C">
+            <p>C の内容が表示されます</p>
+          </div>
+        </div>
+        <br>
+        <p class="desc">dateピッカー</p>
+        <div>
+          <input type="text" id="date">
         </div>
       </div>
     </div>
@@ -759,7 +837,7 @@ nav.NavMenu.active{
 
 
 
-          <!-- jqueryの読み込み基本はbody閉じタグの前に読込む(html読み込み時間短縮) -->
+          <!-- jqueryの読み込み基本はbody閉じタグの前に読込む(html読み込み時間短縮) 本体を読込んだ後にuiやその他ライブラリを読み込む-->
           <!-- jqueryそのものを読込んでから処理を記述する -->
           <!-- 基本的にはcssと同じ感じでセレクタを書いてそれに対するメソッドでcssのプロパティを設定していくイメージ -->
           <!-- セレクタはjQuery('')の括弧内シングルクォート内に書く。もしくは省略できて$('') -->
@@ -767,8 +845,15 @@ nav.NavMenu.active{
           src="https://code.jquery.com/jquery-1.12.4.min.js"
           integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
           crossorigin="anonymous"></script>
-          <!-- slick用 -->
-          <script src="../slick-1.8.1/slick/slick.js"></script>
+          <!-- slick用(ダウンロードしたもの) -->
+          <!-- <script src="../slick-1.8.1/slick/slick.js"></script> -->
+          <!-- slick用(cdn用) -->
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+
+          <!-- jqueryUI用 -->
+          <script type="text/javascript"
+            src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
+
           <script>
           //一番外側の$(function(){})は$(document).ready(function(){});と同じ。省略記法
           //もっと丁寧に書くとjQuery(document).ready(function(){});
@@ -855,6 +940,29 @@ nav.NavMenu.active{
               autoplaySpeed: 1000,
               dots: true,
               fade: true
+            });
+
+            // jqueryUI
+            // ツールチップ
+            $('#tooltip').tooltip({
+              show: false,
+              hide: {
+                delay: 500,
+                duration: 1000
+              },
+              position:{
+                my: 'left top',
+                at: 'right bottom',
+                collision: 'none'
+              }
+            });
+            // タブ
+            $('#tabs').tabs({
+              heightStyle: 'content'
+            })
+            // dateピッカー
+            $('#date').datepicker({
+              dateFormat: 'yy/mm/dd'
             });
 
             // 上へ戻るボタン処理
