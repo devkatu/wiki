@@ -96,6 +96,24 @@ body > p{
   align-items: center;
 }
 
+.outer_ex8{
+  height: 300px;
+}
+.inner_ex8{
+  width: 40%;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+.inner_ex9{
+  height: 100px;
+  line-height: 100px;
+}
+
+.inner_ex10{
+  padding: 20px 0;
+}
+
 li{
   list-style: none;
 }

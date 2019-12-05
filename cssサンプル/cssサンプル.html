@@ -40,10 +40,16 @@
   <div class="title">
     <h3>display:table-cell & vertical-align:middle;</h3>
     <p class="desc">outerをtable、innerをtable-cell(tdタグと同じ働き)に指定して、vertical-align:middle;する。
-      vertical-alignはtable-cellでないと効かない。幅、高さ共に親要素のいっぱいまで伸びる。<br />例)横並びの高さの違う要素を中央揃えするのに便利</p>
+      vertical-alignはtable-cellでないと効かない。幅、高さ共に親要素のいっぱいまで伸びる。<br />例)outerに対する上下中央揃えが簡単にできる</p>
     </div>
     <div class="outer outer_ex4">
       <p class="inner inner_ex4">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
+    </div>
+
+    <p class="desc">display:inline-block; vertical-align:middle; 時は次のようになる。並びあう要素同士のどこで位置をそろえるか決めるのみ<br>例)横並びの高さの違う要素を中央揃えするのに便利</p>
+    <div class="outer outer_ex8">
+      <p class="inner inner_ex8">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
+      <p class="inner inner_ex8">inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
     </div>
 
     <div class="title">
@@ -71,6 +77,24 @@
         <p class="inner">inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text ,inner text</p>
       </div>
 
+      <div class="title">
+        <h3>line-height: [outerのサイズ];</h3>
+        <p class="desc">line-heightをouterのサイズにすると上下中央にそろう<br>
+        例)？？？？？</p>
+      </div>
+      <div class="outer">
+        <p class="inner inner_ex9">inner text ,inner text ,inner text</p>
+      </div>
+
+      <div class="title">
+        <h3>padding: [xx] 0;</h3>
+        <p class="desc">上下のpaddingを指定するだけでouterのheightを決めつつ上下中央揃えが可能<br>
+        例)？？？？？</p>
+      </div>
+      <div class="outer">
+        <p class="inner inner_ex10">inner text ,inner text ,inner text</p>
+      </div>
+
 
       <h1>ついでのflexbox(qiita)</h1>
       <p class="desc">結構たくさんあるので<a href="https://qiita.com/watamura/items/48b6a99aea925c707925">https://qiita.com/watamura/items/48b6a99aea925c707925</a>を参照</p>
@@ -92,7 +116,7 @@
 
       <div class="title">
         <h3>display:inline-block;</h3>
-        <p class="desc">display:inline;だけでも横並びにはなるが、高さ指定できない為inline-blockの方が良い。又自動的にmarginが入る。<br />例)パンくずリストとかナビゲーションバーに使える</p>
+        <p class="desc">display:inline;だけでも横並びにはなるが、高さ指定できない為inline-blockの方が良い。又自動的にmarginが入り、cssで指定した値+αになってしまう。<br />例)パンくずリストとかナビゲーションバーに使える。</p>
       </div>
       <div class="outer">
         <ul class="inner ul2">
