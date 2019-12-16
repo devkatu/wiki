@@ -192,7 +192,7 @@
       <p class="desc">基本的にはデフォルトでblock要素、inline-block要素においてwidthは親要素の幅いっぱい、heightは子要素の高さに合わせ成り行き。<br />inline要素においてwidthは子要素の幅に合わせ成り行き、heightも同様。<br />※pxはそのままなので例を省略！</p>
       <div class="title">
         <h3>width ％指定</h3>
-        <p class="desc">親要素の幅(padding含まず)に対する割合い％で指定する。合計が100%を超えないようにする。ただしデフォルトでpaddingを含む幅指定なので,100%指定するとwidthが親要素の幅いっぱい+paddingで親要素からはみ出てしまう。auto(初期値)だとpadding含みで親要素の幅いっぱいに調整される。これを解消するためにbox-sizing:border-box;を指定するか、paddingとwidthを含め100%となるように指定するとよい。min-width,max-widthを指定しておくとレスポンシブ</p>
+        <p class="desc">親要素の幅(padding含まないcontentの幅)に対する割合い％で指定する。(親要素がbox-sizing:border-box;でもcontentの幅に対する割合となる。)合計が100%を超えないようにする。ただしデフォルトではbox-sizing:content-box;なのでコンテンツ幅が親要素いっぱいになる+paddingなので,親要素からはみ出てしまう。auto(初期値)だとpadding含みで親要素の幅いっぱいに調整される。これを解消するためにbox-sizing:border-box;を指定する(autoと同じ挙動になるはずだがレスポンシブ時は width:100%; と box-sizing:border-box; の方がいいかも)か、paddingとwidthを含め100%となるように指定するとよい。min-width,max-widthを指定しておくとレスポンシブ</p>
       </div>
       <div class="outer">
         <div class="clr_fix">
