@@ -316,6 +316,29 @@ li{
   background-color: pink;
 }
 
+.margin{
+  margin: 50px 10px 0 10px;
+  background-color: pink;
+}
+.margin_parent1{
+  border: initial;
+  height: 100px;
+}
+.margin_parent2{
+  border: initial;
+  padding: 10px 0;
+  height: 100px;
+}
+.margin_parent3{
+  border: 3px solid blue;
+  height: 100px;
+}
+.margin_parent4{
+  border: initial;
+  height: 100px;
+  overflow: hidden;
+}
+
 .bg0{
   width: auto;
   height: 100px;

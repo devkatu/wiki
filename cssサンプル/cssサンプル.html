@@ -247,6 +247,55 @@
         </div>
       </div>
 
+      <h1>margin相殺について</h1>
+      <p class="desc">縦方向のmarginのみ要素間でmargin相殺が起こる事は簡単だが子要素が親要素のmarginにも影響を与える場合があるので注意</p>
+      <div class="title">
+        <h3>誤りの例</h3>
+        <p class="desc">こんな感じ。innerの中のdivにmargin-top:50px;をしているつもりだが親要素のinnerにmargin-top:50px;されてしまっている</p>
+      </div>
+      <div class="outer">
+        <div class="inner margin_parent1">
+          <div class="margin">margin-top: 50px;</div>
+        </div>
+      </div>
+      <div class="title">
+        <h3>対策１</h3>
+        <p class="desc">親要素にpaddingする。親paddingからのmarginとして扱われるイメージ。これが自然な感じ。</p>
+      </div>
+      <div class="outer">
+        <div class="inner margin_parent2">
+          <div class="margin">margin-top: 50px;</div>
+        </div>
+      </div>
+      <div class="title">
+        <h3>対策２</h3>
+        <p class="desc">親要素にborderを入れる。borderからのmarginとして扱われるイメージ。heroとか画面いっぱいに広げたい要素内にmarginを設定したいならborder色を背景色と一緒にしてこれがいいかも</p>
+      </div>
+      <div class="outer">
+        <div class="inner margin_parent3">
+          <div class="margin">margin-top: 50px;</div>
+        </div>
+      </div>
+      <div class="title">
+        <h3>対策３</h3>
+        <p class="desc">親要素にoverflow:hidden;を入れる。これもheroとか画面いっぱいに広げたい要素内にmarginを設定したいならいいかも</p>
+      </div>
+      <div class="outer">
+        <div class="inner margin_parent4">
+          <div class="margin">margin-top: 50px;</div>
+        </div>
+      </div>
+      <div class="title">
+        <h3>対策４</h3>
+        <p class="desc">なんらかのブロック要素を入れて邪魔をする。根本対策ではない</p>
+      </div>
+      <div class="outer">
+        <div class="inner margin_parent1">
+          <p> text </p>
+          <div class="margin">margin-top: 50px;</div>
+        </div>
+      </div>
+
 
       <h1>background</h1>
       <div class="sampleimg">
