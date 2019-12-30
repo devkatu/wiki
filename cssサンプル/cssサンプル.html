@@ -80,10 +80,32 @@
       <div class="title">
         <h3>line-height: [outerのサイズ];</h3>
         <p class="desc">line-heightをouterのサイズにすると上下中央にそろう<br>
+          注意！ line-height なのでテキストが複数行になるときは使用できない<br>
         例)？？？？？</p>
       </div>
       <div class="outer">
         <p class="inner inner_ex9">inner text ,inner text ,inner text</p>
+      </div>
+
+      <div class="title">
+        <p class="desc">★line-height絡みでハマったこと<br>
+          画像を使ったリンクのリストを作ったとき、li間のmarginをとっていないのに<br>
+          marginができていた。ul&gt;li&gt;a&gt;img のaタグにはbodyに指定していた<br>
+          font-size:16pxが指定されていたが、 line-height 1.6も指定されており、<br>
+          <b>16*1.6=25.6pxが親要素であるliのheightとなってしまい、imgの元の<br>
+          height:24pxを超えて余白ができてしまった(img要素のvertical-<br>
+          align:top;していないせいでめっちゃハマった！…imgはインライン要素<br>
+          なのでvertical-alignしないと位置が可笑しくなる)。</b>
+        </p>
+      </div>
+      <div class="outer">
+        <div class="inner">
+          <p class="desc">色付きの部分がli。liにはmargin、paddingの設定はしていない</p>
+          <ul>
+            <li style="background:pink;"><a href="#" style="font-size:20px;line-height:1.8;"><img src="asset 2.png" alt="" style="vertical-align:top;"></a></li>
+            <li style="background:skyblue;"><a href="#" style="font-size:20px;line-height:1.8;"><img src="asset 3.png" alt="" style="vertical-align:top;"></a></li>
+          </ul>
+        </div>
       </div>
 
       <div class="title">
