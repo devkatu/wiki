@@ -71,7 +71,7 @@
           font-size:16pxが指定されていたが、 line-height 1.6も指定されており、<br>
           <b>16*1.6=25.6pxが親要素であるliのheightとなってしまい、imgの元の<br>
             height:24pxを超えて余白ができてしまった(img要素のvertical-<br>
-            align:top;していないせいでめっちゃハマった！…imgはインライン要素<br>
+            align:top;していないせいもありめっちゃハマった！…imgはインライン要素<br>
             なのでvertical-alignしないと位置が可笑しくなる)。</b>
           </p>
         </div>
@@ -84,6 +84,14 @@
             </ul>
           </div>
         </div>
+        <div class="outer">
+          <figure>
+            <img src="inlinebox.png" alt="インラインボックスについての画像">
+            <figcaption style="font-size:12px;">参考画像。font-sizeにより行ボックスの高さが決まり、line-heightにより外側のボックス高さがきまる。<b>尚、インライン要素に対してline-heightを狭めようとすると、外側のボックス高さは変化するものの、包含するコンテンツの高さは変わらない(行間狭まらない)。dispalay:block;等が必要</b><br>
+            <b>ブロック要素内に複数のインライン要素を置き、異なるline-heightを設定しておくと、一番高いインライン要素でブロック要素の高さがきまる。</b></figcaption>
+          </figure>
+        </div>
+
 
         <div class="title">
           <h3>padding: [xx] 0;</h3>
@@ -123,11 +131,12 @@
 
             <div class="title">
               <h3>vertical-alignについて</h3>
-              <p class="desc">inline、inline-block、table-cellである子要素に対し、親要素の縦方向のどの位置に配置するのかを決定する。<br><b>親要素に対する指定となるので親要素のfont-size、line-heightによって変化するので注意。あとからまとめる！</b></p>
+              <p class="desc">inline、inline-block、table-cellである子要素に対し、親要素の縦方向のどの位置に配置するのかを決定する。<br><b>top,bottom以外は親要素に対する指定となる。ので親要素のfont-size、line-heightによって変化するので注意。top,bottomは行ボックスの上端、下端に対する設定となる。下記例では親ボックスには小さめのフォント、子には大きめのフォント、大き目の行間があり、行ボックスが大きくなっている。</b><br>
+              <b>基本は親要素(もしくはbodyとか)にfont-size、line-heightを設定してtop,bottom以外(つまり親要素に対する縦方向の指定)を設定するが、画像を同じ行に入れたりして行ボックスの高さが変化するときはtop、bottomで行ボックスに対する相対位置を決めるといいかも</b></p>
             </div>
             <div class="outer">
-              <div class="inner" style="font-size:50px;border-top:1px solid gray;border-bottom:1px solid gray;">
-                <span style="text-decoration:underline;">ABC</span>
+              <div class="inner" style="font-size:20px;line-height:1;border-top:1px solid gray;border-bottom:1px solid gray;">
+                <span style="font-size:50px;line-height:3;text-decoration:underline;">ABC</span>
                   <span style="vertical-align: baseline;font-size:8px;text-decoration:underline;">baseline</span>
                   <span style="vertical-align: sub;font-size:8px;text-decoration:underline;">sub</span>
                   <span style="vertical-align: super;font-size:8px;text-decoration:underline;">super</span>
@@ -136,8 +145,13 @@
                   <span style="vertical-align: middle;font-size:8px;text-decoration:underline;">middle</span>
                   <span style="vertical-align: top;font-size:8px;font-style:italic;text-decoration:underline;">top</span>
                   <span style="vertical-align: bottom;font-size:8px;font-style:italic;text-decoration:underline;">bottom</span>
-
               </div>
+            </div>
+            <div class="outer">
+              <figure>
+                <img src="vertical-align.gif" alt="vertical-align">
+                <figcaption>参考画像</figcaption>
+              </figure>
             </div>
 
 
