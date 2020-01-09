@@ -382,3 +382,20 @@ li{
   background-repeat: repeat-x;
   background-attachment: fixed;
 }
+
+.bg5{
+  width: auto;
+}
+.bg5 div.a{
+  background: linear-gradient(transparent 50%, pink 50%);
+}
+.bg5 div.b{
+  margin-top: 20px;
+  height: 300px;
+  background: linear-gradient(yellow 20%,pink 80%);
+}
+.bg5 div.c{
+  margin-top: 20px;
+  height: 500px;
+  background: linear-gradient(45deg, yellow 20%,pink 80%);
+}
