@@ -339,6 +339,30 @@
     transform: rotate(-45deg);
   }
 
+  /* スクロールしたら表示するやつ */
+  .scroll_show_up{
+    /* 表示する前の状態を設定 */
+    position: relative;
+    bottom: -100px;
+    opacity: 0;
+    transition: all 0.6s;
+  }
+  .scroll_show_up.show{
+    /* 表示するときの動きを設定 */
+    bottom: 0;
+    opacity: 1;
+  }
+  .scroll_show_right{
+    position: relative;
+    left: -100px;
+    opacity: 0;
+    transition: all 0.6s;
+  }
+  .scroll_show_right.show{
+    left: 0;
+    opacity: 1;
+  }
+
   </style>
   <!-- slick用(ダウンロードしたもの用) -->
   <!-- <link rel="stylesheet" href="../slick-1.8.1/slick/slick.css">
@@ -750,6 +774,62 @@ $('.accordion_arrow').click(function(){
           </div>
 
           <div class="title">
+            <h3>スクロールしたらポップアップ表示</h3>
+              <pre class="desc2"><code>
+.scroll_show_up{
+  /* 表示する前の状態を設定 */
+  position: relative;
+  bottom: -100px;
+  opacity: 0;
+  transition: all 0.6s;
+}
+.scroll_show_up.show{
+  /* 表示するときの動きを設定 */
+  bottom: 0;
+  opacity: 1;
+}
+
+.scroll_show_right{
+  position: relative;
+  left: -100px;
+  opacity: 0;
+  transition: all 0.6s;
+}
+.scroll_show_right.show{
+  left: 0;
+  opacity: 1;
+}
+
+var st = $(this).scrollTop();
+// 以下のクラスの要素全てに対して処理を行う
+$('.scroll_show_up, .scroll_show_right').each(function(){
+  var elm = $(this);
+  var elmpos = elm.offset().top;
+  var wh = $(window).height();
+
+  // スクロール量が対象要素のtopからの位置+画面の1/4になったらshowクラス付与
+  // *画面に対象要素が1/4見えたらshow付与
+  // show時の動きはcssにて設定。removeClassを消すと出しっぱなしになる。
+  if ( st > elmpos - wh + wh /4){
+    elm.addClass('show');
+  }else{
+    elm.removeClass('show');
+  }
+});
+              </code></pre>
+            </div>
+              <div class="outer">
+                <div class="inner">
+                  <div class="scroll_show_up" style="height:200px;">上に表示</div>
+                </div>
+              </div>
+              <div class="outer">
+                <div class="inner">
+                  <div class="scroll_show_right" style="height:200px;">右に表示</div>
+                </div>
+              </div>
+
+          <div class="title">
             <h3>ハンバーガーメニュー</h3>
             <pre class="desc2"><code>
 // ハンバーガーメニュー
@@ -832,7 +912,6 @@ nav.NavMenu.active{
               <li><a href="#">Menu1</a></li>
             </ul>
           </nav>
-
 
 
           <!-- jqueryの読み込み基本はbody閉じタグの前に読込む(html読み込み時間短縮) 本体を読込んだ後にuiやその他ライブラリを読み込む-->
@@ -976,6 +1055,27 @@ nav.NavMenu.active{
               }else{
                 $('#back').fadeOut();
               }
+
+
+              var st = $(this).scrollTop();
+
+              // スクロールしたら表示するやつ
+              // 以下のクラスの要素全てに対して処理を行う
+              $('.scroll_show_up, .scroll_show_right').each(function(){
+                var elm = $(this);
+                var elmpos = elm.offset().top;
+                var wh = $(window).height();
+
+                // スクロール量が対象要素のtopからの位置+画面の1/4になったらshowクラス付与
+                // *画面に対象要素が1/4見えたらshow付与
+                // show時の動きはcssにて設定。removeClassを消すと出しっぱなしになる。
+                if ( st > elmpos - wh + wh /4){
+                  elm.addClass('show');
+                }else{
+                  elm.removeClass('show');
+                }
+              });
+
             });
             // clickメソッドを作る
             $('#back a').click(goTop);
