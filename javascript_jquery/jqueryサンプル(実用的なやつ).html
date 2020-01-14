@@ -363,6 +363,15 @@
     opacity: 1;
   }
 
+  span#maker{
+    background: linear-gradient(transparent 50%,red 50%)
+    no-repeat 200% 0 / 200% 100%;
+    transition: all 0.5s;
+  }
+  span#maker.show{
+    background-position: 100% 100%;
+  }
+
   </style>
   <!-- slick用(ダウンロードしたもの用) -->
   <!-- <link rel="stylesheet" href="../slick-1.8.1/slick/slick.css">
@@ -829,6 +838,42 @@ $('.scroll_show_up, .scroll_show_right').each(function(){
                 </div>
               </div>
 
+              <div class="title">
+                <h3>蛍光マーカー</h3>
+                <pre class="desc2"><code>
+span#maker{
+  background: linear-gradient(transparent 50%,red 50%)
+  no-repeat 200% 0 / 200% 100%;
+  transition: all 0.5s;
+}
+span#maker.show{
+  background-position: 100% 100%;
+}
+var st = $(this).scrollTop();
+// 以下のクラスの要素全てに対して処理を行う
+$('span#maker').each(function(){
+  var elm = $(this);
+  var elmpos = elm.offset().top;
+  var wh = $(window).height();
+
+  // スクロール量が対象要素のtopからの位置+画面の1/4になったらshowクラス付与
+  // *画面に対象要素が1/4見えたらshow付与
+  // show時の動きはcssにて設定。removeClassを消すと出しっぱなしになる。
+  if ( st > elmpos - wh + wh /4){
+    elm.addClass('show');
+  }else{
+    elm.removeClass('show');
+  }
+});
+
+                </code></pre>
+              </div>
+              <div class="outer">
+                <div class="inner">
+                  <span id="maker">ここが大事！</span>
+                </div>
+              </div>
+
           <div class="title">
             <h3>ハンバーガーメニュー</h3>
             <pre class="desc2"><code>
@@ -1061,7 +1106,7 @@ nav.NavMenu.active{
 
               // スクロールしたら表示するやつ
               // 以下のクラスの要素全てに対して処理を行う
-              $('.scroll_show_up, .scroll_show_right').each(function(){
+              $('.scroll_show_up, .scroll_show_right, span#maker').each(function(){
                 var elm = $(this);
                 var elmpos = elm.offset().top;
                 var wh = $(window).height();
@@ -1075,7 +1120,7 @@ nav.NavMenu.active{
                   elm.removeClass('show');
                 }
               });
-
+              
             });
             // clickメソッドを作る
             $('#back a').click(goTop);
