@@ -373,6 +373,15 @@ li{
   background-repeat: no-repeat;
 }
 
+.bg3a{
+  width: auto;
+  height: 100vh;
+  background-image: url("star.png");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
 .bg4{
   width: auto;
   height: 100px;

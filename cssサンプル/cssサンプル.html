@@ -301,7 +301,14 @@
                 <p>
                   padding: 25% 0;<br />
                   横幅の25%ずつを上下にpadding<br />
-                  縦横比を保つことができる。
+                  縦横比を保つことができる。<br /><br />
+                  <b>この仕組みを使って背景画像の比率を保つように<br>
+                    することができる。height/width*100を<br>
+                    padding-topに指定してあげたりすればOK<br>
+                    なかに文字を入れたいときは高さを持たない要素に<br>
+                    なっているので内側に絶対配置の要素をcontainer<br>
+                    として配置してさらに内側に文字を入れる等のスタイリングを
+                  </b>
                 </p>
               </div>
             </div>
@@ -400,6 +407,15 @@
               </div>
 
               <div class="title">
+                <h3>background-size:cover; & height:100vh;</h3>
+                <p class="desc">height: 100vh;と指定すると画面の表示高さいっぱいにブロック要素が広がり、coverにしているのでそれを全て埋め尽くすように拡大表示する。所謂ヒーローイメージとして使える。</p>
+              </div>
+              <div class="outer">
+                <div class="bg3a">
+                </div>
+              </div>
+
+              <div class="title">
                 <h3>background-attachment:fixed;</h3>
                 <p class="desc">背景画像をｽｸﾛｰﾙに関わらず固定する。大体body要素の背景に対して使うはず
                   ここではbottom centerに表示している</p>
@@ -421,7 +437,7 @@
                     </div>
                     <div class="b">
                       linear-gradient(yellow 20%,pink 80%)
-                    </div>                    
+                    </div>
                     <div class="c">
                       linear-gradient(45deg, yellow 20%,pink 80%)
                     </div>
