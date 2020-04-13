@@ -270,27 +270,35 @@
             </div>
 
             <div class="title">
-              <h3>height ％指定</h3>
-              <p class="desc">親要素の高さ(padding含まず)に対する割合い％で指定する。合計が100%を超えないようにする。heightは初期値がautoなので、親要素には必ずheight:auto;以外の指定をしなければ子要素の％指定は不可。ただしwidthと同様デフォルトでpaddingを含む高さ指定なので,100%指定するとwidthが親要素の高さいっぱい+paddingで親要素からはみ出てしまう。これを解消するためにbox-sizing:border-box;を指定する。ただしwidthと同様にpaddingとheightを含め100%になるようにはできない(次で説明)。min-width,max-widthを指定しておくとレスポンシブ</p>
+            <h3>height ％指定</h3>
+            <p class="desc">親要素の高さ(padding含まず)に対する割合い％で指定する。合計が100%を超えないようにする。heightは初期値がautoなので、親要素には必ずheight:auto;以外の指定をしなければ子要素の％指定は不可。(但し次の例外あり)ただしwidthと同様デフォルトでpaddingを含む高さ指定なので,100%指定するとwidthが親要素の高さいっぱい+paddingで親要素からはみ出てしまう。これを解消するためにbox-sizing:border-box;を指定する。ただしwidthと同様にpaddingとheightを含め100%になるようにはできない(次次で説明)。min-width,max-widthを指定しておくとレスポンシブ</p>
+          </div>
+          <div class="outer height_parent clr_fix">
+            <div class="height_smpcontain25">
+              <p class="height_50per">50% + border_box</p>
+              <p class="height_30per">30% + border_box</p>
+              <p class="height_20per">20% + border_box</p>
             </div>
-            <div class="outer height_parent clr_fix">
-              <div class="height_smpcontain25">
-                <p class="height_50per">50% + border_box</p>
-                <p class="height_30per">30% + border_box</p>
-                <p class="height_20per">20% + border_box</p>
-              </div>
-              <div class="height_smpcontain25">
-                <p class="height_100per content_box">100% + content-box(初期値)</p>
-              </div>
-              <div class="height_smpcontain25">
-                <p class="height_100per">100% + border-box</p>
-              </div>
-              <div class="height_smpcontain25">
-                <div class="hp_sel_contain">
-                  <p class="hp_sel">height80% + padding10%ずつ + content-box(レイアウト崩れる)</p>
-                </div>
+            <div class="height_smpcontain25">
+              <p class="height_100per content_box">100% + content-box(初期値)</p>
+            </div>
+            <div class="height_smpcontain25">
+              <p class="height_100per">100% + border-box</p>
+            </div>
+            <div class="height_smpcontain25">
+              <div class="hp_sel_contain">
+                <p class="hp_sel">height80% + padding10%ずつ + content-box(レイアウト崩れる)</p>
               </div>
             </div>
+          </div>
+          <div class="title">
+            <p class="desc">自要素がposition:absolute;だと<b>親要素にheightが設定されていなくてもheight:100%;が使える。</b>下記親要素にはheight指定なしposition:relative;のみ。</p>
+          </div>
+          <div class="outer height_parent_2">
+              <p class="height_100per_abs">100% + position: absolute;</p>
+              <p class="height_100per_rel">100% + position: 設定なし;</p>
+              <p class="dummy">containの高さを確保するための要素 height 200px</p>
+          </div>
 
             <div class="title">
               <h3>margin,paddingの％指定は基本横方向のみ</h3>

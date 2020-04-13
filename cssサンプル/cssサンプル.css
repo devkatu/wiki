@@ -287,6 +287,35 @@ li{
   background-color: rgb(240, 135, 48);
 }
 
+
+.height_parent_2{
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+.height_100per_abs{
+  position: absolute;
+  width: 25%;
+  height: 100%;
+  top:0;left:0;
+  padding: 20px 0;
+  background-color: rgb(200, 210, 38);
+  text-align: center;
+}
+.height_100per_rel{
+  width: 25%;
+  height: 100%;
+  padding: 20px 0;
+  background-color: rgb(120, 110, 38);
+  text-align: center;
+}
+.dummy{
+  width: 25%;
+  height: 200px;
+  background-color: rgba(0,0,0,0.3);
+  text-align: center;
+}
+
 .hp_sel_contain{
   height: 80%;
   padding: 10% 0;
