@@ -525,6 +525,9 @@ jqueryでの値取得とかはjqueryのほう参照
             <input type="file" name="file" id="file" accept="image/*,audio/*,video/*,.css" multiple>
             <!-- multipleで複数ふぁいる指定 -->
             <!-- acceptに拡張子やimage/*等を指定できる -->
+            <!-- typeをfileにするならformの開始タグを下記にする　method="get"では不可　enctypeはこれ固定 -->
+            <!-- <form method="post" enctype="multipart/form-data"> -->
+
           </p>
           <p>
             <label for="img_btn">画像ボタン</label>
