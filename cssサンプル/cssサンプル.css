@@ -437,3 +437,34 @@ li{
   height: 500px;
   background: linear-gradient(45deg, yellow 20%,pink 80%);
 }
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="username"],
+input[type="date"]{
+  width: 200px;
+}
+p>label{
+  display: inline-block;
+  width: 150px;
+  text-align: right;
+}
+#jform input:invalid {
+  border: 1px solid red;
+}
+#jform input:valid {
+  border: 1px solid black;
+}
+
+#style_none input, #style_none button, #style_none textarea, #style_none select {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
