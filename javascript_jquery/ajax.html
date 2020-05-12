@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>React Test</title>
+</head>
+<body>
+<script type="text/javascript">
+  var req = new XMLHttpRequest();
+  req.open('GET','https://mdn.github.io/learning-area/javascript/oojs/json/superheroes.json');
+  req.responseType = 'json';
+  // req.responseType = 'text';
+  req.send();
+
+  req.onload = function(){
+    var result = req.response;
+    // result = JSON.parse(result);
+    var e = document.createElement('p');
+    e.textContent = result.squadName + "達！" + result.members[0].name + "は" + result.members[0].age + "才";
+    var b = document.querySelector('body');
+    b.appendChild(e);
+  };
+
+</script>
+</body>
+</html>
