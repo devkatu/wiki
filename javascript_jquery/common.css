@@ -1,0 +1,33 @@
+@charset "utf-8";
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body h1, h2{
+  text-align: center;
+  margin-top: 40px;
+}
+body > p{
+  text-align: center;
+}
+.title{
+  width: 900px;
+  margin: 30px auto 0;
+}
+.desc{
+  font-size: 12px;
+}
+.outer{
+  width: 900px;
+  margin: 10px auto 0;
+  background-color: #E6ECF2;
+  padding: 10px;
+}
+.inner{
+  background-color: #EEF2F6;
+  border: 1px solid white;
+  position: relative;
+}
