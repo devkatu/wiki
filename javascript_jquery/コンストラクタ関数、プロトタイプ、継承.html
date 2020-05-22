@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="common.css">
+  <title>コンストラクタ関数、プロトタイプ、継承</title>
+</head>
+<body>
+  <div class="title">
+    <p>関数内で this.~ に値を設定していく関数をコンストラクタ関数といい、このコンストラクタ関数を
+      new して変数に代入すると、 this.~ をもったオブジェクトが作られる。基本はオブジェクトリテラルとかで
+      オブジェクトを作成するイメージで作っていける。 this.~ は作成するオブジェクトのプロパティを指す。
+      コンストラクタの .prototype プロパティに関数とかを設定することができる。このプロパティは継承することで
+      引き継がれる。オブジェクトはプロパティを読もうとすると、まず自分のプロパティに対象のものがあるか確認し、
+      ければ親の __prototype__ プロパティ内にあるか確認し、なければさらに親の __prototype__ にあるかどうか・・・
+      と確認していく。これがプロトタイプチェーン。ちなみにコンストラクタ関数内にも関数(オブジェクトのメソッド)を
+      書けるがオブジェクト作成毎に関数が作成されメモリ圧迫されるのでprototypeに紐付けるのが一般的</p>
+    </div>
+    <div class="outer">
+      <pre><code>
+        function Person(name){
+          this.name = name;
+          this.isgreet = false;
+          this.o = {
+            func: function(){
+              alert('test');
+            }
+          }
+        }
+        Person.prototype.greet = function(){
+          alert('hello! My name is ' + this.name + '!');
+          this.isgreet = true;
+        };
+      </code></pre>
+    </div>
+    <div class="title">
+      <p>以下ではstudentコンストラクタ関数を作成し、personコンストラクタ関数から継承している様子。
+        親コンストラクタの .call では第一引数に this を設定して、あとは親コンストラクタの
+        引数をそのまま入れること　※Object.createでもオブジェクトの作成できる！</p>
+      </div>
+      <div class="outer">
+        <pre><code>
+          function Student(name, age){
+            Person.call(this, name);  //★
+            this.age = age;
+          };
+          Student.prototype = Object.create(Person.prototype);  //★
+          Student.prototype.constructor = Student;  //★
+
+          // ↓↓こっちの方が結構簡単
+          // Katu.prototype = new Person();
+          // mdnでは上の★コメント部分のやり方で説明してたけど・・・
+
+        </code></pre>
+      </div>
+      <div class="title">
+        <p>オブジェクトの作成。コンソール開いてpersonやstudentを見てみるとよい</p>
+      </div>
+      <div class="outer">
+        <pre><code>
+
+          var person = new Person('katu');
+          var student = new Student('ryouhei', 32);
+
+          console.log(person);
+          console.log(student);
+        </code></pre>
+      </div>
+        <div class="title">
+          <p>クラス風の書き方も以下のようにできる。こちらは一般的なので説明省略</p>
+        </div>
+        <div class="outer">
+          <pre><code>
+            class Person2{
+              constructor(name){
+                this.name = name;
+                this.isgreet = false;
+                this.o = {
+                  func: function(){
+                    alert('test');
+                  }
+                };
+              };
+              greet(){
+                alert('hello! My name is ' + this.name + '!');
+                this.isgreet = true;
+              };
+            }
+
+            class Student2 extends Person2{
+              constructor(name, age){
+                super(name);
+                this.age = age;
+              };
+              greet(){
+                alert('hello! My name is ' + this.name + '! age is ' + this.age);
+                this.isgreet = true;
+              };
+            }
+
+            var person2 = new Person2('ito');
+            var student2 = new Student2('kaede',22);
+          </code></pre>
+        </div>
+
+
+
+      </div>
+
+      <!-- </code></pre>
+      <pre><code> -->
+
+      <script type="text/javascript">
+      function Person(name){
+        this.name = name;
+        this.isgreet = false;
+        this.o = {
+          func: function(){
+            alert('test');
+          }
+        }
+      }
+      Person.prototype.greet = function(){
+        alert('hello! My name is ' + this.name + '!');
+        this.isgreet = true;
+      };
+
+      function Student(name, age){
+        Person.call(this, name);
+        this.age = age;
+      };
+      Student.prototype = Object.create(Person.prototype);
+      Student.prototype.constructor = Student;
+      Student.prototype.greet = function(){
+        alert('hello! My name is ' + this.name + '! age is ' + this.age);
+        this.isgreet = true;
+      };
+
+      // こっちの方が結構簡単
+      // mdnでは上のコメント部分のやり方で説明してたけど・・・
+      // Student.prototype = new Person();
+
+      var person = new Person('katu');
+      var student = new Student('ryouhei', 32);
+
+      console.log(person);
+      console.log(student);
+
+      class Person2{
+        constructor(name){
+          this.name = name;
+          this.isgreet = false;
+          this.o = {
+            func: function(){
+              alert('test');
+            }
+          };
+        };
+        greet(){
+          alert('hello! My name is ' + this.name + '!');
+          this.isgreet = true;
+        };
+      }
+
+      class Student2 extends Person2{
+        constructor(name, age){
+          super(name);
+          this.age = age;
+        };
+        greet(){
+          alert('hello! My name is ' + this.name + '! age is ' + this.age);
+          this.isgreet = true;
+        };
+      }
+
+      var person2 = new Person2('ito');
+      var student2 = new Student2('kaede',22);
+
+      </script>
+    </body>
+    </html>

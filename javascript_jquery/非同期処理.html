@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="common.css">
+<title>非同期処理</title>
+</head>
+<body>
+  <div class="title">
+    <p>javascriptはシングルスレッドだが、webWorkerというものを使うと別のスレッドを立ててそちらにタスクの処理を
+      任せるようなことができるようになる。しかしこれでは複数のタスクの結果を必要とする場合にはうまく機能しない</p>
+    <input type="button" id="worker" value="workerｽﾀｰﾄ">
+  </div>
+  <div class="outer">
+    <pre><code>
+  const worker_start = document.querySelector('#worker');
+  const worker = new Worker('worker.js');  //workerインスタンスの作成
+
+  worker_start.addEventListener('click',function(){
+    worker.postMessage('go');  //postMessageメソッドでインスタンス作成時に渡したスクリプトを実行できる
+                               //これでスクリプト側でonmessageの関数を実行する
+  });
+  worker.onmessage = (e) => {
+    alert(e.data);  //postMessageで開始したスクリプトが終了(スクリプト側のpostMessage実行のタイミング)
+                    //するとonmessageイベントが発火する
+  };
+    </code></pre>
+    <pre>
+
+  全体イメージ
+  メインスレッド　：postMessage('go');　     　onmessageイベント
+                      ↓                          ↑
+  ワーカースレッド：onmessageイベント　　---->　postMessage(data);
+    </pre>
+  </div>
+
+  <script type="text/javascript">
+  const worker_start = document.querySelector('#worker');
+  const worker = new Worker('worker.js');
+
+  worker_start.addEventListener('click',function(){
+    worker.postMessage('go');
+  });
+  worker.onmessage = (e) => {
+    alert(e.data);
+  };
+
+  function myPromise(param){
+    return new Promise((resolve,reject) => {
+      setTimeout(() => {
+        if(Math.random() < 0.3){
+          resolve(param + '成功！');
+        }else{
+          reject(new Error('errorrrrrrrr'));
+        }
+      },1000);
+    });
+  }
+
+  let mypromise = myPromise('promise');
+  mypromise.then((p) => {
+    console.log(p)
+  })
+  .catch((p) => {
+    console.log(p + 'aaa');
+  });
+
+
+  let asyncpromise = new Promise((resolve, reject) => {
+    setTimeout(resolve,5000,'foo');
+  });
+
+var a;
+  async function asyncfunc(){
+    a = await asyncpromise;
+    console.log(a);
+  }
+
+  asyncfunc();
+
+  </script>
+</body>
+</html>
