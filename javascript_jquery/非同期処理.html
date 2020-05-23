@@ -8,7 +8,9 @@
 <body>
   <div class="title">
     <p>javascriptはシングルスレッドだが、webWorkerというものを使うと別のスレッドを立ててそちらにタスクの処理を
-      任せるようなことができるようになる。しかしこれでは複数のタスクの結果を必要とする場合にはうまく機能しない</p>
+      任せるようなことができるようになる。しかしこれでは複数のタスクの結果を必要とする場合にはイマイチ都合が悪い。
+      ただただ１スレッドで完結する何かの計算とかにはいいけど・・・。これを解決するために非同期コールバック(clickとかの
+      イベントが良い例)とかpromiseがある</p>
     <input type="button" id="worker" value="workerｽﾀｰﾄ">
   </div>
   <div class="outer">
@@ -35,22 +37,130 @@
   </div>
 
   <div class="title">
-    <p>promise</p>
+    <p>非同期の処理promiseを使うと
+    <ul>
+      <li>一つのタスクに、成功 .then 、失敗 .catch 、成功失敗関わらず必ずやる .finally の処理を割り当てられる</li>
+      <li>複数の連なる非同期操作をメソッドチェーンで連結できる。これによりコールバック地獄を回避</li>
+      <li>promiseの操作はイベントキューに割り当てられメインスレッド処理完了後に順に実施</li>
+    </ul>
+    等の利点がある。
+    </p>
     <input type="button" id="promise_start" value="promiseｽﾀｰﾄ">
   </div>
   <div class="outer">
     <pre><code>
+      // この関数はpromiseオブジェクトを返す
+      function myPromise(param){
+        return new Promise((resolve,reject) => {
+          setTimeout(() => {  //settimeoutで時間のかかる処理を疑似的に作っている
+            if(Math.random() < 0.8){
+              resolve(param + '成功！');  // resolveが実行されるとpromiseオブジェクトの.thenが走る
+                                          この時のパラメータが.thenにそのまま渡される
+            }else{
+              reject(new Error('error発生です'));  // rejectが実行されるとpromiseオブジェクトの.catchが走る
+                                                    この時のパラメータが.catchにそのまま渡される
+            }
+          },1000);
+        });
+      }
 
+      let promise_start = document.querySelector('#promise_start');
+      promise_start.addEventListener('click',() => {
+        let mypromise = myPromise('promise');  //ここでpromiseオブジェクトが返されるがここではまだ
+                                                成功(fulfilled)でも失敗(rejected)でもない初期状態(pending)
+        mypromise.then((str) => {  //myPromise('promise')が成功したときの処理を定義
+                                    .then内のコールバックのパラメータはpromiseオブジェクトの
+                                    resolve()で設定されることになる
+          alert(str);
+          return myPromise('promise2');  //ここでさらにpromiseオブジェクトを返すようにすることで.thenを
+                                          繋げることができる。それ以外の値を返すと処理はそこで終わることがある。
+        })
+        .then((str) => {  //myPromise('promise2')が成功したときの処理を定義
+          alert(str);
+          return myPromise('promise3');
+        })
+        .then((str) => {  //myPromise('promise3')が成功したときの処理を定義
+          alert(str);
+        })
+        .catch((str) => {  //上記のpromiseがいずれか失敗したときの処理を定義
+                          .catch内のコールバックのパラメータはpromiseオブジェクトの
+                          reject()で設定されることになる
+          alert(str);
+        });
+      });
+
+
+      // 以下のようにすることもできる
+      let mp1 = myPromise('promise1');
+      let mp2 = myPromise('promise2');
+      let mp3 = myPromise('promise3');
+
+      // パラメータに指定したpromiseがすべて終わるのを待つ
+      Promise.all([mp1, mp2, mp3]).then(val => {
+        alert(val[0] + val[1] + val[2]);  //promise1成功です！・・・promise3成功です！
+      });
+
+
+      // mdnで出てた例。fetchした画像を加工するみたいなやつ
+      fetch('coffee.jpg')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        } else {
+          return response.blob();
+        }
+      })
+      .then(myBlob => {
+        let objectURL = URL.createObjectURL(myBlob);
+        let image = document.createElement('img');
+        image.src = objectURL;
+        document.body.appendChild(image);
+      })
+      .catch(e => {
+        console.log('There has been a problem with your fetch operation: ' + e.message);
+      });
     </code></pre>
   </div>
 
   <div class="title">
-    <p>async/await</p>
+    <p>async/awaitを使うとpromiseを使った処理がさらに見やすく書く事ができる。非同期処理なのに.thenとか.catchとか
+    使わずに自然な感じの文体になる。</p>
     <input type="button" id="async_start" value="asyncｽﾀｰﾄ">
   </div>
-  <pre><code>
+  <div class="outer">
+    <pre><code>
+      // promiseオブジェクトを返す関数。この辺は上と同じ
+      function asyncpromise(){
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            if(Math.random() < 0.5){
+              resolve('成功！');
+            }else{
+              reject(new Error('error発生です'));
+            }
+          },1000);
+        });
+      }
 
-  </code></pre>
+      // 非同期な関数。asyncを頭につけると関数内でawaitが使える
+      async function asyncfunc(){
+        let str = await asyncpromise();  // promiseオブジェクトが解決されるのを待つ
+                                          解決されるまではここから先の処理は実行されず、
+                                          且つノンブロッキングな状態になる。
+                                          resolveになるとresolveのパラメータがawaitの
+                                          戻り値として取得できる
+        alert(str);
+      }
+
+      let async_start = document.querySelector('#async_start');
+      async_start.addEventListener('click', () => {
+        asyncfunc().catch(str => {  // 実行するときに.eatchを付け加えられる。この辺ん上と同じ
+            alert(str);
+          }
+        );
+      });
+    </code></pre>
+  </div>
 
   <script type="text/javascript">
   const worker_start = document.querySelector('#worker');
@@ -67,7 +177,7 @@
   function myPromise(param){
     return new Promise((resolve,reject) => {
       setTimeout(() => {
-        if(Math.random() < 0.3){
+        if(Math.random() < 0.8){
           resolve(param + '成功！');
         }else{
           reject(new Error('error発生です'));
@@ -81,28 +191,46 @@
     let mypromise = myPromise('promise');
     mypromise.then((str) => {
       alert(str);
+      return myPromise('promise2');
+    })
+    .then((str) => {
+      alert(str);
+      return myPromise('promise3');
+    })
+    .then((str) => {
+      alert(str);
     })
     .catch((str) => {
       alert(str);
     });
+
+
   });
 
 
-  let asyncpromise = new Promise((resolve, reject) => {
-    // setTimeout(resolve,5000,'foo');
-    setTimeout(() => {
-      resolve('async終了');
-    },3000);
-  });
+  function asyncpromise(){
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if(Math.random() < 0.5){
+          resolve('成功！');
+        }else{
+          reject(new Error('error発生です'));
+        }
+      },1000);
+    });
+  }
 
   async function asyncfunc(){
-    let str = await asyncpromise;
+    let str = await asyncpromise();
     alert(str);
   }
 
   let async_start = document.querySelector('#async_start');
   async_start.addEventListener('click', () => {
-    asyncfunc();
+    asyncfunc().catch(str => {
+        alert(str);
+      }
+    );
   });
 
   </script>
