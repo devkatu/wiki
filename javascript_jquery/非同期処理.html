@@ -34,9 +34,28 @@
     </pre>
   </div>
 
+  <div class="title">
+    <p>promise</p>
+    <input type="button" id="promise_start" value="promiseｽﾀｰﾄ">
+  </div>
+  <div class="outer">
+    <pre><code>
+
+    </code></pre>
+  </div>
+
+  <div class="title">
+    <p>async/await</p>
+    <input type="button" id="async_start" value="asyncｽﾀｰﾄ">
+  </div>
+  <pre><code>
+
+  </code></pre>
+
   <script type="text/javascript">
   const worker_start = document.querySelector('#worker');
-  const worker = new Worker('worker.js');
+  // const worker = new Worker('worker.js');
+  // originのやつでローカル環境で実行するとerror
 
   worker_start.addEventListener('click',function(){
     worker.postMessage('go');
@@ -51,32 +70,40 @@
         if(Math.random() < 0.3){
           resolve(param + '成功！');
         }else{
-          reject(new Error('errorrrrrrrr'));
+          reject(new Error('error発生です'));
         }
       },1000);
     });
   }
 
-  let mypromise = myPromise('promise');
-  mypromise.then((p) => {
-    console.log(p)
-  })
-  .catch((p) => {
-    console.log(p + 'aaa');
+  let promise_start = document.querySelector('#promise_start');
+  promise_start.addEventListener('click',() => {
+    let mypromise = myPromise('promise');
+    mypromise.then((str) => {
+      alert(str);
+    })
+    .catch((str) => {
+      alert(str);
+    });
   });
 
 
   let asyncpromise = new Promise((resolve, reject) => {
-    setTimeout(resolve,5000,'foo');
+    // setTimeout(resolve,5000,'foo');
+    setTimeout(() => {
+      resolve('async終了');
+    },3000);
   });
 
-var a;
   async function asyncfunc(){
-    a = await asyncpromise;
-    console.log(a);
+    let str = await asyncpromise;
+    alert(str);
   }
 
-  asyncfunc();
+  let async_start = document.querySelector('#async_start');
+  async_start.addEventListener('click', () => {
+    asyncfunc();
+  });
 
   </script>
 </body>
