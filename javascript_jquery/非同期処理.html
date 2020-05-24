@@ -162,6 +162,43 @@
     </code></pre>
   </div>
 
+  <div class="title">
+    <p>
+      ちなみにここまでに出ているsettimeoutとかの関数もjsのメインスレッドではなく外部に任せている
+      処理であり、jsは自分のスレッドの処理を進められる。他にもhttp通信やDB回りの処理が同様に外部に
+      処理を任せ、自分の処理を継続できるようになっている。
+    </p>
+    <input type="button" id="timer" value="timerｽﾀｰﾄ">
+    <input type="button" id="interval" value="intervalｽﾀｰﾄ">
+    <input type="button" id="clearinterval" value="intervalｸﾘｱ">
+  </div>
+  <div class="outer">
+    <pre><code>
+      let timer = document.querySelector('#timer');
+      timer.addEventListener('click',() => {
+        setTimeout(() => {
+          alert('２秒けいかしました');
+        },2000);
+      });
+
+      let myInterval;
+      let interval = document.querySelector('#interval');
+      interval.addEventListener('click',() => {
+        myInterval = setInterval(() => {
+          alert('interval中');
+        },3000);
+      });
+      let clearinterval = document.querySelector('#clearinterval');
+      clearinterval.addEventListener('click',() => {
+        clearInterval(myInterval);
+      });
+
+      requestAnimationFrameは省略　ボールのやつ見て
+      setIntervalはスキャン間インターバルを処理時間含みで一定間隔とし、
+      時間間隔を確保する
+      </code></pre>
+  </div>
+
   <script type="text/javascript">
   const worker_start = document.querySelector('#worker');
   // const worker = new Worker('worker.js');
@@ -231,6 +268,25 @@
         alert(str);
       }
     );
+  });
+
+  let timer = document.querySelector('#timer');
+  timer.addEventListener('click',() => {
+    setTimeout(() => {
+      alert('２秒けいかしました');
+    },2000);
+  });
+
+  let myInterval;
+  let interval = document.querySelector('#interval');
+  interval.addEventListener('click',() => {
+    myInterval = setInterval(() => {
+      alert('interval中');
+    },3000);
+  });
+  let clearinterval = document.querySelector('#clearinterval');
+  clearinterval.addEventListener('click',() => {
+    clearInterval(myInterval);
   });
 
   </script>
