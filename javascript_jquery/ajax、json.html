@@ -1,25 +1,124 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>React Test</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="common.css">
+  <title>ajax json</title>
 </head>
 <body>
-<script type="text/javascript">
-  var req = new XMLHttpRequest();
-  req.open('GET','https://mdn.github.io/learning-area/javascript/oojs/json/superheroes.json');
-  req.responseType = 'json';
-  // req.responseType = 'text';
-  req.send();
+  <div class="title">
+    <p>
+      JSONはネットワーク上でのデータの転送によく使用され、異なるプログラムでも大体JSONをパース、生成する機能が存在する。
+      JavaScriptでは
+      <dl>
+        <dt>JSON.parse</dt>
+        <dd>JSON→jsオブジェクトへの変換</dd>
+        <dt>JSON.stringify</dt>
+        <dd>jsオブジェクト→JSONへの変換</dd>
+      </dl>
+      がある。
+      他にもjsonそのものをファイル.jsonとして保存したり、各プロパティが配列や、オブジェクトを含んだりすることができる。
+      但し、メソッドは含むことが出来ず、プロパティも値もダブルクォーテーションで囲う、等の制約がある。
+    </p>
+    <input type="button" id="xhr" value="ajaxｽﾀｰﾄ">
+    <div id="result"></div>
+  </div>
 
-  req.onload = function(){
-    var result = req.response;
-    // result = JSON.parse(result);
-    var e = document.createElement('p');
-    e.textContent = result.squadName + "達！" + result.members[0].name + "は" + result.members[0].age + "才";
-    var b = document.querySelector('body');
-    b.appendChild(e);
-  };
+  <div class="outer">
+    ajax(XMLHttpRequest)で以下のJSONを取りに行く
+    <pre><code>
+      {
+        "squadName" : "Super Hero Squad",
+        "homeTown" : "Metro City",
+        "formed" : 2016,
+        "secretBase" : "Super tower",
+        "active" : true,
+        "members" : [
+        {
+          "name" : "Molecule Man",
+          "age" : 29,
+          "secretIdentity" : "Dan Jukes",
+          "powers" : [
+          "Radiation resistance",
+          "Turning tiny",
+          "Radiation blast"
+          ]
+        },
+        {
+          "name" : "Madame Uppercut",
+          "age" : 39,
+          "secretIdentity" : "Jane Wilson",
+          "powers" : [
+          "Million tonne punch",
+          "Damage resistance",
+          "Superhuman reflexes"
+          ]
+        },
+        {
+          "name" : "Eternal Flame",
+          "age" : 1000000,
+          "secretIdentity" : "Unknown",
+          "powers" : [
+          "Immortality",
+          "Heat Immunity",
+          "Inferno",
+          "Teleportation",
+          "Interdimensional travel"
+          ]
+        }
+        ]
+      }
+    </code></pre>
+  </div>
+  <div class="outer">
+    <pre><code>
+      let xhr_btn = document.querySelector('#xhr');
+      xhr_btn.addEventListener('click',function(){
+        var req = new XMLHttpRequest();  //xhrオブジェクト生成
+        req.open('GET','https://mdn.github.io/learning-area/javascript/oojs/json/superheroes.json');  //method、urlを指定
+        req.responseType = 'json';  //json指定によりresponseがそのままjsオブジェクトになるみたい
+        // req.responseType = 'text';
+        req.send();  //requsetを送信
+
+        req.onload = function(){  //レスポンスが帰ってきたときに発火
+          var result = req.response;  //responseにjsonが入っている
+          // result = JSON.parse(result);
+
+          var e = document.createElement('p');
+          e.textContent = result.squadName + "達！" + result.members[0].name + "は" + result.members[0].age + "才";
+          var r = document.querySelector('#result');
+          r.appendChild(e);
+          // var e2 = document.createElement('p');
+          // e2.textContent = JSON.stringify(result);
+          // b.appendChild(e2);
+        };
+      });
+    </code></pre>
+
+  </div>
+
+  <script type="text/javascript">
+  let xhr_btn = document.querySelector('#xhr');
+  xhr_btn.addEventListener('click',function(){
+    var req = new XMLHttpRequest();
+    req.open('GET','https://mdn.github.io/learning-area/javascript/oojs/json/superheroes.json');
+    req.responseType = 'json';
+    // req.responseType = 'text';
+    req.send();
+
+    req.onload = function(){
+      var result = req.response;
+      // result = JSON.parse(result);
+
+      var e = document.createElement('p');
+      e.textContent = result.squadName + "達！" + result.members[0].name + "は" + result.members[0].age + "才";
+      var r = document.querySelector('#result');
+      r.appendChild(e);
+      // var e2 = document.createElement('p');
+      // e2.textContent = JSON.stringify(result);
+      // b.appendChild(e2);
+    };
+  });
 
 </script>
 </body>

@@ -164,8 +164,7 @@
 
   <div class="title">
     <p>
-      ちなみにここまでに出ているsettimeoutとかの関数もjsのメインスレッドではなく外部に任せている
-      処理であり、jsは自分のスレッドの処理を進められる。他にもhttp通信やDB回りの処理が同様に外部に
+      ちなみにここまでに出ているsettimeoutとかの関数はjsのメインスレッドではなく外部に処理を任せているものであり、jsは自分のスレッドの処理を進められる。他にもhttp通信やDB回りの処理が同様に外部に
       処理を任せ、自分の処理を継続できるようになっている。
     </p>
     <input type="button" id="timer" value="timerｽﾀｰﾄ">
@@ -176,7 +175,8 @@
     <pre><code>
       let timer = document.querySelector('#timer');
       timer.addEventListener('click',() => {
-        setTimeout(() => {
+        setTimeout(() => {  //ここでtimerに処理を任せて、2秒後にこの関数内の処理をしてもらう
+                            //タイマーのタイムアップを待たずにjsは次の処理へ移る
           alert('２秒けいかしました');
         },2000);
       });
