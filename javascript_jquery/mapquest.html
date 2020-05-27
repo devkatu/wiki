@@ -2,11 +2,13 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="common.css">
     <title>Mapquest example</title>
     <style>
       #map {
-        width: 100vw;
-        height: 100vh;
+        width: 50vw;
+        height: 50vh;
+        margin: 0 auto;
       }
     </style>
     <script src="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.js"></script>
@@ -29,8 +31,96 @@
     </script>
   </head>
   <body>
-    <h1>Simple Mapquest example</h1>
+    <div class="title">
+      <h1>ブラウザAPI</h1>
+      <h2>文書操作</h2>
+      <p>Document Window Navigator API</p>
+      <p>webブラウザは上記３つの構成からなりたつ</p>
+      <figure>
+        <img src="document-window-navigator.png" alt="">
+        <figcaption>document window navigator の関係</figcaption>
+      </figure>
+      <ul>
+        <li>windowはブラウザの枠を指し、そのものの大きさや含まれる文書、関係するデータをクライアント側
+        ローカルDBで保存したり、ウィンドウへのイベントハンドラの追加ができる。</li>
+        <li>Navigatorはユーザーエージェントを表し、位置情報、ユーザが好む言語、ユーザのウェブカムからの
+          録画データ、などを取得できる</li>
+        <li>Documentは実際の読込まれるページであり、要素の参照、テキスト変更、スタイル変更、要素の追加・削除などができる</li>
+      </ul>
+      <div class="outer">
+        <p>documentのAPIでは下記を抑えておく</p>
+        <pre><code>
+          document.querySelector('セレクタ');  //Document.getElementById()は古い
+          document.querySelectorAll('セレクタ');
+          document.createElement('要素');  //要素の新規作成したものを返す
+          document.createTextNode('テキスト');  //テキストノードの新規作成したものを返す
+          要素.appendChild(ノード);  //要素の子にノードを追加する
+          要素.removeChild(ノード);  //要素の子からノードを削除する
+          要素.style.プロパティ = '値';  //要素の指定したプロパティのスタイルに値を設定する。プロパティはキャメルケースで書く
+          要素.setAttribute('class', 'highlight');  //第一引数の属性に値を設定する
+        </code></pre>
+      </div>
 
+
+      <h2>サーバーからのデータ取得</h2>
+      <p>XMLHttpRequest　fetch</p>
+
+      <h2>グラフィックの描画</h2>
+      <p>canvas</p>
+
+      <h2>動画や音声関係操作</h2>
+      <p>HTMLMediaElement Web Audio API　WebRTC　</p>
+
+      <h2>デバイスapi</h2>
+      <p>Geolocation Notifications Vibration</p>
+
+      <h2>クライアント側データ保持</h2>
+      <p>WebStorage　IndexedDB</p>
+
+
+          　
+
+          　
+          　
+          　
+    </div>
+    <div class="title">
+      <h1>サードパーティ製API</h1>
+      <p>
+        サードパーティ製のWEB APIは基本的に、
+        <ul>
+          <li>jsライブラリをCDNとかで読込む</li>
+          <li>APIキーを設定する…ブラウザAPIのセキュリティはユーザーへの使用許可伺い(カメラへのアクセス権限とか)
+          とかで担保されるが、サードパーティAPIは基本的にはAPIキーを要求されることが多い。APIプロバイダはAPIキー
+          を発行して使用を許可し？、API開発者が悪意のある事をしようとするとAPIキーを取り消すような感じでセキュリティを担保する</li>
+        </ul>
+        下記はMAP questの例
+      </p>
+    </div>
+    <div class="outer">
+      <pre><code>
+        // 当然ながらjsライブラリをCDNとかで読込む
+        &lt;script src="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.js"&gt;&lt;/script&gt;
+        &lt;link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.css"/&gt;
+        var L;
+
+        // APIキー
+        L.mapquest.key = 'Y';
+
+        // mapというIDの要素にmapを展開する
+        window.onload = function(){
+          var map = L.mapquest.map('map', {
+            // オプションとして渡すオブジェクト。詳細はレファレンスを見ること
+            center: [40.490769, 140.242631],
+            layers: L.mapquest.tileLayer('hybrid'),
+            zoom: 12
+          });
+          map.addControl(L.mapquest.control({position: 'bottomleft'}));  // コントロールUIを付け加える
+        };
+      </code></pre>
+    </div>
+
+    <h1>Simple Mapquest example</h1>
     <div id="map"></div>
   </body>
 </html>
