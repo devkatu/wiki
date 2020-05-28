@@ -19,6 +19,8 @@
       がある。
       他にもjsonそのものをファイル.jsonとして保存したり、各プロパティが配列や、オブジェクトを含んだりすることができる。
       但し、メソッドは含むことが出来ず、プロパティも値もダブルクォーテーションで囲う、等の制約がある。
+
+      しかしxhrはやや古いものでfetchに代替されつつある。
     </p>
     <input type="button" id="xhr" value="ajaxｽﾀｰﾄ">
     <div id="result"></div>
@@ -97,6 +99,30 @@
 
   </div>
 
+  <div class="title">
+    <p>fetchの例</p>
+    <p>こっちの方が自然な文体で書ける。</p>
+    <input type="button" id="fetch" value="fetchｽﾀｰﾄ">
+    <div id="fetch_elm"></div>
+  </div>
+  <div class="outer">
+    xhrと同じjsonを読込んでいる
+    <pre><code>
+      let fetch_btn = document.querySelector('#fetch');
+      fetch_btn.addEventListener('click',() => {
+        fetch('https://mdn.github.io/learning-area/javascript/oojs/json/superheroes.json')
+        .then((response) => {
+          return response.text();
+        }).then((text) => {
+          let elm = document.querySelector('#fetch_elm');
+          let jobj = JSON.parse(text);
+          elm.textContent = jobj.squadName + "の戦隊をfetchしました";
+        });
+      });
+    </code></pre>
+  </div>
+
+
   <script type="text/javascript">
   let xhr_btn = document.querySelector('#xhr');
   xhr_btn.addEventListener('click',function(){
@@ -118,6 +144,18 @@
       // e2.textContent = JSON.stringify(result);
       // b.appendChild(e2);
     };
+  });
+
+  let fetch_btn = document.querySelector('#fetch');
+  fetch_btn.addEventListener('click',() => {
+    fetch('https://mdn.github.io/learning-area/javascript/oojs/json/superheroes.json')
+    .then((response) => {
+      return response.text();
+    }).then((text) => {
+      let elm = document.querySelector('#fetch_elm');
+      let jobj = JSON.parse(text);
+      elm.textContent = jobj.squadName + "の戦隊をfetchしました";
+    });
   });
 
 </script>

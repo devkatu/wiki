@@ -26,6 +26,18 @@
     alert(e.data);  //postMessageで開始したスクリプトが終了(スクリプト側のpostMessage実行のタイミング)
                     //するとonmessageイベントが発火する
   };
+
+
+
+  // worker.js側の処理
+      onmessage = function(e){
+        let myDate;
+        for(let i = 0; i < 1000000; i++){
+          let date = new Date();
+          myDate = date;
+        }
+        postMessage(myDate);
+      }
     </code></pre>
     <pre>
 
@@ -201,7 +213,7 @@
 
   <script type="text/javascript">
   const worker_start = document.querySelector('#worker');
-  // const worker = new Worker('worker.js');
+  const worker = new Worker('worker.js');
   // originのやつでローカル環境で実行するとerror
 
   worker_start.addEventListener('click',function(){

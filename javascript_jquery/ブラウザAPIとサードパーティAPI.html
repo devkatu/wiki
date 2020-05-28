@@ -3,8 +3,11 @@
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="common.css">
-    <title>Mapquest example</title>
+    <title>ブラウザAPIとサードパーティAPI</title>
     <style>
+    h2{
+      text-align: left;
+    }
       #map {
         width: 50vw;
         height: 50vh;
@@ -63,20 +66,52 @@
 
 
       <h2>サーバーからのデータ取得</h2>
-      <p>XMLHttpRequest　fetch</p>
+      <p>XMLHttpRequest　fetchによるもの</p>
+      <p><a href="XHRとfetchによるajaxとjson.html">こちらを参照</a></p>
 
       <h2>グラフィックの描画</h2>
-      <p>canvas</p>
+      <p>canvasによるもの</p>
+      <p><a href="バウンドボールデモでオブジェクト実践とcanvasAPI.html">こちらを参照</a></p>
 
       <h2>動画や音声関係操作</h2>
-      <p>HTMLMediaElement Web Audio API　WebRTC　</p>
+      <p>HTMLMediaElement Web Audio API　WebRTC　によるもの</p>
 
       <h2>デバイスapi</h2>
-      <p>Geolocation Notifications Vibration</p>
+      <p>Geolocation Notifications Vibration　によるもの</p>
 
       <h2>クライアント側データ保持</h2>
-      <p>WebStorage　IndexedDB</p>
+      <p>WebStorage　IndexedDBによるもの</p>
+      <p>クライアント側でのデータ保存はクッキーとかが初期にあったが容量が小さかったり
+      セキュリティに問題があったり複雑なデータが保持できなかったりで上記に変わりつつある。
+      Web Storage の sessionStorageはセッション中に保持、 localStorage はセッションが
+      切れてもずっとローカルに保持し続ける。(但しドメイン毎に違うストレージとなる。違う
+      ドメインのデータ見られたらまずいよね)</p>
 
+      <div class="outer">
+        <pre><code>
+          // nameをキーにChrisの値をセット
+          localStorage.setItem('name','Chris');
+
+          // nameのキーの値を取得
+          var myName = localStorage.getItem('name');
+
+          // nameのキーの値を削除
+          localStorage.removeItem('name');
+
+          // 一気に削除
+          localStorage.clear();
+
+          // 連想配列,オブジェクトのプロパティ的にも扱える
+          localStorage['name'] = 'Chris';
+          localStorage.name = 'Chris';
+
+          // オブジェクトも入れられる。・・・文字列に変換してから(json)。でないとobjectという文字が保存されてしまうみたい
+          let storage = JSON.parse(localStorage['barcodes'] || '{}');
+          ～ storageオブジェクトを用いていろいろ処理 ～
+          localStorage['barcodes'] = JSON.stringify(storage);
+
+        </code></pre>
+      </div>
 
           　
 

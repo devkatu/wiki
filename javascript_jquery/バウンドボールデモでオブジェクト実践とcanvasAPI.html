@@ -18,6 +18,51 @@
   var width = canvas.width = window.innerWidth;
   var height = canvas.height = window.innerHeight;
 
+// 塗りつぶし矩形を書く
+  // ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';  //塗りつぶし色
+  // ctx.fillRect(0, 0, width, height);  //左上頂点のx,y座標と幅,高さ
+// 塗りつぶし無し矩形
+  // ctx.strokeStyle = 'rgba(0, 0, 0, 0.25)';  //線の色
+  // ctx.strokeRect(0, 0, width, height);  //左上頂点のx,y座標と幅,高さ
+
+// 矩形以外は自分でパスを描画する必要がある
+// beginPath()→lineWidthやfillStyleとかで線幅や色指定
+// →moveTo()…パスをトレースせずに指定した座標へジャンプ…や
+// lineTo()…指定した座標へ線を引くを実行
+// →fill()やstroke()で塗りつぶしや線のみを引く
+
+// 三角形
+  // ctx.fillStyle = 'rgb(255, 0, 0)';
+  // ctx.beginPath();
+  // ctx.moveTo(50, 50);
+  // ctx.lineTo(150, 50);
+  // let triHeight = 50 * Math.tan(degToRad(60));
+  // ctx.lineTo(100, 50+triHeight);
+  // ctx.lineTo(50, 50);
+  // ctx.fill();
+
+// 塗りつぶし円
+  // ctx.beginPath();  // canvasに形を書き始める宣言
+  // ctx.fillStyle = this.color;
+  // ctx.arc(this.x, this.y, this.size, 0, 2 *Math.PI);  // 中心座標、半径、円弧の開始から終了角度のrad指定
+  // ctx.fill();  // canvasに書けという命令
+
+// 塗りつぶしなし円
+  // ctx.beginPath();  // canvasに形を書き始める宣言
+  // ctx.strokeStyle = this.color;
+  // ctx.arc(this.x, this.y, this.size, 0, 2 *Math.PI);  // 中心座標、半径、円弧の開始から終了角度のrad指定
+  // ctx.stroke();  // canvasに書けという命令
+
+// こんな事もできる。パックマンスタイル
+  // ctx.fillStyle = 'yellow';
+  // ctx.beginPath();
+  // ctx.arc(200, 106, 50, -0.25 * Math.PI, 0.25 * Math.PI, true);  //-45度から45度の
+  // ところまで線を引く。最後にtrueをつけると反時計回りに線を引くことになる
+  // ctx.lineTo(200, 106);  //中心点へ戻る。これがないと弧を書き始めた点に勝手に
+  // パスを書く事になる。閉じたパスにしなければ基本開始したパスへもどる
+  // ctx.fill();
+
+
   // ボールを管理する配列
   var balls = [];
 
