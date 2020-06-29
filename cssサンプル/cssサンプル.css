@@ -438,6 +438,12 @@ li{
   background: linear-gradient(45deg, yellow 20%,pink 80%);
 }
 
+.bg6{
+  height: 300px;
+  background: url("star.png") no-repeat center top / auto,
+  url("star.png") no-repeat center bottom / cover;
+}
+
 input[type="text"],
 input[type="email"],
 input[type="password"],
