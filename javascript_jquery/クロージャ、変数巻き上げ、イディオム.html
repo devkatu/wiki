@@ -1,0 +1,403 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>クロージャとonclick</title>
+  <style type="text/css">
+    *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body h1, h2{
+    text-align: center;
+    margin-top: 40px;
+  }
+  body > p{
+    text-align: center;
+  }
+  .clr_fix::after{
+    content:"";
+    display: block;
+    clear:both;
+  }
+  .title{
+    width: 40%;
+    margin: 30px auto 0;
+  }
+  .desc{
+    font-size: 12px;
+  }
+  .desc2{
+    font-size: 12px;
+    font-weight: bold;
+    word-break:break-all;
+  }
+  .outer{
+    width: 40%;
+    margin: 10px auto 0;
+    background-color: #E6ECF2;
+    padding: 10px;
+    display: table;
+  }
+  .inner{
+    background-color: #EEF2F6;
+    padding:10px;
+    border: 1px solid white;
+    position: relative;
+
+  }
+
+  .box{
+    width: 100px;
+    height: 100px;
+    border: solid 1px black;
+    background-color: pink;
+    word-break:break-all;
+  }
+
+  .t_c{
+    display: table-cell;
+    padding: 10px;
+  }
+
+  ul{
+    margin-left:20px;
+  }
+
+  .listbox{
+    width: 50%;
+    margin: 0 auto;
+    min-width: 300px;
+  }
+
+  .add{
+    border-radius: 50%;
+    background-color: blue;
+  }
+  </style>
+</head>
+
+<body>
+
+
+  <div class="title">
+    <h3>クロージャ</h3>
+    <p class="desc">
+      ★クロージャについて<br>
+      まず前提として<br>
+      ・関数の定義時にはその関数の関数オブジェクトが作られる。new Function("関数式") みたいな<br>
+      ・関数の実行時には<b>その関数内のローカル変数と引数を持つ新しいスコープオブジェクトが作られ、そこに値が保存</b>される。<br>
+      　さらにその関数を呼出したときに参照したグローバルスコープとかのスコープオブジェクトを継承(スコープチェーン)する。<br>
+      　この<b>スコープオブジェクトは参照されている限り存在し続け、参照が無くなるとガベコレ</b>される。<br><br>
+    
+      関数のなかに関数をネストすると、外側の関数(エンクロージャ)を"実行したとき"に、外側の関数内で定義された変数と引数の<br>
+      スコープオブジェクトを作成する。内側にネストされた関数はそのスコープオブジェクトを参照するので、<br>
+      この<b>ネストされた関数を外部にreturnしたりすると、外側の関数がreturnしても、そのスコープオブジェクトは<br>
+      ネストされた(外部にreturnした)関数から参照され続けるのでガベコレされず残り続ける。</b><br><br>
+    
+      さらにエンクロージャを実行するたびに新しいスコープオブジェクトができるので<br>
+      <b>同じエンクロージャから作成したものでも、各々のクロージャで違う値を持ち続ける</b>ことができる。<br><br>
+      
+      まあクラスからオブジェクト作るみたいなもん。javascriptのオブジェクトは変更不可なプロパティは持てないけど<br>
+      クロージャならできるみたいな感じ。<br>
+    
+      詳しくはここのサイト　<a href="https://postd.cc/how-do-javascript-closures-work-under-the-hood/">ここ</a>
+    </p>
+  </div>
+  <div class="outer">
+    <div class="inner">
+      <pre><code>
+  // ●例えばadd_the_handlers関数を使って上のliに順次onclickを付けていく
+  window.onload = function () {
+    var element = document.getElementById("z01").getElementsByTagName("li");
+    for (var i = 0; i < element.length; i += 1) {
+      add_the_handlers(element);
+    }
+  }
+      </code></pre>
+      <ul id="z01">
+        <li><a href="#">0</a></li><!-- 4 -->
+        <li><a href="#">1</a></li><!-- 4 -->
+        <li><a href="#">2</a></li><!-- 4 -->
+        <li><a href="#">3</a></li><!-- 4 -->
+      </ul>
+      <pre><code>
+
+  // ×　ループの時にクロージャ作ろうとして下記のようにすると誤り。
+  // 下の例ではonclickメソッドはfor文終了後のi…4にアクセスしてしまう。
+  // これはvar iが関数スコープを持ち、なおかつonclickが実行されるときに
+  // スコープオブジェクトが作られる為、
+  // どのonclickでもvar iを参照すると、ループ終了後のi=4となってしまう。
+  // なので、ブロックスコープを持つlet i;にしてfor文中に入れておくか、
+  // 次の例に示すようなfor文ループ時の変数iのコピーを渡せるようなクロージャとする必要がある。
+  var add_the_handlers = function (nodes) {
+    var i;
+    for (i = 0; i < nodes.length; i += 1) {
+      nodes[i].onclick = function (e) {
+        alert(i);
+      };
+    }
+  };
+
+
+  // ★パターン1
+  // onclickに代入される即時関数にadd_the_handlers関数で定義した
+  // 変数iを渡す(コピー)事でこの即時関数でのローカル変数となり
+  // ハンドラとして返される内部の関数はその外部のiにアクセスすることになる
+  var add_the_handlers = function (nodes) {
+    var i;
+    for (i = 0; i < nodes.length; i += 1) {
+      nodes[i].onclick = (function (i) {
+        return function (e) {
+          alert(i);  //保存されたiを実行できる
+        };
+      })(i);  // 即時関数を定義してその場で変数iを渡し"実行"している
+              // これによりループの回数分即時関数のスコープオブジェクトが作られて、
+              // iは各々保存され、onclickからずっと参照することとなり、
+              // クロージャとして意図する所の動作となる
+    }
+  };
+
+  
+  //★パターン2
+  // パターン1の即時関数をhelperというデリゲートに代入して"実行"するパターン
+  var add_the_handlers = function (nodes) {
+    var helper = function (i) {
+      return function (e) {
+        alert(i);
+      };
+    };
+    var i;
+    for (i = 0; i < nodes.length; i += 1) {
+      nodes[i].onclick = helper(i); //ここで"実行"することにより
+                                    //ループ回数分のhelper関数のスコープオブジェクトを作成する
+    }
+  };
+
+
+  //★パターン3
+  // javascriptでオセロのやつで使ってたパターン
+  // パターン1を変形し、ローカル変数jを新たに定義し、変数iを代入、
+  // onclickメソッドはこのjが記憶されるのでここにアクセスする。
+  var add_the_handlers = function (nodes) {
+    var i;
+    for (i = 0; i < nodes.length; i += 1) {
+      // 下記即時関数自体が"実行"される事でループ回数分のスコープオブジェクトが作成される
+      (function () {
+        var j = i;
+        nodes[i].onclick = function (e) {
+          alert(j);
+        };
+      }());
+    }
+  };
+
+
+  //★パターン4
+  // 1,3を合わせたような形。パターン3のような新たにローカル変数を
+  // 作らずに引数にiを渡して即時関数を実行し、コピーを渡している
+  var add_the_handlers = function (nodes) {
+    var i;
+    for (i = 0; i < nodes.length; i += 1) {
+      (function (i) {
+        nodes[i].onclick = function (e) {
+          alert(i);
+        };
+      }(i));
+    }
+  };
+      </code></pre>
+    </div>
+  </div>
+
+  <div class="title">
+    <h3>変数のスコープと巻き上げ</h3>
+    <p class="desc">  javascriptの変数スコープは基本的には他言語と同じくスコープチェーン(ある変数を参照するとき
+      自分のブロックで定義されているか確認し、なければその親のブロックへと続く)であるが、
+      ifやfor文の時のブロックスコープが無く、 関数ブロックでのみスコープのみが分かれる。
+      加えて内部の関数の途中で定義した変数はその関数内の全てで有効となり一行上のcosole.logでは
+      未定義となり出力不可となる。これを変数の巻き上げといい、関数内で使用する変数は関数の
+      最初に定義しておくとよい</p>
+  </div>
+  <div class="outer">
+    <div class="inner">
+      <pre><code>
+        (function () {
+          var val = "global";
+          (function () {
+            console.log(val);  //変数の巻き上げが起こりvalの値は未定義となる
+            var val = "local";  //ここをコメントかすると上のconsole.logはglobalになる
+            console.log(val);
+          })();
+          console.log(val);
+        })();
+      </code></pre>
+    </div>
+  </div>
+
+  <div class="title">
+    <h3>イディオムとか</h3>
+    <p class="desc">地味に役立つしちょっとドヤできるかもなイディオム</p>
+  </div>
+  <div class="outer">
+    <div class="inner">
+      <pre><code>
+  // +演算子をつける事で数値変換出来そうな文字列は数値化できる。しかも高速らしい
+  var v = "123";
+  console.log(+v + 100) // 223
+
+
+  // +演算子で文字列リテラルがあればその時点から文字列化できる
+  var n = 123;
+  console.log(n + 123); //246
+  console.log(n + "" + 123); //123123
+
+
+  // 変数oがnullかのチェックもできる。短絡評価なのでnullなら実行しない
+  var name = o && o.getName();
+
+
+  // スコープ化
+  // 中断のfunction(){}()中で弄った変数は外側には影響しない
+  var a = 1;
+  var b = 2;
+  (function() {
+    var b = 3;
+    a += b;
+  })();
+  a; // 4
+  b; // 2
+      </code></pre>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    // ★クロージャについて
+    // まず前提として
+    // ・関数の定義時にはその関数の関数オブジェクトが作られる。new Function("関数式") みたいな
+    // ・関数の実行時にはその関数内のローカル変数と引数を持つ新しいスコープオブジェクトが作られ、そこに値が保存される。
+    // 　さらにその関数を呼出したときに参照したグローバルスコープとかのスコープオブジェクトを継承(スコープチェーン)する。
+    // 　このスコープオブジェクトは参照されている限り存在し続け、参照が無くなるとガベコレされる。
+
+    // 関数のなかに関数をネストすると、外側の関数(エンクロージャ)を"実行したとき"に、外側の関数内で定義された変数と引数の
+    // スコープオブジェクトを作成する。内側にネストされた関数はそのスコープオブジェクトを参照するので、
+    // このネストされた関数を外部にreturnしたりすると、外側の関数がreturnしても、そのスコープオブジェクトは
+    // ネストされた(外部にreturnした)関数から参照され続けるのでガベコレされず残り続ける。
+
+    // さらにエンクロージャを実行するたびに新しいスコープオブジェクトができるので
+    // 同じエンクロージャから作成したものでも、各々のクロージャで違う値を持ち続けることができる。
+    
+    // まあクラスからオブジェクト作るみたいなもん。javascriptのオブジェクトは変更不可なプロパティは持てないけど
+    // クロージャならできるみたいな感じ。
+
+    // 詳しくはここのサイト　https://postd.cc/how-do-javascript-closures-work-under-the-hood/
+    window.onload = function () {
+      var element = document.getElementById("z01").getElementsByTagName("li");
+      for (var i = 0; i < element.length; i += 1) {
+        add_the_handlers(element);
+      }
+    }
+    /*
+    // ループの時にクロージャ作ろうとして下記のようにすると誤り。下の例ではonclickメソッドはfor文終了後のi…4にアクセスしてしまう。
+    // これはvar iが関数スコープを持ち、なおかつonclickが実行されるときにスコープオブジェクトが作られ為、
+    // どのonclickでもvar iを参照すると、ループ終了後のi=4となってしまう。
+    // なので、ブロックスコープを持つlet i;にしてfor文中に入れておくか、次の例に示すようなfor文ループ時の変数iのコピーを渡せるようなクロージャとする必要がある。
+
+    var add_the_handlers = function (nodes) {
+      var i;
+      for (i = 0; i < nodes.length; i += 1) {
+        nodes[i].onclick = function (e) {
+          alert(i);
+        };
+      }
+    };
+  */
+
+    //パターン1
+    // onclickに代入される即時関数にadd_the_handlers関数で定義した
+    // 変数iを渡す(コピー)事でこの即時関数でのローカル変数となり
+    // ハンドラとして返される内部の関数はその外部のiにアクセスすることになる
+    var add_the_handlers = function (nodes) {
+      var i;
+      for (i = 0; i < nodes.length; i += 1) {
+        nodes[i].onclick = (function (i) {
+          return function (e) {
+            alert(i);  //保存されたiを実行できる
+          };
+        })(i);  // 即時関数を定義してその場で変数iを渡し"実行"している
+                // これによりループの回数分即時関数のスコープオブジェクトが作られて、
+                // iは各々保存され、onclickからずっと参照することとなり、クロージャとして意図する所の動作となる
+      }
+    };
+
+    //パターン2
+    // パターン1の即時関数をhelperというデリゲートに代入して"実行"するパターン
+    var add_the_handlers = function (nodes) {
+      var helper = function (i) {
+        return function (e) {
+          alert(i);
+        };
+      };
+      var i;
+      for (i = 0; i < nodes.length; i += 1) {
+        nodes[i].onclick = helper(i); //ここで"実行"することによりループ回数分のhelper関数のスコープオブジェクトを作成する
+      }
+    };
+
+    //パターン3
+    // javascriptでオセロのやつで使ってたパターン
+    // パターン1を変形し、ローカル変数jを新たに定義し、変数iを代入、
+    // onclickメソッドはこのjが記憶されるのでここにアクセスする。
+    var add_the_handlers = function (nodes) {
+      var i;
+      for (i = 0; i < nodes.length; i += 1) {
+        // 下記即時関数自体が"実行"される事でループ回数分のスコープオブジェクトが作成される
+        (function () {
+          var j = i;
+          nodes[i].onclick = function (e) {
+            alert(j);
+          };
+        }());
+      }
+    };
+
+    //パターン4
+    // 1,3を合わせたような形。パターン3のような新たにローカル変数を
+    // 作らずに引数にiを渡して即時関数を実行し、コピーを渡している
+    var add_the_handlers = function (nodes) {
+      var i;
+      for (i = 0; i < nodes.length; i += 1) {
+        (function (i) {
+          nodes[i].onclick = function (e) {
+            alert(i);
+          };
+        }(i));
+      }
+    };
+
+
+    // 変数のスコープと巻き上げ
+    // javascriptの変数スコープは基本的には他言語と同じくスコープチェーン(ある変数を参照するとき
+    // 自分のブロックで定義されているか確認し、なければその親のブロックへと続く)であるが、
+    // ifやfor文の時のブロックスコープが無く、 関数ブロックでのみスコープのみが分かれる。
+    // 加えて内部の関数の途中で定義した変数はその関数内の全てで有効となり一行上のcosole.logでは
+    // 未定義となり出力不可となる。これを変数の巻き上げといい、関数内で使用する変数は関数の
+    // 最初に定義しておくとよい
+    (function () {
+      var val = "global";
+      (function () {
+        console.log(val);  //変数の巻き上げが起こりvalの値は未定義となる
+        var val = "local";  //ここをコメントかすると上のconsole.logはglobalになる
+        console.log(val);
+      })();
+      console.log(val);
+    })();
+
+  </script>
+</body>
+
+</html>

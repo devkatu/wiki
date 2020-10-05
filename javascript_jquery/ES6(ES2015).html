@@ -1,0 +1,432 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>ES6絡み</title>
+  <style type="text/css">
+    *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body h1, h2{
+    text-align: center;
+    margin-top: 40px;
+  }
+  body > p{
+    text-align: center;
+  }
+  .clr_fix::after{
+    content:"";
+    display: block;
+    clear:both;
+  }
+  .title{
+    width: 40%;
+    margin: 30px auto 0;
+  }
+  .desc{
+    font-size: 12px;
+  }
+  .desc2{
+    font-size: 12px;
+    font-weight: bold;
+    word-break:break-all;
+  }
+  .outer{
+    width: 40%;
+    margin: 10px auto 0;
+    background-color: #E6ECF2;
+    padding: 10px;
+    display: table;
+  }
+  .inner{
+    background-color: #EEF2F6;
+    padding:10px;
+    border: 1px solid white;
+    position: relative;
+
+  }
+
+  .box{
+    width: 100px;
+    height: 100px;
+    border: solid 1px black;
+    background-color: pink;
+    word-break:break-all;
+  }
+
+  .t_c{
+    display: table-cell;
+    padding: 10px;
+  }
+
+  ul{
+    margin-left:20px;
+  }
+
+  .listbox{
+    width: 50%;
+    margin: 0 auto;
+    min-width: 300px;
+  }
+
+  .add{
+    border-radius: 50%;
+    background-color: blue;
+  }
+  </style>
+</head>
+
+<body>
+
+  <div class="title">
+    <h3>let const</h3>
+    <p class="desc">letとconstで変数を宣言できる。
+      letは再宣言が不可能な宣言であり、constは再宣言と再代入が不可能な宣言。
+      間違えて変数を二重に定義しまったり、予期せぬ再代入を防ぐことができる。
+      また、どちらもブロックスコープをもつ。
+    </p>
+  </div>
+  <div class="outer">
+    <div class="inner">
+      <pre><code>
+  let name = 'soarflat';
+  console.log(name); // => soarflat
+
+  name = 'SoarFlat'; // 再代入する
+  console.log(name); // => SoarFlat
+
+  let name = 'SOARFLAT'; // 再宣言するとエラーになる
+  
+
+  
+  const NAME = 'soarflat';
+  console.log(NAME); // => soarflat
+
+  NAME = 'SOARFLAT'; // 再代入するとエラーになる
+
+
+
+  if (true) {
+    var a = 1;
+    let b = 2;
+    const c = 3;
+    console.log(a); // => 1
+    console.log(b); // => 2
+    console.log(c); // => 3
+  }
+
+  console.log(a); // => 1
+  console.log(b); // => undefined
+  console.log(c); // => undefined
+      </code></pre>
+    </div>
+  </div>
+
+  
+  <div class="title">
+    <h3>アロー関数</h3>
+    <p class="desc"></p>
+  </div>
+  <div class="outer">
+    <div class="inner">
+      <pre><code>
+  const fn = (a, b) => {
+    return a + b;
+  };
+  
+  // 単一式の場合はブラケットやreturnを省略できる
+  const fn = (a, b) => a + b;
+  
+  // ブラケットやreturnを省略してオブジェクトを返したい場合は`()`で囲む
+  const fn = (a, b) => ({ sum: a + b });
+      </code></pre>
+    </div>
+  </div>
+
+
+  <div class="title">
+    <h3>Class構文</h3>
+    <p class="desc">Class構文はprototypeベースのクラス定義構文の糖衣構文。</p>
+  </div>
+  <div class="outer">
+    <div class="inner">
+      <pre><code>
+  // prototypeベースの構文
+  var Person = function(name) {
+    this.name = name;
+  };
+  
+  Person.prototype.sayHello = function() {
+    console.log("Hello, I'm " + this.getName());
+  };
+  
+  Person.prototype.getName = function() {
+    return this.name;
+  };
+
+  // Class構文
+  class Person {
+    constructor(name) {
+      this.name = name;
+    }
+    sayHello() {
+      console.log("Hello, I'm " + this.getName());   
+    }
+    getName() {
+      return this.name;
+    }
+  }
+  // Personを敬承
+  // 同じメソッド名であるsayHelloは敬承先のものに上書きされる。
+  class Teacher extends Person {
+    sayHello() {
+      console.log("Hi, I'm " + this.getName());   
+    }
+  }
+
+      </code></pre>
+    </div>
+  </div>
+
+
+  <div class="title">
+    <h3>デフォルト引数</h3>
+    <p class="desc">関数になにも引数を与えなかった時のデフォルト値を設定</p>
+  </div>
+  <div class="outer">
+    <div class="inner">
+      <pre><code>
+  // 引数の値を乗算する関数
+  function multiply (a = 5) {
+    return a * a;
+  }
+  
+  console.log(multiply()) // => 25
+  console.log(multiply(10)) // => 100
+      </code></pre>
+    </div>
+  </div>
+
+
+  <div class="title">
+    <h3>分割代入</h3>
+    <p class="desc">配列やオブジェクトからデータを取り出して個別の変数に代入できる。</p>
+  </div>
+  <div class="outer">
+    <div class="inner">
+      <pre><code>
+  // 従来の構文
+  var a = 1;
+  var b = 2;
+  var c = {d: 3};
+  var d = 3;
+
+
+  // 配列の分割代入の構文
+  const [a, b, c, d] = [1, 2, {d: 3}, 3];
+
+
+  // オブジェクトの分割代入の構文
+  const object = {a: 1, b: 2, c: {d: 3}};
+  const {a, b, c, c: {d}} = object;
+  console.log(a, b, c, d); // => 1 2 {d: 3} 3
+
+  const person = {
+    name: 'soarflat',
+    country: 'Japan'
+  };
+  const {name, country} = person;
+  console.log(name); // => soarflat
+  console.log(country); // => Japan
+
+  function fullName ({first, last}) {
+    return first + last;
+  }
+  console.log(fullName({ first: 'John', last: 'Doe'})); // => JohnDoe
+      </code></pre>
+    </div>
+  </div>
+
+
+  <div class="title">
+    <h3>テンプレート文字列</h3>
+    <p class="desc">``（バッククオート）で文字列を囲むと、${}で文字列内に変数展開ができ、改行も反映できる。(ヒアドキュメント)</p>
+  </div>
+  <div class="outer">
+    <div class="inner">
+      <pre><code>
+  const name = 'soarflat';
+
+  console.log(`My name is ${name}`); // => My name is soarflat
+  console.log(`My
+  name
+  is
+  ${name}`); // => My
+            //    name
+            //    is
+            //    soarflat
+      </code></pre>
+    </div>
+  </div>
+
+
+  <div class="title">
+    <h3>スプレッド構文...</h3>
+    <p class="desc">複数の引数 (関数呼び出しのため) または複数の要素 (配列リテラルのため)、あるいは複数の値 (分割代入のため) が置かれるところで式が展開されます。</p>
+  </div>
+  <div class="outer">
+    <div class="inner">
+      <pre><code>
+  // 可変長引数（レストパラメータ…定義側で楽する）
+  // 関数の仮引数にスプレッド構文を利用すると可変長引数を配列で受け取ることができる。
+  function func (...r) {
+    console.log(r);
+    console.log(r[0]);
+  }
+  func(1, 2, 3, 4, 5); // => [1, 2, 3, 4, 5]
+                      // => 1
+
+  // 配列の展開(呼び出し側で楽する)
+  // スプレッド構文を利用すると配列の展開ができる。
+  function func (x, y, z) {
+    console.log(x);
+    console.log(y);
+    console.log(z);
+  }
+  const array = [1, 2, 3]
+  func(...array); // => 1
+                  // => 2
+                  // => 3
+
+  // 分割代入時に複数の値を1つの配列にまとめる
+  //  分割代入時にスプレッド構文を利用すると複数の値を1つの配列にまとめられる。
+  const [a, b, ...c] = ['a', 'b', 'c', 'C'];
+  console.log(a); // => a
+  console.log(b); // => b
+  console.log(c); // => ["c", "C"]
+  
+  // 配列の結合
+  // スプレッド構文を利用すると配列の結合が簡単にできる。
+  const array = [1, 2, 3];
+  const array2 = [...array, 4, 5, 6];
+  console.log(array2); // => [1, 2, 3, 4, 5, 6]
+      </code></pre>
+    </div>
+  </div>
+
+
+  <div class="title">
+    <h3>for...of</h3>
+    <p class="desc">反復可能なオブジェクト（配列等）に対して反復処理（ループ処理）ができる。
+      for...inは配列のインデックスやオブジェクトのプロパティ等を処理できるのに対し
+      for...ofは配列の値（要素）等を処理できる。</p>
+  </div>
+  <div class="outer">
+    <div class="inner">
+      <pre><code>
+  // for ... in はインデックス
+  const array = [65, 55, 80, 100];
+  for(const index in array) {
+    console.log(index);
+  }
+  // => 0
+  // => 1
+  // => 2
+  // => 3
+  for(const index in array) {
+    console.log(array[index]);
+  }
+  // => 65
+  // => 55
+  // => 80
+  // => 100
+  const obj = {name: 'soarflat', country: 'Japan'}
+  
+  for(const key in obj) {
+    console.log(key);
+  }
+  // => name
+  // => country
+
+
+  // for ... of は配列の値
+  const array = [65, 55, 80, 100];
+  for(const value of array) {
+    console.log(value);
+  }
+  // => 65
+  // => 55
+  // => 80
+  // => 100
+      </code></pre>
+    </div>
+  </div>
+
+
+  <div class="title">
+    <h3>import export</h3>
+    <p class="desc">
+export には<br>
+単一値  →export default<br>
+複数値  →export<br>
+混在系がある →上記両方あり<br>
+基本的にはexportしたもの全てをオブジェクトで返すような仕組みになる<br>
+
+これらをimportする側は<br>
+import 単一値を受取る識別子 from 'モジュール名';<br>
+import {複数値を受取る識別子１, 複数値を受取る識別子２, ...} from 'モジュール名';<br>
+import 単一値を受取る識別子, {複数値を受取る識別子１, 複数値を受取る識別子２, ...} from 'モジュール名';<br>
+→これだと各値がそのまま使用できる<br>
+  複数値を受取る場合はモジュール側でexportした名前と一致していなければならない。<br>
+  名前を変えたい時は、複数値を受取る識別子 as 別名ともできる<br>
+import * as X from 'モジュール名';<br>
+  →こちらはXにexportしたモジュールがすべてオブジェクトとして代入される<br>
+    default exportのものはXそのままか、defaultプロパティで呼出せる<br>
+    </p>
+  </div>
+  <div class="outer">
+    <div class="inner">
+      <pre><code>
+// Default exports
+//------ myFunc.js ------
+export default function () { ... };
+
+//------ main1.js ------
+import myFunc from 'myFunc';
+myFunc();
+
+
+
+// Named exports
+//------ lib.js ------
+export const sqrt = Math.sqrt;
+export function square(x) {
+    return x * x;
+}
+export function diag(x, y) {
+    return sqrt(square(x) + square(y));
+}
+
+//------ main.js ------
+import { square, diag } from 'lib';
+console.log(square(11)); // 121
+console.log(diag(4, 3)); // 5
+
+もしくは
+//------ main.js ------
+import * as lib from 'lib';
+console.log(lib.square(11)); // 121
+console.log(lib.diag(4, 3)); // 5
+      </code></pre>
+    </div>
+  </div>
+
+
+
+</body>
+
+</html>
