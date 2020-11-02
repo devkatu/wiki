@@ -2,6 +2,7 @@ import './App.css';
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import MenuList from './pages/MenuList'
+import Base from './pages/Base'
 import RouteExample from './pages/RouteExample';
 import NotFound from './pages/NotFound';
 
@@ -21,6 +22,7 @@ function App() {
           {/* exactを付けるとpathに完全一致の場合のみマッチとみなす */}
           {/* exactがないものは部分一致となる */}
           <Route exact path="/" component={MenuList} />
+          <Route exact path="/Base" component={Base} />
           <Route exact path="/RouteExample" component={RouteExample} />
           <Route path="/RouteExample/:attr" component={RouteExample} />
           {/* 最終的にどのpathともマッチしなければ下のrouteがよばれる */}

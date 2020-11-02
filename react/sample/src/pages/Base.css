@@ -1,0 +1,14 @@
+.ProductTableContain{
+  width: 500px;
+  margin: 0 auto;
+}
+.BaseProductTable{
+  width: 100%;
+}
+.BaseProductTable tr,
+.BaseProductTable th,
+.BaseProductTable td{
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: 1px solid gray;
+}

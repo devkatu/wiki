@@ -1,0 +1,31 @@
+纏めること
+
+
+・reactそのもの
+  １）基本のコンセプト　react公式のreactの流儀のやつがいいかな？
+    →jsx(htmlとの違い…イベントの属性名、条件付きrender)、props、props.children、state(setStateするときはstate用いるならコールバック)とか、
+    →関数コンポーネントとクラスコンポーネント、
+    →条件付きレンダリング
+    →ライフサイクルメソッド
+    →イベント処理
+    →map()におけるkey
+    →制御されたフォーム
+  ２）高度なコンセプト(個別に作成)
+    →fragment
+    →ref(とDOM)
+    →lazy(() => import())、suspence、error boundary
+    →context
+    →高階コンポーネント
+・router
+  →router使ってページ分けするようにしたい　switchも
+・reduxとかの状態管理方法
+  →とりあえずqiitaのやつ纏める
+
+
+・materialuiとか
+・ディレクトリ構成
+
+ components(commonのもの入れる)
+ pages(component毎にファイル分ける。pageComponentみたいな感じでファイル名付ける？)
+ actions
+ reducers
