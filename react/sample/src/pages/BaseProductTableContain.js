@@ -11,6 +11,7 @@ export default class BaseProductTableContain extends React.Component{
   render(){
     return (
       <div className="ProductTableContain"> 
+        {/* props.children はこのコンポーネントの子要素に指定されているものとなる */}
         {this.props.children}
       </div>
     );
