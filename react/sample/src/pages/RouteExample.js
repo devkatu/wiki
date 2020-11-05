@@ -11,7 +11,11 @@ export default function RouteExample(props) {
         ? (<p>URLに与えたパラメータは　{props.match.params.attr}　です</p>)
         : (<p>パラメータはありません</p>)
       }
-
+      {
+        props.match.params.attr == "extra"
+          ? (<p>モードは　extra　です</p>)
+          : (<p>モードは　main　です</p>)
+      }
     </div>
   );
 }

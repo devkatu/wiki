@@ -9,11 +9,13 @@ import BaseProductTableContain from './BaseProductTableContain';
 import BaseSearchBar from './BaseSearchBar';
 
 export default class Base extends React.Component {
+  // コンストラクタ―はクラスコンポーネント呼出し時に発火
   constructor(props) {
     super(props);
     this.state = {
       searchString: "",
-      isStockOnly: false
+      isStockOnly: false,
+      date: new Date()
     };
     // ↓jsonで受取る値のシミュレーション
     this.goodsDatas = [
@@ -29,6 +31,27 @@ export default class Base extends React.Component {
       { name: "android", price: 5.0 },
     ]
   }
+
+  // ライフサイクルメソッド
+  // 該当コンポーネントがDOMにレンダーされた後に発火する
+  componentDidMount(){
+    this.timerID = setInterval(
+      () => this.tick(),
+      1000
+    );
+  }
+  // 該当コンポーネントがDOMから削除されるときに発火する
+  componentWillUnmount(){
+    clearInterval(this.timerID);
+  }
+
+  tick(){
+    this.setState({
+      date: new Date()
+    });
+  }
+
+
 
   // ★イベントハンドラについて
   // propsで渡すイベントハンドラは
@@ -89,11 +112,14 @@ export default class Base extends React.Component {
           <BaseProductTable>
             <BaseProductCategory title="Sport Gooods" />
 
-            {/* map関数は配列の要素に対しそれぞれ処理を実施し、その結果を配列として返す
+            {/* 
+            ★key属性について
+            map関数は配列の要素に対しそれぞれ処理を実施し、その結果を配列として返す
             liタグのkey属性はreactがどの要素に変更あったかを識別するために必要
             (一意に特定できるようなものであればなんでもいい)
             ただし普通にprops.keyとして使うことはできない
-            map関数の処理の中でkeyがセットで出てくると思って間違いない */}
+            map関数の処理の中でkeyがセットで出てくると思って間違いない
+            */}
             {this.goodsDatas.map((data) => {
               if(0 <= data.name.indexOf(this.state.searchString) || !this.state.isStockOnly)
                 return <BaseProductRow name={data.name} price={data.price} />;
@@ -104,7 +130,7 @@ export default class Base extends React.Component {
             })}
           </BaseProductTable>
         </BaseProductTableContain>
-
+          <p>現在時刻は　{this.state.date.toLocaleTimeString()}　</p>
       </div>
     );
   }

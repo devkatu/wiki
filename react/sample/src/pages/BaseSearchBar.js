@@ -8,6 +8,16 @@ export default class BaseSearchBar extends React.Component {
 
   }
 
+
+  // ★制御されたコンポーネント(controlled component)
+  // react側にてフォームのデータを扱うものを制御されたコンポーネントという(具体的にはstateに保存する)
+  // 逆に非制御コンポーネントとはDOMにてフォームのデータを扱う事をいう。
+
+  // onChangeやonClick等のハンドラは親コンポーネント内にて
+  // アロー関数や普通の関数のbindされたものとして定義され、
+  // setStateにてevent.target.valueやchecked等をstateに保存する。
+  // valueやchecked等のformに表示する内容は親コンポーネント内のstateから
+  // propsとして渡される
   render() {
     return (
       <div className="SearchBar">
@@ -25,7 +35,11 @@ export default class BaseSearchBar extends React.Component {
             checked={this.props.isStockOnly}
           /></label>
         </p>
-        <p>{this.props.isStockOnly && <span>チェックされています</span>}</p>
+        <p>{
+          // ★条件付きレンダリング
+          // if文でレンダーするか決めても良いが以下でもできる
+          this.props.isStockOnly && <span>チェックされています</span>
+        }</p>
       </div>
     );
   }

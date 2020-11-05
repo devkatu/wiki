@@ -25,6 +25,7 @@ function App() {
           <Route exact path="/Base" component={Base} />
           <Route exact path="/RouteExample" component={RouteExample} />
           <Route path="/RouteExample/:attr" component={RouteExample} />
+          <Route path="/RouteExample/:mode(main|extra)" component={RouteExample} />
           {/* 最終的にどのpathともマッチしなければ下のrouteがよばれる */}
           <Route component={NotFound}/>
         </Switch>
