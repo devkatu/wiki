@@ -10,6 +10,7 @@ export default function MenuList(props) {
       <ul className="MenuList">
         <li className="MenuItem"><Link to="/Base">React基本…(Reactの流儀)</Link></li>
         <li className="MenuItem"><Link to="/Fragment">Fragment</Link></li>
+        <li className="MenuItem"><Link to="/Split">Split</Link></li>
 
 
 

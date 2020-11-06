@@ -1,12 +1,5 @@
-import './Base.css';
 import React, { Fragment } from 'react';
-import ReactDOM from 'react-dom';
-import { Link } from 'react-router-dom';
-import BaseProductCategory from './BaseProductCategory';
-import BaseProductRow from './BaseProductRow';
-import BaseProductTable from './BaseProductTable';
-import BaseProductTableContain from './BaseProductTableContain';
-import BaseSearchBar from './BaseSearchBar';
+
 
 
 // ★React.Fragmentについて
