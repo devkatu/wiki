@@ -1,8 +1,9 @@
 import './App.css';
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
-import MenuList from './pages/MenuList'
-import Base from './pages/Base'
+import MenuList from './pages/MenuList';
+import Base from './pages/Base';
+import MyFragment from './pages/MyFragment';
 import RouteExample from './pages/RouteExample';
 import NotFound from './pages/NotFound';
 
@@ -23,6 +24,7 @@ function App() {
           {/* exactがないものは部分一致となる */}
           <Route exact path="/" component={MenuList} />
           <Route exact path="/Base" component={Base} />
+          <Route exact path="/Fragment" component={MyFragment} />
           <Route exact path="/RouteExample" component={RouteExample} />
           <Route path="/RouteExample/:attr" component={RouteExample} />
           <Route path="/RouteExample/:mode(main|extra)" component={RouteExample} />
