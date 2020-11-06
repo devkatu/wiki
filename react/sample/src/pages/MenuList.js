@@ -8,14 +8,14 @@ export default function MenuList(props) {
     <div>
       <h2>Reactサンプル</h2>
       <ul className="MenuList">
-        <li className="MenuItem"><Link to="/Base">React基本…(Reactの流儀)</Link></li>
-        <li className="MenuItem"><Link to="/Fragment">Fragment</Link></li>
-        <li className="MenuItem"><Link to="/Split">Split</Link></li>
+        <li className="MenuItem"><Link to="/Base">React基本コンセプトまとめ…Reactの流儀</Link></li>
+        <li className="MenuItem"><Link to="/Fragment">React高度コンセプト…Fragment</Link></li>
+        <li className="MenuItem"><Link to="/Split">React高度コンセプト…Split</Link></li>
 
 
 
-        <li className="MenuItem"><Link to="/RouteExample">ルーティング(パラメータ無し)</Link></li>
-        <li className="MenuItem"><Link to="/RouteExample/get_param">ルーティング(パラメータ有り)</Link></li>
+        <li className="MenuItem"><Link to="/RouteExample">React高度コンセプト…ルーティング(パラメータ無し)</Link></li>
+        <li className="MenuItem"><Link to="/RouteExample/get_param">React高度コンセプト…ルーティング(パラメータ有り)</Link></li>
       </ul>
     </div>
   );

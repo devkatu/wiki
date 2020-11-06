@@ -15,6 +15,9 @@
   ２）高度なコンセプト(個別に作成)
     →fragment
     →lazy(() => import())、suspence、error boundary
+
+    →イミュータブルなstate更新のやつ
+
     →context
     →ref(とDOM)
     →高階コンポーネント
