@@ -16,11 +16,12 @@
     →fragment
     →lazy(() => import())、suspence、error boundary
 
-    →イミュータブルなstate更新のやつ
-
     →context
     →ref(とDOM)
     →高階コンポーネント
+
+★★★完了★★★
+・イミュータブルなstate更新のやつ
 
 ★★★完了★★★
 ・router

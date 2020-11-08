@@ -6,6 +6,7 @@ import Base from './pages/Base';
 import MyFragment from './pages/MyFragment';
 import Split from './pages/Split';
 import RouteExample from './pages/RouteExample';
+import Immutability from './pages/Immutability';
 import NotFound from './pages/NotFound';
 
 
@@ -31,6 +32,10 @@ function App() {
           <Route exact path="/RouteExample" component={RouteExample} />
           <Route path="/RouteExample/:attr" component={RouteExample} />
           <Route path="/RouteExample/:mode(main|extra)" component={RouteExample} />
+
+          <Route path="/Immutability" component={Immutability} />
+
+          
           {/* 最終的にどのpathともマッチしなければ下のrouteがよばれる */}
           <Route component={NotFound}/>
         </Switch>

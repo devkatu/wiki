@@ -16,6 +16,7 @@ export default function MenuList(props) {
 
         <li className="MenuItem"><Link to="/RouteExample">React高度コンセプト…ルーティング(パラメータ無し)</Link></li>
         <li className="MenuItem"><Link to="/RouteExample/get_param">React高度コンセプト…ルーティング(パラメータ有り)</Link></li>
+        <li className="MenuItem"><Link to="/Immutability">イミュータブルとは</Link></li>
       </ul>
     </div>
   );
