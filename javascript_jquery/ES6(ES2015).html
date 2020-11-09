@@ -5,78 +5,86 @@
   <meta charset="UTF-8">
   <title>ES6絡み</title>
   <style type="text/css">
-    *{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  body h1, h2{
-    text-align: center;
-    margin-top: 40px;
-  }
-  body > p{
-    text-align: center;
-  }
-  .clr_fix::after{
-    content:"";
-    display: block;
-    clear:both;
-  }
-  .title{
-    width: 40%;
-    margin: 30px auto 0;
-  }
-  .desc{
-    font-size: 12px;
-  }
-  .desc2{
-    font-size: 12px;
-    font-weight: bold;
-    word-break:break-all;
-  }
-  .outer{
-    width: 40%;
-    margin: 10px auto 0;
-    background-color: #E6ECF2;
-    padding: 10px;
-    display: table;
-  }
-  .inner{
-    background-color: #EEF2F6;
-    padding:10px;
-    border: 1px solid white;
-    position: relative;
+    body h1,
+    h2 {
+      text-align: center;
+      margin-top: 40px;
+    }
 
-  }
+    body>p {
+      text-align: center;
+    }
 
-  .box{
-    width: 100px;
-    height: 100px;
-    border: solid 1px black;
-    background-color: pink;
-    word-break:break-all;
-  }
+    .clr_fix::after {
+      content: "";
+      display: block;
+      clear: both;
+    }
 
-  .t_c{
-    display: table-cell;
-    padding: 10px;
-  }
+    .title {
+      width: 40%;
+      margin: 30px auto 0;
+    }
 
-  ul{
-    margin-left:20px;
-  }
+    .desc {
+      font-size: 12px;
+    }
 
-  .listbox{
-    width: 50%;
-    margin: 0 auto;
-    min-width: 300px;
-  }
+    .desc2 {
+      font-size: 12px;
+      font-weight: bold;
+      word-break: break-all;
+    }
 
-  .add{
-    border-radius: 50%;
-    background-color: blue;
-  }
+    .outer {
+      width: 40%;
+      margin: 10px auto 0;
+      background-color: #E6ECF2;
+      padding: 10px;
+      display: table;
+    }
+
+    .inner {
+      background-color: #EEF2F6;
+      padding: 10px;
+      border: 1px solid white;
+      position: relative;
+
+    }
+
+    .box {
+      width: 100px;
+      height: 100px;
+      border: solid 1px black;
+      background-color: pink;
+      word-break: break-all;
+    }
+
+    .t_c {
+      display: table-cell;
+      padding: 10px;
+    }
+
+    ul {
+      margin-left: 20px;
+    }
+
+    .listbox {
+      width: 50%;
+      margin: 0 auto;
+      min-width: 300px;
+    }
+
+    .add {
+      border-radius: 50%;
+      background-color: blue;
+    }
   </style>
 </head>
 
@@ -126,7 +134,7 @@
     </div>
   </div>
 
-  
+
   <div class="title">
     <h3>アロー関数</h3>
     <p class="desc"></p>
@@ -320,6 +328,31 @@
 
 
   <div class="title">
+    <h3>オブジェクトリテラル</h3>
+    <p class="desc">オブジェクトのリテラルについて以下のような方法がある</p>
+  </div>
+  <div class="outer">
+    <div class="inner">
+      <pre><code>
+  // Shorthand property names (ES2015)
+  // 今までのこのような書き方を
+  var a = 'foo', b = 42, c = {};
+  var o = {a: a, b: b, c: c};
+  ↓↓↓このように↓↓↓
+  var o = {a, b, c};
+  
+
+  // Computed property names (ES2015)
+  var prop = 'foo';
+  var o = {
+  [prop]: 'hey',    []で囲われた部分は変数展開されるここでは foo: 'hey',に
+  ['b' + 'ar']: 'there'     ここではbar: 'there'になる
+  };
+      </code></pre>
+    </div>
+  </div>
+
+  <div class="title">
     <h3>for...of</h3>
     <p class="desc">反復可能なオブジェクト（配列等）に対して反復処理（ループ処理）ができる。
       for...inは配列のインデックスやオブジェクトのプロパティ等を処理できるのに対し
@@ -370,22 +403,22 @@
   <div class="title">
     <h3>import export</h3>
     <p class="desc">
-export には<br>
-単一値  →export default<br>
-複数値  →export<br>
-混在系がある →上記両方あり<br>
-基本的にはexportしたもの全てをオブジェクトで返すような仕組みになる<br>
+      export には<br>
+      単一値 →export default<br>
+      複数値 →export<br>
+      混在系がある →上記両方あり<br>
+      基本的にはexportしたもの全てをオブジェクトで返すような仕組みになる<br>
 
-これらをimportする側は<br>
-import 単一値を受取る識別子 from 'モジュール名';<br>
-import {複数値を受取る識別子１, 複数値を受取る識別子２, ...} from 'モジュール名';<br>
-import 単一値を受取る識別子, {複数値を受取る識別子１, 複数値を受取る識別子２, ...} from 'モジュール名';<br>
-→これだと各値がそのまま使用できる<br>
-  複数値を受取る場合はモジュール側でexportした名前と一致していなければならない。<br>
-  名前を変えたい時は、複数値を受取る識別子 as 別名ともできる<br>
-import * as X from 'モジュール名';<br>
-  →こちらはXにexportしたモジュールがすべてオブジェクトとして代入される<br>
-    default exportのものはXそのままか、defaultプロパティで呼出せる<br>
+      これらをimportする側は<br>
+      import 単一値を受取る識別子 from 'モジュール名';<br>
+      import {複数値を受取る識別子１, 複数値を受取る識別子２, ...} from 'モジュール名';<br>
+      import 単一値を受取る識別子, {複数値を受取る識別子１, 複数値を受取る識別子２, ...} from 'モジュール名';<br>
+      →これだと各値がそのまま使用できる<br>
+      複数値を受取る場合はモジュール側でexportした名前と一致していなければならない。<br>
+      名前を変えたい時は、複数値を受取る識別子 as 別名ともできる<br>
+      import * as X from 'モジュール名';<br>
+      →こちらはXにexportしたモジュールがすべてオブジェクトとして代入される<br>
+      default exportのものはXそのままか、defaultプロパティで呼出せる<br>
     </p>
   </div>
   <div class="outer">

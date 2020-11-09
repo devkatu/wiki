@@ -11,6 +11,8 @@ export default function MenuList(props) {
         <li className="MenuItem"><Link to="/Base">React基本コンセプトまとめ…Reactの流儀</Link></li>
         <li className="MenuItem"><Link to="/Fragment">React高度コンセプト…Fragment</Link></li>
         <li className="MenuItem"><Link to="/Split">React高度コンセプト…Split</Link></li>
+        <li className="MenuItem"><Link to="/Context">React高度コンセプト…Context</Link></li>
+        <li className="MenuItem"><Link to="/RefDom">React高度コンセプト…RefとDOM</Link></li>
 
 
 

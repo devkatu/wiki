@@ -5,6 +5,8 @@ import MenuList from './pages/MenuList';
 import Base from './pages/Base';
 import MyFragment from './pages/MyFragment';
 import Split from './pages/Split';
+import MyContext from './pages/MyContext';
+import RefDom from './pages/RefDom';
 import RouteExample from './pages/RouteExample';
 import Immutability from './pages/Immutability';
 import NotFound from './pages/NotFound';
@@ -28,6 +30,8 @@ function App() {
           <Route exact path="/Base" component={Base} />
           <Route exact path="/Fragment" component={MyFragment} />
           <Route exact path="/Split" component={Split} />
+          <Route exact path="/Context" component={MyContext} />
+          <Route exact path="/RefDom" component={RefDom} />
 
           <Route exact path="/RouteExample" component={RouteExample} />
           <Route path="/RouteExample/:attr" component={RouteExample} />
