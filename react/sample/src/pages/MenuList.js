@@ -13,7 +13,8 @@ export default function MenuList(props) {
         <li className="MenuItem"><Link to="/Split">React高度コンセプト…Split</Link></li>
         <li className="MenuItem"><Link to="/Context">React高度コンセプト…Context</Link></li>
         <li className="MenuItem"><Link to="/RefDom">React高度コンセプト…RefとDOM</Link></li>
-
+        <li className="MenuItem"><Link to="/HOC">React高度コンセプト…高階コンポーネント</Link></li>
+        
 
 
         <li className="MenuItem"><Link to="/RouteExample">React高度コンセプト…ルーティング(パラメータ無し)</Link></li>

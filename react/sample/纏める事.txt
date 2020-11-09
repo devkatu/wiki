@@ -2,7 +2,7 @@
 
 
 ・reactそのもの
-  ★★★１）完了★★★
+  ★★★完了★★★
   １）基本のコンセプト　react公式のreactの流儀のやつがいいかな？
     →jsx(htmlとの違い…イベントの属性名、条件付きrender)、props、props.children、state(setStateするときはstate用いるならコールバック)とか、
     →関数コンポーネントとクラスコンポーネント、
@@ -11,14 +11,15 @@
     →イベント処理
     →map()におけるkey
     →制御されたフォーム
-    
+
+  ★★★完了★★★
   ２）高度なコンセプト(個別に作成)
     →fragment
     →lazy(() => import())、suspence、error boundary
     →context
     →ref(とDOM)
-
     →高階コンポーネント
+
 
 ★★★完了★★★
 ・イミュータブルなstate更新のやつ
