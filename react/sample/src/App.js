@@ -18,7 +18,7 @@ import NotFound from './pages/NotFound';
 // Router>Switch>Routeの構造
 // Linkでto属性に設定したURLに対応するRouteのcomponentを呼出せる
 
-function App() {
+function App(props) {
   return (
     <Router>
       <div className="App">
