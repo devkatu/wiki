@@ -10,8 +10,9 @@ import RefDom from './pages/RefDom';
 import HOC from './pages/HOC';
 import RouteExample from './pages/RouteExample';
 import Immutability from './pages/Immutability';
+// import MyRedux from './pages/MyRedux';
+import MyRedux from './containers/container';
 import NotFound from './pages/NotFound';
-
 
 
 // ルーティング
@@ -39,9 +40,10 @@ function App(props) {
           <Route path="/RouteExample/:attr" component={RouteExample} />
           <Route path="/RouteExample/:mode(main|extra)" component={RouteExample} />
 
-          <Route path="/Immutability" component={Immutability} />
+          <Route exact path="/Immutability" component={Immutability} />
 
-          
+          <Route exact path="/Redux" component={MyRedux} />
+
           {/* 最終的にどのpathともマッチしなければ下のrouteがよばれる */}
           <Route component={NotFound}/>
         </Switch>

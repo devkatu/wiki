@@ -5,9 +5,7 @@ const initialState = {
 export default function reducer(state = initialState, action) {
   switch(action.type){
     case 'INCREMENT':
-      alert();
-      state = {...state, fuga: state.fuga+1};
-      break;
+      return {...state, fuga: state.fuga + 2};
     default:
       return state
   }
