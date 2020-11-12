@@ -7,10 +7,11 @@ import './index.css';
 import App from './App';
 import reducer from './reducers/reducer';
 
-// const store = createStore(reducer);
+// storeの読込
 import store from './store';
 
 ReactDOM.render(
+  // ★Providerで囲ってreactとreduxのstoreを接続する
   <Provider store={store}>
     <App />
   </Provider>,

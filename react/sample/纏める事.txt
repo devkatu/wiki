@@ -28,8 +28,11 @@
 ・router
   →router使ってページ分けするようにしたい　switchも
 
+★★★完了★★★
 ・reduxとかの状態管理方法
   →とりあえずqiitaのやつ纏める
+  →reducer複数のやつ
+  →fetchのやつ付ける
 
 
 ・materialuiとか

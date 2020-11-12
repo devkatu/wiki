@@ -11,7 +11,7 @@ import HOC from './pages/HOC';
 import RouteExample from './pages/RouteExample';
 import Immutability from './pages/Immutability';
 // import MyRedux from './pages/MyRedux';
-import MyRedux from './containers/container';
+import MyRedux from './containers/MyRedux';
 import NotFound from './pages/NotFound';
 
 
