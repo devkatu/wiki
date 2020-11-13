@@ -12,6 +12,7 @@ import RouteExample from './pages/RouteExample';
 import Immutability from './pages/Immutability';
 // import MyRedux from './pages/MyRedux';
 import MyRedux from './containers/MyRedux';
+import MaterialUi from './pages/MaterialUi';
 import NotFound from './pages/NotFound';
 
 
@@ -43,6 +44,8 @@ function App(props) {
           <Route exact path="/Immutability" component={Immutability} />
 
           <Route exact path="/Redux" component={MyRedux} />
+
+          <Route exact path="/MaterialUi" component={MaterialUi} />
 
           {/* 最終的にどのpathともマッチしなければ下のrouteがよばれる */}
           <Route component={NotFound}/>
