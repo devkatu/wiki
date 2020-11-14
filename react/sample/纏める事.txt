@@ -36,9 +36,5 @@
 
 
 ・materialuiとか
-・ディレクトリ構成
+・スタイルの書き方ベスト
 
- components(commonのもの入れる)
- pages(component毎にファイル分ける。pageComponentみたいな感じでファイル名付ける？)
- actions
- reducers
