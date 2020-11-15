@@ -32,6 +32,7 @@ export default function MaterialUi(props) {
   return (
     <div>
       <h2>MaterialUiのサンプル</h2>
+      <p>詳しくは公式DOC参照</p>
       <Container>
         <AppBar position="static">
           <Toolbar>

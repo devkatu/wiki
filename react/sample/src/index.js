@@ -1,19 +1,37 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore } from 'redux';
 import { Provider } from 'react-redux';
+
+// material-ui
+import { createMuiTheme, MuiThemeProvider  } from '@material-ui/core/styles';
+import red from '@material-ui/core/colors/red';
+import blue from '@material-ui/core/colors/blue';
+
 
 import './index.css';
 import App from './App';
-import reducer from './reducers/reducer';
+
+
 
 // storeの読込
 import store from './store';
 
+// マテリアルUIのテーマカスタマイズ
+const theme = createMuiTheme({
+  palette: {
+    type: 'light', // light or dark
+    primary: red, // primaryのカラー
+    secondary: blue, // secondaryのカラー
+  },
+});
+
 ReactDOM.render(
   // ★Providerで囲ってreactとreduxのstoreを接続する
   <Provider store={store}>
-    <App />
+    {/* MuiThemeProviderはこの要素下にあるマテリアルUIに対しテーマを指示する */}
+    <MuiThemeProvider theme={theme}>
+      <App />
+    </MuiThemeProvider>
   </Provider>,
   document.getElementById('root')
 );
