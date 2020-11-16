@@ -37,4 +37,6 @@
 
 ・materialuiとか
 ・スタイルの書き方ベスト
+　シンプルなreactアプリであればcssをそのまま書いてcssモジュールとする
+　materialuiではmakestyles()かな
 

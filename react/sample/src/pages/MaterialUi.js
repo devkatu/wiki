@@ -3,8 +3,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
 
+import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
 
+import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
@@ -37,79 +39,185 @@ import NavigationIcon from '@material-ui/icons/Navigation';
 /> */}
 
 
+// ★materialuiのコンポーネントにスタイル適用するときはこれがいいかも？
+// 他にもwithStyles(高階コンポーネント式)とかstyledコンポーネントとかあるけど・・・
+// 全体的に統一感のあるやつ作りたいならthemeを適用かな？？
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1
+  },
+  menuButton: {
+    marginRight: theme.spacing(2)
+  },
+  title: {
+    textAlign: 'left',
+    flexGrow: 1,
+  }
+}));
+
 export default function MaterialUi(props) {
+  const classes = useStyles();
   return (
     <div>
-      <h2>MaterialUiのサンプル</h2>
-      <p>詳しくは公式DOC参照</p>
-      <Container>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton>
-              <MenuIcon/>
-            </IconButton>
-            <Typography variant="h6">
-            News
-          </Typography>
-          <Button>Login</Button>
-          </Toolbar>
-        </AppBar>
 
-        {/* dateピッカー */}
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <DatePicker/>
-        </MuiPickersUtilsProvider>
+      {/* materialuiでのデフォルトのスタイルを適用できるようにする */}
+      <CssBaseline />
+
+        <div className={classes.root}>
+
+          <AppBar position="static">
+            <Toolbar>
+              <IconButton edge="start" className={classes.menuButton}>
+                <MenuIcon />
+              </IconButton>
+              <Typography variant="h6" className={classes.title}>
+                News
+              </Typography>
+              <Button>Login</Button>
+            </Toolbar>
+          </AppBar>
+        </div>
+
+      {/* 中央揃えにするレイアウト用のコンポーネント */}
+      <Container>
 
         {/* タイポグラフィ */}
         {/* variantでスタイル、componentで実際に割り当たるhtmlタグ指定。gutterBottomは下にmarginつけるみたい */}
         <Typography variant="h1" component="h2" gutterBottom>
-          Heading 1
+          MaterialUiのサンプル
         </Typography>
         <Typography variant="h2">
-          Heading 2
+          詳しくは公式DOC参照
         </Typography>
         <Typography variant="h3">
           Heading 3
         </Typography>
         <Typography variant="subtitle1" gutterBottom>
-          subtitle1. title title title title title title title title 
+          subtitle1. title title title title title title title title
         </Typography>
         <Typography variant="subtitle2" gutterBottom>
-          subtitle2. title title title title title title title title  
+          subtitle2. title title title title title title title title
         </Typography>
         <Typography variant="body1" gutterBottom>
-          body1. text text text text text text text text text text 
+          body1. text text text text text text text text text text
         </Typography>
         <Typography variant="body2" gutterBottom>
-          body2. text text text text text text text text text text 
+          body2. text text text text text text text text text text
         </Typography>
+
+
+        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>        <Typography variant="h2">
+          詳しくは公式DOC参照
+        </Typography>
+        {/* dateピッカー */}
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <DatePicker />
+        </MuiPickersUtilsProvider>
+
         {/* <ButtonGroup color="primary" aria-label="outlined primary button group"> */}
         <ButtonGroup >
-        <Button>click</Button>
-        <Button>me</Button>
-        <Button>please</Button>
+          <Button>click</Button>
+          <Button>me</Button>
+          <Button>please</Button>
 
         </ButtonGroup>
-        <BottomNavigation showLabels>
-          <BottomNavigationAction lagel="Recents" icon={<RestoreIcon />}/>
-          <BottomNavigationAction lagel="Favorires" icon={<FavoriteIcon />}/>
-          {/* <BottomNavigationAction lagel="Favorires" icon={<FavoriteIcon />}/> */}
-        </BottomNavigation>
+
 
         <Fab color="primary" aria-label="add">
-        <AddIcon />
-      </Fab>
-      <Fab color="secondary" aria-label="edit">
-        <EditIcon />
-      </Fab>
-      <Fab variant="extended">
-        <NavigationIcon />
+          <AddIcon />
+        </Fab>
+        <Fab color="secondary" aria-label="edit">
+          <EditIcon />
+        </Fab>
+        <Fab variant="extended">
+          <NavigationIcon />
         Navigate
       </Fab>
-      <Fab disabled aria-label="like">
-        <FavoriteIcon />
-      </Fab>
+        <Fab disabled aria-label="like">
+          <FavoriteIcon />
+        </Fab>
       </Container>
+      <BottomNavigation showLabels>
+          <BottomNavigationAction lagel="Recents" icon={<RestoreIcon />} />
+          <BottomNavigationAction lagel="Favorires" icon={<FavoriteIcon />} />
+          {/* <BottomNavigationAction lagel="Favorires" icon={<FavoriteIcon />}/> */}
+        </BottomNavigation>
     </div>
   );
 }
