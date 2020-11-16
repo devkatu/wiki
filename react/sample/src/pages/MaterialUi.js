@@ -21,11 +21,20 @@ import GridListTile from '@material-ui/core/GridList';
 import GridListTileBar from '@material-ui/core/GridList';
 import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
-import { DatePicker } from "@material-ui/pickers";
+import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
+import DateFnsUtils from '@date-io/date-fns';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import NavigationIcon from '@material-ui/icons/Navigation';
+
+
+
+// レンダリング、タッチズームを確実に行う為に、以下をheadタグに入れておくといいみたい
+{/* <meta
+  name="viewport"
+  content="minimum-scale=1, initial-scale=1, width=device-width"
+/> */}
 
 
 export default function MaterialUi(props) {
@@ -45,6 +54,35 @@ export default function MaterialUi(props) {
           <Button>Login</Button>
           </Toolbar>
         </AppBar>
+
+        {/* dateピッカー */}
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <DatePicker/>
+        </MuiPickersUtilsProvider>
+
+        {/* タイポグラフィ */}
+        {/* variantでスタイル、componentで実際に割り当たるhtmlタグ指定。gutterBottomは下にmarginつけるみたい */}
+        <Typography variant="h1" component="h2" gutterBottom>
+          Heading 1
+        </Typography>
+        <Typography variant="h2">
+          Heading 2
+        </Typography>
+        <Typography variant="h3">
+          Heading 3
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          subtitle1. title title title title title title title title 
+        </Typography>
+        <Typography variant="subtitle2" gutterBottom>
+          subtitle2. title title title title title title title title  
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          body1. text text text text text text text text text text 
+        </Typography>
+        <Typography variant="body2" gutterBottom>
+          body2. text text text text text text text text text text 
+        </Typography>
         {/* <ButtonGroup color="primary" aria-label="outlined primary button group"> */}
         <ButtonGroup >
         <Button>click</Button>
