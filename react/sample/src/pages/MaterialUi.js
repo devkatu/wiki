@@ -42,16 +42,21 @@ import NavigationIcon from '@material-ui/icons/Navigation';
 // ★materialuiのコンポーネントにスタイル適用するときはこれがいいかも？
 // 他にもwithStyles(高階コンポーネント式)とかstyledコンポーネントとかあるけど・・・
 // 全体的に統一感のあるやつ作りたいならthemeを適用かな？？
+// ・makeStylesのコールバックに引数themeを入れるとMuiThemeProviderに設定した
+// themeを参照することができる
+// ・makeStylesの引数はそのままオブジェクトをいれてもよい
 const useStyles = makeStyles((theme) => ({
   root: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   menuButton: {
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(2),
   },
   title: {
     textAlign: 'left',
     flexGrow: 1,
+    
+    color: theme.status.danger,
   }
 }));
 

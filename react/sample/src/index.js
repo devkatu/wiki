@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import { createMuiTheme, MuiThemeProvider  } from '@material-ui/core/styles';
 import red from '@material-ui/core/colors/red';
 import blue from '@material-ui/core/colors/blue';
-
+import { orange } from '@material-ui/core/colors';
 
 import './index.css';
 import App from './App';
@@ -16,13 +16,17 @@ import App from './App';
 // storeの読込
 import store from './store';
 
-// マテリアルUIのテーマカスタマイズ
+// ★マテリアルUIのテーマカスタマイズ
+// ここでテーマを作成して読込ませることでアプリに一貫したテーマを持たせることができる
 const theme = createMuiTheme({
   palette: {
     type: 'light', // light or dark
     primary: red, // primaryのカラー
-    secondary: blue, // secondaryのカラー
+    secondary: red, // secondaryのカラー
   },
+  status: {
+    danger: orange[500],
+  }
 });
 
 ReactDOM.render(
