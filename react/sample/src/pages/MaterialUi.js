@@ -30,6 +30,8 @@ import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import NavigationIcon from '@material-ui/icons/Navigation';
 
+import MaterialUI_Drawer from './MaterialUi_Drawer';
+
 
 
 // レンダリング、タッチズームを確実に行う為に、以下をheadタグに入れておくといいみたい
@@ -50,38 +52,44 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   menuButton: {
+    // theme.spacingはデフォルトでは引数×8px
     marginRight: theme.spacing(2),
   },
   title: {
     textAlign: 'left',
     flexGrow: 1,
-    
+
     color: theme.status.danger,
   }
 }));
 
 export default function MaterialUi(props) {
   const classes = useStyles();
+
+  const [value, setValue] = React.useState('recents');
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
   return (
     <div>
 
       {/* materialuiでのデフォルトのスタイルを適用できるようにする */}
       <CssBaseline />
 
-        <div className={classes.root}>
-
-          <AppBar position="static">
-            <Toolbar>
-              <IconButton edge="start" className={classes.menuButton}>
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6" className={classes.title}>
-                News
+      {/* アプリバー */}
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton edge="start" className={classes.menuButton}>
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" className={classes.title}>
+            News
               </Typography>
-              <Button>Login</Button>
-            </Toolbar>
-          </AppBar>
-        </div>
+          <Button>Login</Button>
+        </Toolbar>
+      </AppBar>
+
 
       {/* 中央揃えにするレイアウト用のコンポーネント */}
       <Container>
@@ -92,7 +100,7 @@ export default function MaterialUi(props) {
           MaterialUiのサンプル
         </Typography>
         <Typography variant="h2">
-          詳しくは公式DOC参照
+          いろんなUIが最初から使えるよ！<br/>詳しくは公式DOC参照
         </Typography>
         <Typography variant="h3">
           Heading 3
@@ -110,86 +118,12 @@ export default function MaterialUi(props) {
           body2. text text text text text text text text text text
         </Typography>
 
+        {/* ドロワーメニュー */}
+        <Typography variant="h3" gutterBottom>
+          ドロワーメニュー
+        <MaterialUI_Drawer />
+      </Typography>
 
-        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>        <Typography variant="h2">
-          詳しくは公式DOC参照
-        </Typography>
         {/* dateピッカー */}
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <DatePicker />
@@ -218,11 +152,14 @@ export default function MaterialUi(props) {
           <FavoriteIcon />
         </Fab>
       </Container>
+
+      {/* ボトムナビゲーション */}
       <BottomNavigation showLabels>
-          <BottomNavigationAction lagel="Recents" icon={<RestoreIcon />} />
-          <BottomNavigationAction lagel="Favorires" icon={<FavoriteIcon />} />
-          {/* <BottomNavigationAction lagel="Favorires" icon={<FavoriteIcon />}/> */}
-        </BottomNavigation>
+        <BottomNavigationAction label="Recents" value="recents" icon={<RestoreIcon />} />
+        <BottomNavigationAction label="Favorires" value="favorites" icon={<FavoriteIcon />} />
+        <BottomNavigationAction label="Nearby" value="nearby" icon={<LocationOnIcon />} />
+        <BottomNavigationAction label="Nearby" value="nearby" icon={<LocationOnIcon />} />
+      </BottomNavigation>
     </div>
   );
 }
