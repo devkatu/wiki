@@ -14,6 +14,7 @@ import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import RestoreIcon from '@material-ui/icons/Restore';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
+import ShareIcon from '@material-ui/icons/Share';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -29,8 +30,16 @@ import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import NavigationIcon from '@material-ui/icons/Navigation';
+import List from '@material-ui/core/List';
+import Divider from '@material-ui/core/Divider';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import MailIcon from '@material-ui/icons/Mail';
+import Drawer from '@material-ui/core/Drawer';
+import { Card, CardActionArea, CardActions, CardContent, CardMedia } from '@material-ui/core';
 
-import MaterialUI_Drawer from './MaterialUi_Drawer';
 
 
 
@@ -60,15 +69,35 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
 
     color: theme.status.danger,
+  },
+  list: {
+    width: 250,
+  },
+  cardWrap: {
+    display: "flex",
+    flexWrap: "wrap"
+  },
+  card: {
+    maxWidth: 345,
+    marginRight: 15,
+    marginBottom: 15
+  },
+  cardMedia: {
+    height: 140,
   }
 }));
 
 export default function MaterialUi(props) {
   const classes = useStyles();
 
-  const [value, setValue] = React.useState('recents');
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  // const [value, setValue] = React.useState('recents');
+  const [state, setState] = React.useState({
+    showDrawer: false,
+  });
+
+  // ドロワーメニューの切替ハンドラ
+  const toggleDrawer = (open) => (event) => {
+    setState({ ...state, showDrawer: open });
   };
 
   return (
@@ -77,10 +106,41 @@ export default function MaterialUi(props) {
       {/* materialuiでのデフォルトのスタイルを適用できるようにする */}
       <CssBaseline />
 
+      {/* ドロワーメニューとその中に表示する内容 */}
+      {/* anchor: ドロワーを表示する位置 */}
+      {/* open: ドロワーの表示、非表示切替bool */}
+      {/* onClose:  */}
+      <Drawer anchor="left" open={state.showDrawer} onClose={toggleDrawer(false)}>
+        <div
+          className={classes.list}
+          role="presentation"
+          onClick={toggleDrawer(false)}
+          onKeyDown={toggleDrawer(false)}>
+          <List>
+            {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+              <ListItem button key={text}>
+                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+          <Divider />
+          <List>
+            {['All mail', 'Trash', 'Spam'].map((text, index) => (
+              <ListItem button key={text}>
+                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+        </div>
+      </Drawer>
+
       {/* アプリバー */}
       <AppBar position="static">
         <Toolbar>
-          <IconButton edge="start" className={classes.menuButton}>
+          {/* IconButtonクリックにてドロワーメニューの切替 */}
+          <IconButton edge="start" className={classes.menuButton} onClick={toggleDrawer(true)}>
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
@@ -100,7 +160,7 @@ export default function MaterialUi(props) {
           MaterialUiのサンプル
         </Typography>
         <Typography variant="h2">
-          いろんなUIが最初から使えるよ！<br/>詳しくは公式DOC参照
+          いろんなUIが最初から使えるよ！<br />詳しくは公式DOC参照
         </Typography>
         <Typography variant="h3">
           Heading 3
@@ -118,11 +178,40 @@ export default function MaterialUi(props) {
           body2. text text text text text text text text text text
         </Typography>
 
-        {/* ドロワーメニュー */}
-        <Typography variant="h3" gutterBottom>
-          ドロワーメニュー
-        <MaterialUI_Drawer />
-      </Typography>
+        {/* カード */}
+        <div className={classes.cardWrap}>
+          {[1, 2, 3, 4, 5, 6].map((key) => (
+            <Card key={key} className={classes.card}>
+              <CardActionArea>
+                <CardMedia
+                  className={classes.cardMedia}
+                  image={"./images/image" + key + ".png"}
+                  title="card title" />
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="h2">
+                    image{key}
+              </Typography>
+                  <Typography variant="body2" color="textSecondary" component="p">
+                    image{key} の説明部
+                    image{key} の説明部
+                    image{key} の説明部
+                    image{key} の説明部
+              </Typography>
+                </CardContent>
+              </CardActionArea>
+              <CardActions>
+                {/* <Button size="small" color="primary"> */}
+                <Button size="small">
+                  <FavoriteIcon />
+                </Button>
+                <Button size="small">
+                  <ShareIcon />
+                </Button>
+              </CardActions>
+            </Card>
+          ))}
+        </div>
+
 
         {/* dateピッカー */}
         <MuiPickersUtilsProvider utils={DateFnsUtils}>

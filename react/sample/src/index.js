@@ -21,7 +21,7 @@ import store from './store';
 const theme = createMuiTheme({
   palette: {
     type: 'light', // light or dark
-    primary: red, // primaryのカラー
+    primary: blue, // primaryのカラー
     secondary: red, // secondaryのカラー
   },
   status: {
