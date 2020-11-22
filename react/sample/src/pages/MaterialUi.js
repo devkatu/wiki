@@ -38,7 +38,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import Drawer from '@material-ui/core/Drawer';
-import { Card, CardActionArea, CardActions, CardContent, CardMedia } from '@material-ui/core';
+import { Card, CardActionArea, CardActions, CardContent, CardMedia, Hidden } from '@material-ui/core';
 
 
 
@@ -50,6 +50,8 @@ import { Card, CardActionArea, CardActions, CardContent, CardMedia } from '@mate
 /> */}
 
 
+const drawerWidth = 250;
+
 // ★materialuiのコンポーネントにスタイル適用するときはこれがいいかも？
 // 他にもwithStyles(高階コンポーネント式)とかstyledコンポーネントとかあるけど・・・
 // 全体的に統一感のあるやつ作りたいならthemeを適用かな？？
@@ -60,9 +62,17 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
+  appBar: {
+    [theme.breakpoints.up('md')]: {
+      width: `calc(100% - ${drawerWidth}px)`
+    }
+  },
   menuButton: {
     // theme.spacingはデフォルトでは引数×8px
     marginRight: theme.spacing(2),
+    [theme.breakpoints.up('md')]: {
+      display: "none"
+    }
   },
   title: {
     textAlign: 'left',
@@ -70,8 +80,21 @@ const useStyles = makeStyles((theme) => ({
 
     color: theme.status.danger,
   },
+  drawer: {
+    position: "relative",
+    width: drawerWidth
+  },
   list: {
-    width: 250,
+    width: drawerWidth,
+  },
+  container: {
+    padding: "80px 20px 0",
+
+    [theme.breakpoints.up('md')]: {
+      width: `calc(100% - ${drawerWidth}px)`,
+      marginLeft: drawerWidth,
+      
+    }
   },
   cardWrap: {
     display: "flex",
@@ -87,6 +110,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+
 export default function MaterialUi(props) {
   const classes = useStyles();
 
@@ -100,6 +124,35 @@ export default function MaterialUi(props) {
     setState({ ...state, showDrawer: open });
   };
 
+  // ドロワーメニューに表示する内容
+  function DrawerList() {
+    return (
+      <div
+        className={classes.list}
+        role="presentation"
+        onClick={toggleDrawer(false)}
+        onKeyDown={toggleDrawer(false)}>
+        <List>
+          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+            <ListItem button key={text}>
+              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+              <ListItemText primary={text} />
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+        <List>
+          {['All mail', 'Trash', 'Spam'].map((text, index) => (
+            <ListItem button key={text}>
+              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+              <ListItemText primary={text} />
+            </ListItem>
+          ))}
+        </List>
+      </div>
+    )
+  }
+
   return (
     <div>
 
@@ -109,35 +162,21 @@ export default function MaterialUi(props) {
       {/* ドロワーメニューとその中に表示する内容 */}
       {/* anchor: ドロワーを表示する位置 */}
       {/* open: ドロワーの表示、非表示切替bool */}
-      {/* onClose:  */}
-      <Drawer anchor="left" open={state.showDrawer} onClose={toggleDrawer(false)}>
-        <div
-          className={classes.list}
-          role="presentation"
-          onClick={toggleDrawer(false)}
-          onKeyDown={toggleDrawer(false)}>
-          <List>
-            {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-          <List>
-            {['All mail', 'Trash', 'Spam'].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
-        </div>
+      {/* onClose: 閉じる時の処理。ここではopenに使用するstateをfalseにしてあげている。これを記述しないと閉じない */}
+      {/* variant: permanentで常に表示する。デフォルトはtemporary */}
+      <Hidden smDown>
+      <Drawer variant="permanent" anchor="left" open={state.showDrawer} onClose={toggleDrawer(false)} className={classes.drawer}>
+        <DrawerList/>
       </Drawer>
+      </Hidden>
+      <Hidden mdUp>
+        <Drawer open={state.showDrawer} onClose={toggleDrawer(false)} className={classes.drawer}>
+          <DrawerList/>
+        </Drawer>
+      </Hidden>
 
       {/* アプリバー */}
-      <AppBar position="static">
+      <AppBar className={classes.appBar} >
         <Toolbar>
           {/* IconButtonクリックにてドロワーメニューの切替 */}
           <IconButton edge="start" className={classes.menuButton} onClick={toggleDrawer(true)}>
@@ -152,7 +191,8 @@ export default function MaterialUi(props) {
 
 
       {/* 中央揃えにするレイアウト用のコンポーネント */}
-      <Container>
+      {/* <Container className={classes.container}> */}
+      <div className={classes.container}>
 
         {/* タイポグラフィ */}
         {/* variantでスタイル、componentで実際に割り当たるhtmlタグ指定。gutterBottomは下にmarginつけるみたい */}
@@ -190,13 +230,13 @@ export default function MaterialUi(props) {
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="h2">
                     image{key}
-              </Typography>
+                  </Typography>
                   <Typography variant="body2" color="textSecondary" component="p">
                     image{key} の説明部
                     image{key} の説明部
                     image{key} の説明部
                     image{key} の説明部
-              </Typography>
+                  </Typography>
                 </CardContent>
               </CardActionArea>
               <CardActions>
@@ -240,7 +280,7 @@ export default function MaterialUi(props) {
         <Fab disabled aria-label="like">
           <FavoriteIcon />
         </Fab>
-      </Container>
+      </div>
 
       {/* ボトムナビゲーション */}
       <BottomNavigation showLabels>
