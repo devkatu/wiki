@@ -58,6 +58,28 @@ const drawerWidth = 250;
 // ・makeStylesのコールバックに引数themeを入れるとMuiThemeProviderに設定した
 // themeを参照することができる
 // ・makeStylesの引数はそのままオブジェクトをいれてもよい
+
+// ★レスポンシブ対応…メディアクエリ
+// メディアクエリを設定したいクラスで
+// [theme.breakpoints.up('md')]: { ... }
+// として{ ... }中にスタイルを記述していく
+// ブレイクポイントをカスタマイズしたければcreateMuiThemeでbreakpointsをかえればOK
+// value         |0px     600px    960px    1280px   1920px
+// key           |xs      sm       md       lg       xl
+// screen width  |--------|--------|--------|--------|-------->
+// range         |   xs   |   sm   |   md   |   lg   |   xl
+// 例)up('md')   |        |        |  適用→→→→→→→→→→→→→→→→→→→
+// 例)down('md') |  ←←←←←←←←←←←←←←←←←←適用  |        |
+
+// ★レスポンシブ対応…Hidden
+// スタイルではないが、jsxにてHiddenタグで囲った要素はsmUp属性とかmdDown属性を付けて
+// ウィンドウのサイズによって非表示にすることができる
+// innerWidth  |xs      sm       md       lg       xl
+//             |--------|--------|--------|--------|-------->
+// width       |   xs   |   sm   |   md   |   lg   |   xl
+// 例)smUp     |   show | hide
+// 例)mdDown   |                     hide | show
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
