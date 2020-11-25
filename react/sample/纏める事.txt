@@ -34,9 +34,18 @@
   →reducer複数のやつ
   →fetchのやつ付ける
 
-
+★★★完了★★★
 ・materialuiとか
+
+★★★完了★★★
 ・スタイルの書き方ベスト
 　シンプルなreactアプリであればcssをそのまま書いてcssモジュールとする
 　materialuiではmakestyles()かな
 
+・firebase
+・reduxのstoreでrouteを管理？？
+・templateファイル？？
+・re-ducksパターン
+　オペレーション、セレクタ―
+・関数の引数に配列括弧のみ
+・コンテナのcompose
