@@ -47,5 +47,6 @@
 ・templateファイル？？
 ・re-ducksパターン
 　オペレーション、セレクタ―
+　→dispatchとstate読出しに相当する？
 ・関数の引数に配列括弧のみ
 ・コンテナのcompose
