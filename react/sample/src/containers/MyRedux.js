@@ -55,6 +55,7 @@ class MyRedux extends React.Component {
         <p>reducerはaction、現在stateにより、新しいstateを作る</p><img src="./images/image5.png" alt="" />
         <p>新しいstateを保存する</p><img src="./images/image6.png" alt="" />
         <p>stateやreducerは複雑になると分けた方がよい</p><img src="./images/image7.png" alt="" />
+        <p>redux公式より。APIへの問合せとかも含めた全体観</p><img src="./image/image8.gif" alt=""/>
       </div>
     );
   }

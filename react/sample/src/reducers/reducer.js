@@ -1,7 +1,7 @@
 import { combineReducers } from "redux"
 
 // ★stateの初期値設定
-// createStoreでも初期値設定はできるけどこっちのがわかりやすい？
+// createStoreの第二引数に渡しても初期値設定はできるけどこっちのがわかりやすい？
 const todoInitialState = {
   todos: [],
   input: "",
@@ -17,6 +17,8 @@ const fetchInitialState = {
 // dispatch()が実行されると、reducerが呼出され、state、actionが渡される
 // それらを元に新しいstateをどのように更新して返すか定義しているところ
 // stateが更新されると自動で再レンダリングする
+// 複数のreducerを一緒くたに書くとネストが深くなり、変更前のステート
+// ...stateを書くのが多くなり見づらくなるので分割するのがよい
 function todoReducer(state = todoInitialState, action) {
   switch(action.type){
     case 'ADD_TODO':
