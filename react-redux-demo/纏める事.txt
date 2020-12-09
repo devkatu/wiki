@@ -1,0 +1,71 @@
+纏めること
+
+
+・reactそのもの
+  ★★★完了★★★
+  １）基本のコンセプト　react公式のreactの流儀のやつがいいかな？
+    →jsx(htmlとの違い…イベントの属性名、条件付きrender)、props、props.children、state(setStateするときはstate用いるならコールバック)とか、
+    →関数コンポーネントとクラスコンポーネント、
+    →条件付きレンダリング
+    →ライフサイクルメソッド
+    →イベント処理
+    →map()におけるkey
+    →制御されたフォーム
+
+  ★★★完了★★★
+  ２）高度なコンセプト(個別に作成)
+    →fragment
+    →lazy(() => import())、suspence、error boundary
+    →context
+    →ref(とDOM)
+    →高階コンポーネント
+
+
+★★★完了★★★
+・イミュータブルなstate更新のやつ
+
+★★★完了★★★
+・router
+  →router使ってページ分けするようにしたい　switchも
+
+★★★完了★★★
+・reduxとかの状態管理方法
+  →とりあえずqiitaのやつ纏める
+  →reducer複数のやつ
+  →fetchのやつ付ける
+
+★★★完了★★★
+・materialuiとか
+
+★★★完了★★★
+・スタイルの書き方ベスト
+　シンプルなreactアプリであればcssをそのまま書いてcssモジュールとする
+　materialuiではmakestyles()かな
+
+・firebase
+・reduxのstoreでrouteを管理？？
+・templateファイル？？
+・re-ducksパターン
+　オペレーション、セレクタ―
+　→dispatchとstate読出しに相当する？
+・関数の引数に配列括弧のみ
+・コンテナのcompose
+　引数に渡された複数の関数を右から左に順に合成する
+　渡される関数は各々一つだけ引数を受取ることができ
+　その戻り値は左の関数の引数となる
+
+★ここからredux公式の件
+・基本的にはreducerに副作用のある処理(ファイル操作、非同期処理、コンソール出力、乱数)
+　を作ることはできないが、middleWareを使えば可能。非同期処理を作ることもできる。
+　が、非同期処理はthunkで行うのが一般的？？
+
+ツールキット
+  ▶reducerのstateがネストしてる時に書き方楽に寝るみたい
+  ▶他にもstoreのセットアップが楽になったりする
+  configureStore,createSlice,createAsyncThunk,createEntityAdapterとある
+storeのメソッドまとめ？
+react redux 各フックも
+todolistitem keyの所わからん
+ミドルウェアの所のgifいい感じthunkに
+actionのタイプ命名
+selectorに関してshallowEqualとReact.memo()とreselectのcreateSelector
