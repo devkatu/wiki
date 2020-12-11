@@ -69,3 +69,8 @@ todolistitem keyの所わからん
 ミドルウェアの所のgifいい感じthunkに
 actionのタイプ命名
 selectorに関してshallowEqualとReact.memo()とreselectのcreateSelector
+
+
+とりあえずそんなに大規模なもの作らないのでducksパターンで
+actionのタイプ命名しっかり
+フック使ってみる useSelector,useDispatch...
