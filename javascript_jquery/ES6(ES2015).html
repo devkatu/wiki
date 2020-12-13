@@ -419,6 +419,9 @@
       import * as X from 'モジュール名';<br>
       →こちらはXにexportしたモジュールがすべてオブジェクトとして代入される<br>
       default exportのものはXそのままか、defaultプロパティで呼出せる<br>
+
+      また、index.jsというファイルを作りそのディレクトリのエントリポイントにすることができる<br>
+      このindex.jsに
     </p>
   </div>
   <div class="outer">
@@ -454,6 +457,19 @@ console.log(diag(4, 3)); // 5
 import * as lib from 'lib';
 console.log(lib.square(11)); // 121
 console.log(lib.diag(4, 3)); // 5
+
+
+エントリポイントとして使うとき
+//------ hoge/fuga/index.js ------
+export { default as todosState } from "./todos";
+ →index.jsと同じディレクトリにあるファイルからDefaultExportされている
+ ものをtodosStateとしてNamedExportする
+ エントリポイントとして同ディレクトリにある全てのファイルをexportする
+//------ hoge/bar.js ------
+import { todosState } from "./fuga";
+ →fugaディレクトリのエントリポイントからtodosStateが
+ NamedExportされているのでそれを受取る
+
       </code></pre>
     </div>
   </div>

@@ -72,5 +72,6 @@ selectorに関してshallowEqualとReact.memo()とreselectのcreateSelector
 
 
 とりあえずそんなに大規模なもの作らないのでducksパターンで
+stateフォルダつくってstoreとかいれてそのままducksパターンでそのフォルダ内に作る
 actionのタイプ命名しっかり
 フック使ってみる useSelector,useDispatch...

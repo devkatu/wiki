@@ -8,9 +8,9 @@ import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
-import store from './store';
-import { history } from './store';
-
+import history from './state/history';
+import store from './state/store';
+// import { history } from './state/store';
 const theme = createMuiTheme({
   
 });

@@ -1,19 +1,17 @@
 import { applyMiddleware, combineReducers, createStore } from "redux";
 import { createLogger } from "redux-logger";
 import thunk from "redux-thunk";
-import { TodosReducer } from "./modules/todo";
-import * as History from 'history';
+import { TodosReducer } from "./todo";
 import { connectRouter, routerMiddleware } from "connected-react-router";
-
-export const history = History.createBrowserHistory();
+import history from './history';
 
 // createLoggerはdevelopmentでは入れないようにもできる
 const middleware = applyMiddleware(routerMiddleware(history), thunk, createLogger());
 
 export default createStore(
   combineReducers({
+    router: connectRouter(history),
     todos: TodosReducer,
-    router: connectRouter(history)
   }),
   middleware
 );
