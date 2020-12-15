@@ -1,4 +1,13 @@
 const initialState = {
+  todos: {
+    todo: "test todo",
+    complete: false,
+    color: "nothing",
+
+  }
+  ,
+  
+  
   fetching: false,
   fetched: false
 }
