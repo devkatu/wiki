@@ -68,6 +68,7 @@ todolistitem keyの所わからん
 selectorに関してshallowEqualとReact.memo()とreselectのcreateSelector
 actionのタイプ命名しっかり
 フック使ってみる useSelector,useDispatch...
+標準的なreduxのパターン(storeには配列使わないでオブジェクトとか・・・)
 
 ・とりあえずそんなに大規模なもの作らないのでducksパターンで
 　stateフォルダつくってstoreとかいれてそのままducksパターンでそのフォルダ内に作る
