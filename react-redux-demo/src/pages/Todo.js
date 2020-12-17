@@ -7,11 +7,17 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Header from '../components/Header';
 import DrawerMenu from "../components/DrawerMenu";
-import { TodayOutlined } from "@material-ui/icons";
+import { FullscreenExitTwoTone, TodayOutlined } from "@material-ui/icons";
 import { useState } from "react";
 
-const useStyles = makeStyles({
+import { todoAdd, changeComplete } from "../state/todosSlice";
 
+const useStyles = makeStyles({
+  inputTodo: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  }
 });
 
 const Todo = () => {
@@ -20,24 +26,27 @@ const Todo = () => {
   const [inputText, setInputText] = useState("");
   const todos = useSelector(state => state.todos.entities);
 
-  const inputTextHandler = (e) => {
+  const handleChangeText = (e) => {
     setInputText(e.target.value);
+  }
+  const handleTodoAdd = () => {
+    dispatch(todoAdd(inputText));
+  }
+  const handleChangeCompleted = (e) => {
+    dispatch(changeComplete(e.target.checked));
   }
   return (
     <>
       <Header />
       <Container maxWidth="sm">
-        <TextField placeholder="やることを入力してね" label="TODO" onChange={inputTextHandler}/>
-        <Button
-        variant="contained"
-          onClick={() => { dispatch({
-            type: "TODOS/TODO_ADDED",
-            payload: {
-              text: inputText
-            }
-          }) }}>
-          Todoを登録する
-        </Button>
+        <div className={classes.inputTodo}>
+          <TextField placeholder="やることを入力してね" label="TODO" onChange={handleChangeText} />
+          <Button
+            variant="contained"
+            onClick={handleTodoAdd}>
+            Todoを登録する
+          </Button>
+        </div>
         <List>
           {todos.map((todo, index) =>
             <ListItem key={index}>
@@ -46,6 +55,7 @@ const Todo = () => {
                   edge="start"
                   checked={todo.completed}
                   disableRipple
+                  onChange={handleChangeCompleted}
                 />
               </ListItemIcon>
               <ListItemText primary={todo.text} />

@@ -1,3 +1,4 @@
+// -------- 初期状態 --------
 const initialState = {
   entities: 
     // [todo.id]: {
@@ -28,6 +29,7 @@ const initialState = {
   // fetched: false
 }
 
+// -------- レデューサー --------
 export const TodosReducer = (state = initialState, action) => {
   switch (action.type) {
     case "TODOS/TODO_ADDED":
@@ -44,6 +46,17 @@ export const TodosReducer = (state = initialState, action) => {
           }
         ]
       }
+    case "TODOS/CHANGE_COMPLETE":
+      return {
+        ...state,
+        entities: [
+          ...state.entities,
+          {
+            id: "",
+            completed: action.payload.completed
+          }
+        ]
+      }
 
 
     case "FETCH_TODO":
@@ -53,5 +66,31 @@ export const TodosReducer = (state = initialState, action) => {
       }
     default:
       return state;
+  }
+}
+
+// -------- セレクタ― --------
+
+
+// -------- アクションクリエイター --------
+export const todoAdd = (text) => {
+  return {
+    type: "TODOS/TODO_ADDED",
+    payload: {
+      text: text,
+      completed: false,
+      color: "nothing"
+    }
+  }
+}
+
+export const changeComplete = (complete) => {
+  return {
+    type: "TODOS/CHANGE_COMPLETE",
+    payload: {
+      // text: text,
+      completed: complete,
+      color: ""
+    }
   }
 }
