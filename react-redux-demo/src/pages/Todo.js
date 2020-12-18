@@ -1,5 +1,5 @@
 
-import { AppBar, Button, Checkbox, Container, IconButton, List, ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText, MenuItem, Select, TextField, Toolbar, Typography } from "@material-ui/core";
+import { AppBar, Button, Checkbox, Container, IconButton, InputLabel, List, ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText, MenuItem, Select, TextField, Toolbar, Typography } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import { makeStyles } from "@material-ui/styles";
 import { push } from "connected-react-router";
@@ -10,7 +10,8 @@ import DrawerMenu from "../components/DrawerMenu";
 import { FullscreenExitTwoTone, TodayOutlined } from "@material-ui/icons";
 import { useState } from "react";
 
-import { todoAdd, changeComplete } from "../state/todosSlice";
+import { todoAdd, changeComplete, selectTodos, selectFilteredTodos } from "../state/todosSlice";
+import { filterChanged } from "../state/filtersSlice";
 
 const useStyles = makeStyles({
   inputTodo: {
@@ -24,7 +25,8 @@ const Todo = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [inputText, setInputText] = useState("");
-  const todos = useSelector(state => state.todos.entities);
+  const todos = useSelector(selectTodos);
+  const filteredTodos = useSelector(selectFilteredTodos);
 
   const handleChangeText = (e) => {
     setInputText(e.target.value);
@@ -35,10 +37,14 @@ const Todo = () => {
   const handleChangeCompleted = (e) => {
     dispatch(changeComplete(e.target.checked));
   }
+  const handleFilterChanged = (e) => {
+    dispatch(filterChanged(e.target.value));
+  }
   return (
     <>
       <Header />
       <Container maxWidth="sm">
+        
         <div className={classes.inputTodo}>
           <TextField placeholder="やることを入力してね" label="TODO" onChange={handleChangeText} />
           <Button
@@ -73,7 +79,49 @@ const Todo = () => {
               </ListItemSecondaryAction>
             </ListItem>
           )}
+
+          {/* フィルター済みtodosの表示 */}
+          {filteredTodos.map((todo, index) =>
+            <ListItem key={index}>
+              <ListItemIcon>
+                <Checkbox
+                  edge="start"
+                  checked={todo.completed}
+                  disableRipple
+                  onChange={handleChangeCompleted}
+                />
+              </ListItemIcon>
+              <ListItemText primary={todo.text} />
+              <ListItemSecondaryAction>
+                <Select
+                  edge="end"
+                  value={todo.color}
+                // onChange={ }
+                >
+                  <MenuItem value={"green"}>green</MenuItem>
+                  <MenuItem value={"red"}>red</MenuItem>
+                  <MenuItem value={"blue"}>blue</MenuItem>
+
+                </Select>
+              </ListItemSecondaryAction>
+            </ListItem>
+          )}
         </List>
+
+
+
+        <InputLabel id="SelectColor">filter color</InputLabel>
+        <Select
+          labelId="SelectColor"
+          // value={}
+          onChange={ handleFilterChanged }
+          label="filter color"
+          >
+            <MenuItem value="none"> None </MenuItem>
+            <MenuItem value="green"> Green </MenuItem>
+            <MenuItem value="blue"> Blue </MenuItem>
+            <MenuItem value="red"> Red </MenuItem>
+          </Select>
       </Container>
     </>
   )

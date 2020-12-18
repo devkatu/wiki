@@ -7,7 +7,7 @@ const initialState = {
           id: "1",
           text: "test1",
           completed: false,
-          color: "nothing",
+          color: "none",
         },
         {
           id: "2",
@@ -19,7 +19,7 @@ const initialState = {
           id: "3",
           text: "test3",
           completed: true,
-          color: "nothing",
+          color: "none",
         },
         
       ]
@@ -42,8 +42,16 @@ export const TodosReducer = (state = initialState, action) => {
             id: "",
             text: todo.text,
             completed: false,
-            color: "nothing"
+            color: "none"
           }
+        ]
+      }
+    case "TODOS/CHANGE_COLOR":
+      return {
+        ...state,
+        entities: [
+          ...state.entities,
+
         ]
       }
     case "TODOS/CHANGE_COMPLETE":
@@ -70,7 +78,19 @@ export const TodosReducer = (state = initialState, action) => {
 }
 
 // -------- セレクタ― --------
-
+export const selectTodos = (state) => {
+  return state.todos.entities;
+}
+export const selectTodoIds = (state) => {
+  return state.todos.entities.map(todo => todo.id)
+}
+export const selectFilteredTodos = (state) => {
+  const todos = state.todos.entities;
+  const filter = state.filters.filterColor;
+  return todos.filter((todo) => {
+    if (todo.color === filter) return todo;
+  })
+}
 
 // -------- アクションクリエイター --------
 export const todoAdd = (text) => {

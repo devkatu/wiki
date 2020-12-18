@@ -1,6 +1,6 @@
 // -------- 初期状態 --------
 const initialState = {
-  filterColor: "",
+  filterColor: "none",
   filterComplete: true,
 }
 
@@ -10,7 +10,7 @@ export const FiltersReducer = (state = initialState, action) => {
     case "FILTERS/FILTER_CHANGED":
       return {
         ...state,
-        filterColor: action.payload,
+        filterColor: action.payload.color,
       }
 
 
@@ -25,10 +25,9 @@ export const FiltersReducer = (state = initialState, action) => {
 // -------- アクションクリエイター --------
 export const filterChanged = (filter) => {
   return {
-    type: "TODOS/TODO_ADDED",
+    type: "FILTERS/FILTER_CHANGED",
     payload: {
-      completed: false,
-      color: "nothing"
+      color: filter
     }
   }
 }
