@@ -62,13 +62,30 @@
 　その戻り値は左の関数の引数となる
 
 ★未完(ここからredux公式の件
-storeのメソッドまとめ？
-react redux 各フックも
-todolistitem keyの所わからん
-selectorに関してshallowEqualとReact.memo()とreselectのcreateSelector
-actionのタイプ命名しっかり
-フック使ってみる useSelector,useDispatch...
-標準的なreduxのパターン(storeには配列使わないでオブジェクトとか・・・)
+・actionのタイプ命名しっかり
+　→アプリの主な機能として追跡したいstateを定義して初期stateを設計
+　　initialState = {todos: {...}, filters: {...}}
+　→stateの各プロパティについてのactionを設計する
+　　{type: "TODOS/TODOADDED", payload: todoText}
+　　{type: "FILTERS/FILTER_CHANGED", payload: filter}
+　　typeは "'stateのプロパティ'/'具体的なアクション名'"とする
+　→各actionに対するreducerを設計する
+　　function todosReducer(state, action){}
+　　function filtersReducer(state, action){}
+　　関数名は'stateのプロパティ'+Reducerとなる
+　　これらreducerはstore.jsとかでcombineされる
+　→selectorは
+　　select+'選択したいstate'　かな
+
+　reducer、selectorとかの命名は？
+・selectorに関してshallowEqualとReact.memo()とreselectのcreateSelector
+・todolistitem keyの所わからん
+・標準的なreduxのパターン(storeには配列使わないでオブジェクトとか・・・)
+・storeのメソッドまとめ？
+　getState(), dispatch(action), subscribe(listener), unsubscribe※subscribeの戻り値
+・react redux 各フック
+　useState,useCallback,useEffect...
+　useSelector,useDispatch,useMemo...
 
 ・とりあえずそんなに大規模なもの作らないのでducksパターンで
 　stateフォルダつくってstoreとかいれてそのままducksパターンでそのフォルダ内に作る
