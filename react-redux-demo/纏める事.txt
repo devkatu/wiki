@@ -74,17 +74,20 @@
 　　function filtersReducer(state, action){}
 　　関数名は'stateのプロパティ'+Reducerとなる
 　　これらreducerはstore.jsとかでcombineされる
-　→selectorは
-　　select+'選択したいstate'　かな
+　→selectorを設計する(必要に応じて？createSelector見て考える)
+　　関数名はselect+'選択したいstate'　かな
 
-　reducer、selectorとかの命名は？
+
 ・selectorに関してshallowEqualとReact.memo()とreselectのcreateSelector
 ・todolistitem keyの所わからん
 ・標準的なreduxのパターン(storeには配列使わないでオブジェクトとか・・・)
 ・storeのメソッドまとめ？
 　getState(), dispatch(action), subscribe(listener), unsubscribe※subscribeの戻り値
 ・react redux 各フック
-　useState,useCallback,useEffect...
+　useState,
+　useCallback,
+　useEffect
+　　→クラスコンポーネントのcomponentDidmount,componentWillunmountとかの処理を関数コンポーネントで使える上に一気にかける
 　useSelector,useDispatch,useMemo...
 
 ・とりあえずそんなに大規模なもの作らないのでducksパターンで

@@ -10,7 +10,7 @@ import DrawerMenu from "../components/DrawerMenu";
 import { FullscreenExitTwoTone, TodayOutlined } from "@material-ui/icons";
 import { useState } from "react";
 
-import { todoAdd, changeComplete, selectTodos, selectFilteredTodos } from "../state/todosSlice";
+import { todoAdd, changeComplete, selectTodos, selectFilteredTodos, selectCompletedTodos } from "../state/todosSlice";
 import { filterChanged } from "../state/filtersSlice";
 
 const useStyles = makeStyles({
@@ -27,6 +27,7 @@ const Todo = () => {
   const [inputText, setInputText] = useState("");
   const todos = useSelector(selectTodos);
   const filteredTodos = useSelector(selectFilteredTodos);
+  const completedTodosCount = useSelector(selectCompletedTodos);
 
   const handleChangeText = (e) => {
     setInputText(e.target.value);
@@ -44,7 +45,11 @@ const Todo = () => {
     <>
       <Header />
       <Container maxWidth="sm">
-        
+        <div>
+          <p>
+            完了しているやる項目数　：　{completedTodosCount}
+          </p>
+        </div>
         <div className={classes.inputTodo}>
           <TextField placeholder="やることを入力してね" label="TODO" onChange={handleChangeText} />
           <Button

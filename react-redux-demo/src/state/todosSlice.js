@@ -84,6 +84,9 @@ export const selectTodos = (state) => {
 export const selectTodoIds = (state) => {
   return state.todos.entities.map(todo => todo.id)
 }
+export const selectCompletedTodos = (state) => {
+  return state.todos.entities.filter((todo) => todo.completed).length;
+}
 export const selectFilteredTodos = (state) => {
   const todos = state.todos.entities;
   const filter = state.filters.filterColor;
