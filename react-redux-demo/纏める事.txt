@@ -88,7 +88,19 @@
 　useCallback,
 　useEffect
 　　→クラスコンポーネントのcomponentDidmount,componentWillunmountとかの処理を関数コンポーネントで使える上に一気にかける
-　useSelector,useDispatch,useMemo...
+　useDispatch
+　　→reactコンポーネント内でstore.dispatchが使えるようにする
+　useSelector
+　　→reactコンポーネント内でstoreの値を選択して取り出すとともに、store.subscribeみたいなことをしてくれる
+　　　…actionがdispatchされる度にselectorを呼出し、結果が前回と異なれば該当コンポーネントの再レンダリング
+　　　を行うが、、、厳密な比較演算===なのでdispatch時、値は同じでも新しい配列とかになると前回と違う参照として判定してしまう
+　　　これの対策として他のコンポーネントから変更される可能性のあるstateは直接selectorで読み取らずに
+　　　そのstateのプロパティにID等のプリミティブ型を持たせ、それを読み取り、コンポーネント内で使用すれば、値のみの比較なので問題ない
+　　　しかしそれでもどこかで該当のオブジェクトや配列を読み出さなければならない事が多いと思うので
+　　　useSelector()の第二引数にshallowEqualをわたしてやると、オブジェクトや配列の中の値を比較するようになる。
+　　　createSelectorについては
+　　　　dispatchがあるたびに無駄な再レンダリングはshallowEqualで防げるが、インラインでuseselectorに
+　　　　渡す関数を書いているとき、selector関数の再計算は行われしまう。再計算を防ぎ、なおかつ再レンダリングをも防ぐもの
 
 ・とりあえずそんなに大規模なもの作らないのでducksパターンで
 　stateフォルダつくってstoreとかいれてそのままducksパターンでそのフォルダ内に作る

@@ -1,3 +1,5 @@
+import { createSelector } from "reselect";
+
 // -------- 初期状態 --------
 const initialState = {
   entities: 
@@ -81,19 +83,32 @@ export const TodosReducer = (state = initialState, action) => {
 export const selectTodos = (state) => {
   return state.todos.entities;
 }
-export const selectTodoIds = (state) => {
-  return state.todos.entities.map(todo => todo.id)
-}
+// export const selectTodoIds = (state) => {
+//   return state.todos.entities.map(todo => todo.id)
+// }
+export const selectTodoIds = createSelector(
+  selectTodos,
+  (todos) => todos.map(todo => todo.id)
+)
 export const selectCompletedTodos = (state) => {
   return state.todos.entities.filter((todo) => todo.completed).length;
 }
-export const selectFilteredTodos = (state) => {
-  const todos = state.todos.entities;
-  const filter = state.filters.filterColor;
-  return todos.filter((todo) => {
-    if (todo.color === filter) return todo;
-  })
-}
+// export const selectFilteredTodos = (state) => {
+//   const todos = state.todos.entities;
+//   const filter = state.filters.filterColor;
+//   return todos.filter((todo) => {
+//     if (todo.color === filter) return todo;
+//   })
+// }
+export const selectFilteredTodos = createSelector(
+  selectTodos,
+  state => state.filters.filterColor,
+  ( todos, filter) => {
+    return todos.filter((todo) => {
+      if(todo.color === filter) return todo
+    })
+  }
+)
 
 // -------- アクションクリエイター --------
 export const todoAdd = (text) => {
