@@ -1,3 +1,4 @@
+import { SatelliteSharp } from "@material-ui/icons";
 import { createSelector } from "reselect";
 
 // -------- 初期状態 --------
@@ -53,19 +54,21 @@ export const TodosReducer = (state = initialState, action) => {
         ...state,
         entities: [
           ...state.entities,
-
+          
         ]
       }
     case "TODOS/CHANGE_COMPLETE":
       return {
         ...state,
-        entities: [
-          ...state.entities,
-          {
-            id: "",
+        entities: state.entities.map(todo => {
+          if(todo.id !== action.payload.id){
+            return todo;
+          }
+          return {
+            ...todo,
             completed: action.payload.completed
           }
-        ]
+        }),
       }
 
 
@@ -83,23 +86,14 @@ export const TodosReducer = (state = initialState, action) => {
 export const selectTodos = (state) => {
   return state.todos.entities;
 }
-// export const selectTodoIds = (state) => {
-//   return state.todos.entities.map(todo => todo.id)
-// }
 export const selectTodoIds = createSelector(
   selectTodos,
-  (todos) => todos.map(todo => todo.id)
+  todos => todos.map(todo => todo.id)
 )
-export const selectCompletedTodos = (state) => {
-  return state.todos.entities.filter((todo) => todo.completed).length;
-}
-// export const selectFilteredTodos = (state) => {
-//   const todos = state.todos.entities;
-//   const filter = state.filters.filterColor;
-//   return todos.filter((todo) => {
-//     if (todo.color === filter) return todo;
-//   })
-// }
+export const selectCompletedTodos = createSelector(
+  selectTodos,
+  todos => todos.filter((todo) => todo.completed).length
+)
 export const selectFilteredTodos = createSelector(
   selectTodos,
   state => state.filters.filterColor,
@@ -122,13 +116,12 @@ export const todoAdd = (text) => {
   }
 }
 
-export const changeComplete = (complete) => {
+export const changeComplete = (id, complete) => {
   return {
     type: "TODOS/CHANGE_COMPLETE",
     payload: {
-      // text: text,
+      id: id,
       completed: complete,
-      color: ""
     }
   }
 }

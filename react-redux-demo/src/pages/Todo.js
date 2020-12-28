@@ -7,10 +7,11 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Header from '../components/Header';
 import DrawerMenu from "../components/DrawerMenu";
+import TodoListItem from "../components/TodoListItem"
 import { FullscreenExitTwoTone, TodayOutlined } from "@material-ui/icons";
 import { useState } from "react";
 
-import { todoAdd, changeComplete, selectTodos, selectFilteredTodos, selectCompletedTodos } from "../state/todosSlice";
+import { todoAdd, changeComplete, selectTodos, selectFilteredTodos, selectCompletedTodos, selectTodoIds } from "../state/todosSlice";
 import { filterChanged } from "../state/filtersSlice";
 
 const useStyles = makeStyles({
@@ -26,6 +27,7 @@ const Todo = () => {
   const classes = useStyles();
   const [inputText, setInputText] = useState("");
   const todos = useSelector(selectTodos);
+  const todoIds = useSelector(selectTodoIds);
   const filteredTodos = useSelector(selectFilteredTodos);
   const completedTodosCount = useSelector(selectCompletedTodos);
 
@@ -35,9 +37,9 @@ const Todo = () => {
   const handleTodoAdd = () => {
     dispatch(todoAdd(inputText));
   }
-  const handleChangeCompleted = (e) => {
-    dispatch(changeComplete(e.target.checked));
-  }
+  // const handleChangeCompleted = (e) => {
+  //   dispatch(changeComplete(e.target.checked));
+  // }
   const handleFilterChanged = (e) => {
     dispatch(filterChanged(e.target.value));
   }
@@ -60,33 +62,39 @@ const Todo = () => {
         </div>
         <List>
           {todos.map((todo, index) =>
-            <ListItem key={index}>
-              <ListItemIcon>
-                <Checkbox
-                  edge="start"
-                  checked={todo.completed}
-                  disableRipple
-                  onChange={handleChangeCompleted}
-                />
-              </ListItemIcon>
-              <ListItemText primary={todo.text} />
-              <ListItemSecondaryAction>
-                <Select
-                  edge="end"
-                  value={todo.color}
-                // onChange={ }
-                >
-                  <MenuItem value={"green"}>green</MenuItem>
-                  <MenuItem value={"red"}>red</MenuItem>
-                  <MenuItem value={"blue"}>blue</MenuItem>
+            // <ListItem key={index}>
+            //   <ListItemIcon>
+            //     <Checkbox
+            //       edge="start"
+            //       checked={todo.completed}
+            //       disableRipple
+            //       onChange={handleChangeCompleted}
+            //     />
+            //   </ListItemIcon>
+            //   <ListItemText primary={todo.text} />
+            //   <ListItemSecondaryAction>
+            //     <Select
+            //       edge="end"
+            //       value={todo.color}
+            //     // onChange={ }
+            //     >
+            //       <MenuItem value={"green"}>green</MenuItem>
+            //       <MenuItem value={"red"}>red</MenuItem>
+            //       <MenuItem value={"blue"}>blue</MenuItem>
 
-                </Select>
-              </ListItemSecondaryAction>
-            </ListItem>
+            //     </Select>
+            //   </ListItemSecondaryAction>
+            // </ListItem>
+            <TodoListItem
+              key={index} 
+              id={todo.id}
+              todo={todo}
+              // handleChangeCompleted={handleChangeCompleted}
+              />
           )}
 
           {/* フィルター済みtodosの表示 */}
-          {filteredTodos.map((todo, index) =>
+          {/* {filteredTodos.map((todo, index) =>
             <ListItem key={index}>
               <ListItemIcon>
                 <Checkbox
@@ -110,7 +118,7 @@ const Todo = () => {
                 </Select>
               </ListItemSecondaryAction>
             </ListItem>
-          )}
+          )} */}
         </List>
 
 

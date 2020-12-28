@@ -101,6 +101,7 @@
 　　　createSelectorについては
 　　　　dispatchがあるたびに無駄な再レンダリングはshallowEqualで防げるが、インラインでuseselectorに
 　　　　渡す関数を書いているとき、selector関数の再計算は行われしまう。再計算を防ぎ、なおかつ再レンダリングをも防ぐもの
+　　　　基本createSelecotr使っとけば問題ないが、小規模ならuseSelectorにshallowEqualでも可
 
 ・とりあえずそんなに大規模なもの作らないのでducksパターンで
 　stateフォルダつくってstoreとかいれてそのままducksパターンでそのフォルダ内に作る
