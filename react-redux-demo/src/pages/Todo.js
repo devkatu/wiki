@@ -12,7 +12,7 @@ import { FullscreenExitTwoTone, TodayOutlined } from "@material-ui/icons";
 import { useState } from "react";
 
 import { todoAdd, changeComplete, selectTodos, selectFilteredTodos, selectCompletedTodos, selectTodoIds } from "../state/todosSlice";
-import { filterChanged } from "../state/filtersSlice";
+import { filterColorChanged, filterCompleteChanged } from "../state/filtersSlice";
 
 const useStyles = makeStyles({
   inputTodo: {
@@ -40,8 +40,11 @@ const Todo = () => {
   // const handleChangeCompleted = (e) => {
   //   dispatch(changeComplete(e.target.checked));
   // }
-  const handleFilterChanged = (e) => {
-    dispatch(filterChanged(e.target.value));
+  const handleFilterColorChanged = (e) => {
+    dispatch(filterColorChanged(e.target.value));
+  }
+  const handleFilterCompleteChanged = (e) => {
+    dispatch(filterCompleteChanged(e.target.value));
   }
   return (
     <>
@@ -61,36 +64,11 @@ const Todo = () => {
           </Button>
         </div>
         <List>
-          {todos.map((todo, index) =>
-            // <ListItem key={index}>
-            //   <ListItemIcon>
-            //     <Checkbox
-            //       edge="start"
-            //       checked={todo.completed}
-            //       disableRipple
-            //       onChange={handleChangeCompleted}
-            //     />
-            //   </ListItemIcon>
-            //   <ListItemText primary={todo.text} />
-            //   <ListItemSecondaryAction>
-            //     <Select
-            //       edge="end"
-            //       value={todo.color}
-            //     // onChange={ }
-            //     >
-            //       <MenuItem value={"green"}>green</MenuItem>
-            //       <MenuItem value={"red"}>red</MenuItem>
-            //       <MenuItem value={"blue"}>blue</MenuItem>
-
-            //     </Select>
-            //   </ListItemSecondaryAction>
-            // </ListItem>
+          {filteredTodos.map((todo, index) =>
             <TodoListItem
-              key={index} 
+              key={index}
               id={todo.id}
-              todo={todo}
-              // handleChangeCompleted={handleChangeCompleted}
-              />
+            />
           )}
 
           {/* フィルター済みtodosの表示 */}
@@ -127,14 +105,25 @@ const Todo = () => {
         <Select
           labelId="SelectColor"
           // value={}
-          onChange={ handleFilterChanged }
+          onChange={handleFilterColorChanged}
           label="filter color"
-          >
-            <MenuItem value="none"> None </MenuItem>
-            <MenuItem value="green"> Green </MenuItem>
-            <MenuItem value="blue"> Blue </MenuItem>
-            <MenuItem value="red"> Red </MenuItem>
-          </Select>
+        >
+          <MenuItem value="none"> None </MenuItem>
+          <MenuItem value="green"> Green </MenuItem>
+          <MenuItem value="blue"> Blue </MenuItem>
+          <MenuItem value="red"> Red </MenuItem>
+        </Select>
+        <InputLabel id="SelectComplete">filter complete</InputLabel>
+        <Select
+          labelId="SelectComplete"
+          // value={}
+          onChange={handleFilterCompleteChanged}
+          label="filter complete"
+        >
+          <MenuItem value="none"> None </MenuItem>
+          <MenuItem value="complete"> complete </MenuItem>
+          <MenuItem value="not"> not complete </MenuItem>
+        </Select>
       </Container>
     </>
   )

@@ -52,10 +52,15 @@ export const TodosReducer = (state = initialState, action) => {
     case "TODOS/CHANGE_COLOR":
       return {
         ...state,
-        entities: [
-          ...state.entities,
-          
-        ]
+        entities: state.entities.map(todo => {
+          if(todo.id !== action.payload.id){
+            return todo;
+          }
+          return{
+            ...todo,
+            color: action.payload.color
+          }
+        })          
       }
     case "TODOS/CHANGE_COMPLETE":
       return {
@@ -96,13 +101,22 @@ export const selectCompletedTodos = createSelector(
 )
 export const selectFilteredTodos = createSelector(
   selectTodos,
-  state => state.filters.filterColor,
+  // state => state.filters.filterColor,
+  state => state.filters,
   ( todos, filter) => {
     return todos.filter((todo) => {
-      if(todo.color === filter) return todo
+      if(
+        filter.filterColor === "none" || todo.color === filter.filterColor
+        // todo.completed === (filter.filterComplete === "complete") || 
+        // todo.completed === (filter.filterComplete === "not")
+        
+        ) return todo
     })
   }
 )
+export const selectTodoById = (state, id) => {
+  return selectTodos(state).find(todo => todo.id === id);
+}
 
 // -------- アクションクリエイター --------
 export const todoAdd = (text) => {
@@ -122,6 +136,16 @@ export const changeComplete = (id, complete) => {
     payload: {
       id: id,
       completed: complete,
+    }
+  }
+}
+
+export const changeColor = (id, color) => {
+  return {
+    type: "TODOS/CHANGE_COLOR",
+    payload: {
+      id: id,
+      color: color
     }
   }
 }
