@@ -3,29 +3,29 @@ import { createSelector } from "reselect";
 
 // -------- 初期状態 --------
 const initialState = {
-  entities: 
+  entities:
     // [todo.id]: {
-      [
-        {
-          id: "1",
-          text: "test1",
-          completed: false,
-          color: "none",
-        },
-        {
-          id: "2",
-          text: "test2",
-          completed: false,
-          color: "green",
-        },
-        {
-          id: "3",
-          text: "test3",
-          completed: true,
-          color: "none",
-        },
-        
-      ]
+    [
+      {
+        id: "1",
+        text: "test1",
+        completed: false,
+        color: "none",
+      },
+      {
+        id: "2",
+        text: "test2",
+        completed: false,
+        color: "green",
+      },
+      {
+        id: "3",
+        text: "test3",
+        completed: true,
+        color: "none",
+      },
+
+    ]
 
 
   // fetching: false,
@@ -36,6 +36,7 @@ const initialState = {
 export const TodosReducer = (state = initialState, action) => {
   switch (action.type) {
     case "TODOS/TODO_ADDED":
+      // todo追加時にidどうするかな
       const todo = action.payload;
       return {
         ...state,
@@ -53,20 +54,20 @@ export const TodosReducer = (state = initialState, action) => {
       return {
         ...state,
         entities: state.entities.map(todo => {
-          if(todo.id !== action.payload.id){
+          if (todo.id !== action.payload.id) {
             return todo;
           }
-          return{
+          return {
             ...todo,
             color: action.payload.color
           }
-        })          
+        })
       }
     case "TODOS/CHANGE_COMPLETE":
       return {
         ...state,
         entities: state.entities.map(todo => {
-          if(todo.id !== action.payload.id){
+          if (todo.id !== action.payload.id) {
             return todo;
           }
           return {
@@ -101,16 +102,13 @@ export const selectCompletedTodos = createSelector(
 )
 export const selectFilteredTodos = createSelector(
   selectTodos,
-  // state => state.filters.filterColor,
-  state => state.filters,
-  ( todos, filter) => {
+  state => state.filters.filterComplete,
+  state => state.filters.filterColor,
+  (todos, filterComplete, filterColor) => {
     return todos.filter((todo) => {
-      if(
-        filter.filterColor === "none" || todo.color === filter.filterColor
-        // todo.completed === (filter.filterComplete === "complete") || 
-        // todo.completed === (filter.filterComplete === "not")
-        
-        ) return todo
+      const matchColor = todo.color === filterColor || filterColor === "none";
+      const matchComplete = todo.completed === filterComplete || filterComplete === "none";
+      if (matchColor && matchComplete) return todo
     })
   }
 )
@@ -148,4 +146,14 @@ export const changeColor = (id, color) => {
       color: color
     }
   }
+}
+
+// -------- サンク関数 --------
+// アクションクリエイターみたいにコンポーネント側で実行する
+// 実行するとasyncなfunctionを返す。これがそのままdispatch()に渡される
+export const fetchTodos = () => async (dispatch) => {
+  dispatch({type:"test",payload:{}});
+  // const response = await client.get();
+  dispatch({type:"test",payload:{}})
+
 }

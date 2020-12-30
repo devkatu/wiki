@@ -12,13 +12,18 @@ import { FullscreenExitTwoTone, TodayOutlined } from "@material-ui/icons";
 import { useState } from "react";
 
 import { todoAdd, changeComplete, selectTodos, selectFilteredTodos, selectCompletedTodos, selectTodoIds } from "../state/todosSlice";
-import { filterColorChanged, filterCompleteChanged } from "../state/filtersSlice";
+import { selectFilters, filterColorChanged, filterCompleteChanged } from "../state/filtersSlice";
 
 const useStyles = makeStyles({
   inputTodo: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+  },
+  filters: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-around"
   }
 });
 
@@ -30,12 +35,14 @@ const Todo = () => {
   const todoIds = useSelector(selectTodoIds);
   const filteredTodos = useSelector(selectFilteredTodos);
   const completedTodosCount = useSelector(selectCompletedTodos);
+  const filters = useSelector(selectFilters);
 
   const handleChangeText = (e) => {
     setInputText(e.target.value);
   }
   const handleTodoAdd = () => {
     dispatch(todoAdd(inputText));
+    setInputText("");
   }
   // const handleChangeCompleted = (e) => {
   //   dispatch(changeComplete(e.target.checked));
@@ -100,30 +107,35 @@ const Todo = () => {
         </List>
 
 
-
-        <InputLabel id="SelectColor">filter color</InputLabel>
-        <Select
-          labelId="SelectColor"
-          // value={}
-          onChange={handleFilterColorChanged}
-          label="filter color"
-        >
-          <MenuItem value="none"> None </MenuItem>
-          <MenuItem value="green"> Green </MenuItem>
-          <MenuItem value="blue"> Blue </MenuItem>
-          <MenuItem value="red"> Red </MenuItem>
-        </Select>
-        <InputLabel id="SelectComplete">filter complete</InputLabel>
-        <Select
-          labelId="SelectComplete"
-          // value={}
-          onChange={handleFilterCompleteChanged}
-          label="filter complete"
-        >
-          <MenuItem value="none"> None </MenuItem>
-          <MenuItem value="complete"> complete </MenuItem>
-          <MenuItem value="not"> not complete </MenuItem>
-        </Select>
+        <div className={classes.filters}>
+          <div>
+            <InputLabel id="SelectColor">filter color</InputLabel>
+            <Select
+              labelId="SelectColor"
+              value={filters.filterColor}
+              onChange={handleFilterColorChanged}
+              label="filter color"
+            >
+              <MenuItem value="none"> None </MenuItem>
+              <MenuItem value="green"> Green </MenuItem>
+              <MenuItem value="blue"> Blue </MenuItem>
+              <MenuItem value="red"> Red </MenuItem>
+            </Select>
+          </div>
+          <div>
+            <InputLabel id="SelectComplete">filter complete</InputLabel>
+            <Select
+              labelId="SelectComplete"
+              value={filters.filterComplete}
+              onChange={handleFilterCompleteChanged}
+              label="filter complete"
+            >
+              <MenuItem value="none"> None </MenuItem>
+              <MenuItem value={true}> complete </MenuItem>
+              <MenuItem value={false}> not complete </MenuItem>
+            </Select>
+          </div>
+        </div>
       </Container>
     </>
   )

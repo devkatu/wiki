@@ -1,7 +1,7 @@
 // -------- 初期状態 --------
 const initialState = {
   filterColor: "none",
-  filterComplete: true,
+  filterComplete: "none",
 }
 
 // -------- レデューサー --------
@@ -24,7 +24,7 @@ export const FiltersReducer = (state = initialState, action) => {
 }
 
 // -------- セレクタ― --------
-
+export const selectFilters = state => state.filters;
 
 // -------- アクションクリエイター --------
 export const filterColorChanged = (filter) => {
