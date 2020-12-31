@@ -63,7 +63,11 @@ const Todo = () => {
           </p>
         </div>
         <div className={classes.inputTodo}>
-          <TextField placeholder="やることを入力してね" label="TODO" onChange={handleChangeText} />
+          <TextField
+            placeholder="やることを入力してね"
+            label="TODO"
+            value={inputText}
+            onChange={handleChangeText} />
           <Button
             variant="contained"
             onClick={handleTodoAdd}>

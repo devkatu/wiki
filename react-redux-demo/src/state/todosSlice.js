@@ -7,19 +7,19 @@ const initialState = {
     // [todo.id]: {
     [
       {
-        id: "1",
+        id: 1,
         text: "test1",
         completed: false,
         color: "none",
       },
       {
-        id: "2",
+        id: 2,
         text: "test2",
         completed: false,
         color: "green",
       },
       {
-        id: "3",
+        id: 3,
         text: "test3",
         completed: true,
         color: "none",
@@ -32,18 +32,24 @@ const initialState = {
   // fetched: false
 }
 
+// -------- id更新関数 --------
+function nextTodoId(todos){
+  const maxId = todos.reduce((maxId, todo) => Math.max(todo.id, maxId), -1);
+  return maxId + 1;
+}
+
+
 // -------- レデューサー --------
 export const TodosReducer = (state = initialState, action) => {
   switch (action.type) {
     case "TODOS/TODO_ADDED":
-      // todo追加時にidどうするかな
       const todo = action.payload;
       return {
         ...state,
         entities: [
           ...state.entities,
           {
-            id: "",
+            id: nextTodoId(state.entities),
             text: todo.text,
             completed: false,
             color: "none"
