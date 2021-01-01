@@ -1,7 +1,7 @@
-import { SatelliteSharp } from "@material-ui/icons";
 import { createSelector } from "reselect";
 
 // -------- 初期状態 --------
+// stateの初期状態を定義している
 const initialState = {
   entities:
     // [todo.id]: {
@@ -33,6 +33,7 @@ const initialState = {
 }
 
 // -------- id更新関数 --------
+// sliceに必須なものではないよ！
 function nextTodoId(todos){
   const maxId = todos.reduce((maxId, todo) => Math.max(todo.id, maxId), -1);
   return maxId + 1;
@@ -40,6 +41,8 @@ function nextTodoId(todos){
 
 
 // -------- レデューサー --------
+// actionがdispatchされるとここの処理が呼ばれる
+// action.typeにより処理が分岐し、stateの更新を行う
 export const TodosReducer = (state = initialState, action) => {
   switch (action.type) {
     case "TODOS/TODO_ADDED":
@@ -95,6 +98,8 @@ export const TodosReducer = (state = initialState, action) => {
 }
 
 // -------- セレクタ― --------
+// コンポーネント側でuseSelectorに渡してstoreにアクセスするためのもの
+// 詳しくはメモ参照
 export const selectTodos = (state) => {
   return state.todos.entities;
 }
@@ -123,6 +128,9 @@ export const selectTodoById = (state, id) => {
 }
 
 // -------- アクションクリエイター --------
+// コンポーネント側でこれらの関数を実行してactionオブジェクトを取り出す
+// 基本typeプロパティとpayloadプロパティで構成されて
+// reducerに渡されるとtypeプロパティを元に処理分岐する
 export const todoAdd = (text) => {
   return {
     type: "TODOS/TODO_ADDED",
@@ -163,8 +171,9 @@ export const changeColor = (id, color) => {
 // responseは従来のtodoAddアクションクリエイターによって処理してもらう
 export const saveNewTodo = (text) => async (dispatch) => {
   const initTodo = {text};  //{text:'textの値'}
-  const response = await client.post('fakeApi/todos', {todo: initTodo});
-  dispatch(todoAdd(response.todo));
+  // const response = await client.post('fakeApi/todos', {todo: initTodo});
+  // dispatch(todoAdd(response.todo));
+  dispatch(todoAdd(text));
 }
 
 

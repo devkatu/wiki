@@ -9,6 +9,8 @@ import history from './history';
 // createLoggerはdevelopmentでは入れないようにもできる
 const middleware = applyMiddleware(routerMiddleware(history), thunk, createLogger());
 
+// storeを作成する
+// 各sliceファイルのreducerの他connectRouter関連のやつもある
 export default createStore(
   combineReducers({
     router: connectRouter(history),

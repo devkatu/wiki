@@ -20,6 +20,7 @@ const theme = createMuiTheme({
 // storeで管理しているのでdispatch(push('/path'));
 // のような感じで関数的に書くことができる。
 // なぜかver4じゃないとダメ・・・
+// この配下にはreact-routerの<Router></Router>は不要(代わりにあるみたいなもん)
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>

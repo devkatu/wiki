@@ -10,7 +10,7 @@ import Setting from './pages/Setting';
 function App() {
   return (
     <div className="App">
-      {/* <Router> */}
+      {/* <Router> ←ConnectedRouterがあるからいらない？*/}
         <Switch>
           <Route exact path="/" component={Todo} />
           <Route exact path="/a" component={Setting} />
