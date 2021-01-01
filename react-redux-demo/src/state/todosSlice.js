@@ -157,9 +157,21 @@ export const changeColor = (id, color) => {
 // -------- サンク関数 --------
 // アクションクリエイターみたいにコンポーネント側で実行する
 // 実行するとasyncなfunctionを返す。これがそのままdispatch()に渡される
+
+// 新規に登録するtodo
+// コンポーネント側よりtextをもらって、APIにpostする
+// responseは従来のtodoAddアクションクリエイターによって処理してもらう
+export const saveNewTodo = (text) => async (dispatch) => {
+  const initTodo = {text};  //{text:'textの値'}
+  const response = await client.post('fakeApi/todos', {todo: initTodo});
+  dispatch(todoAdd(response.todo));
+}
+
+
 export const fetchTodos = () => async (dispatch) => {
   dispatch({type:"test",payload:{}});
   // const response = await client.get();
   dispatch({type:"test",payload:{}})
 
 }
+

@@ -11,7 +11,7 @@ import TodoListItem from "../components/TodoListItem"
 import { FullscreenExitTwoTone, TodayOutlined } from "@material-ui/icons";
 import { useState } from "react";
 
-import { todoAdd, changeComplete, selectTodos, selectFilteredTodos, selectCompletedTodos, selectTodoIds } from "../state/todosSlice";
+import { todoAdd, changeComplete, selectTodos, selectFilteredTodos, selectCompletedTodos, selectTodoIds, saveNewTodo } from "../state/todosSlice";
 import { selectFilters, filterColorChanged, filterCompleteChanged } from "../state/filtersSlice";
 
 const useStyles = makeStyles({
@@ -41,7 +41,12 @@ const Todo = () => {
     setInputText(e.target.value);
   }
   const handleTodoAdd = () => {
-    dispatch(todoAdd(inputText));
+    // todoAddでdispatchするとstoreの更新するだけ
+    // dispatch(todoAdd(inputText));
+
+    // saveNewTodoでdispatchするとAPIにpostしたあと
+    // responseがきたらstoreを更新する
+    dispatch(saveNewTodo(inputText));
     setInputText("");
   }
   // const handleChangeCompleted = (e) => {

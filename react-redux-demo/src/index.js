@@ -15,6 +15,11 @@ const theme = createMuiTheme({
   
 });
 
+// ConnectedRouterにより、storeでrouteの管理ができるようになる。
+// これがないと<Link path="hoge"/>とか書く必要があるはずだが、
+// storeで管理しているのでdispatch(push('/path'));
+// のような感じで関数的に書くことができる。
+// なぜかver4じゃないとダメ・・・
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>

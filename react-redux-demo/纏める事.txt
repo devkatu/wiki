@@ -1,67 +1,50 @@
-纏めること
 
+★★★react-redux-demo関係！★★★
 
-・reactそのもの
-  ★★★完了★★★
-  １）基本のコンセプト　react公式のreactの流儀のやつがいいかな？
-    →jsx(htmlとの違い…イベントの属性名、条件付きrender)、props、props.children、state(setStateするときはstate用いるならコールバック)とか、
-    →関数コンポーネントとクラスコンポーネント、
-    →条件付きレンダリング
-    →ライフサイクルメソッド
-    →イベント処理
-    →map()におけるkey
-    →制御されたフォーム
+★★★このアプリの構成★★★
+・とりあえずそんなに大規模なもの作らないのでducksパターンで
+　stateフォルダつくってstoreとかいれてそのままducksパターンでそのフォルダ内に作る
+・view関係は共通要素のcomponentsとページ呼出し単位のpagesくらいの分け方で
+　componentsの中身はatomicデザインのざっくりした感じ。
+　pagesの中身はcomponentsのつなぎ合わせとpage固有の要素
+・assetsとかは？
+　スタイルは基本cssインポートと、materialUiならmakestyleでいいけど
+　assetsにいれるスタイルは共通のスタイル入れる？
+　imgは基本importでいいはず。publicフォルダはfaviconとか？？
 
-  ★★★完了★★★
-  ２）高度なコンセプト(個別に作成)
-    →fragment
-    →lazy(() => import())、suspence、error boundary
-    →context
-    →ref(とDOM)
-    →高階コンポーネント
-
-
-★★★完了★★★
-・イミュータブルなstate更新のやつ
-
-★★★完了★★★
-・router
-  →router使ってページ分けするようにしたい　switchも
-
-★★★完了★★★
-・reduxとかの状態管理方法
-  →とりあえずqiitaのやつ纏める
-  →reducer複数のやつ
-  →fetchのやつ付ける
-
-★★★完了★★★
-・materialuiとか
-
-★★★完了★★★
-・スタイルの書き方ベスト
-　シンプルなreactアプリであればcssをそのまま書いてcssモジュールとする
-　materialuiではmakestyles()かな
-
-★★★完了★★★
-ツールキット
+★★★メモ！★★★
+・ツールキット
   ▶reducerのstateがネストしてる時に書き方楽に寝るみたい
   ▶他にもstoreのセットアップが楽になったりする
   configureStore,createSlice,createAsyncThunk,createEntityAdapterとある
-  ツールキットはとりあえずこんな感じでとらえておけばおｋ
-・re-ducksパターン
+  ツールキットはとりあえずこんな感じでとらえておけばおｋ？
+  →何回も書くようなファイル(ボイラープレート)がだいぶ省略できそうで
+  　便利そう。こんど使ってみるかな
+
+・re-ducksパターン？？
+　storeのディレクトリ構成として、
+　src下に、action,reducer...のようにだけしたがボリュームが大きくなると大変なので、
+　機能毎にファイルを分けて、action,reducer...の中身を分別したのがducksパターン
+　(moduleﾌｫﾙﾀﾞ下にtodoSlice.js,filterSlice.jsみたいな)
+　しかしこれも規模が大きくなるとつらいので、
+　さらに機能別ファイル(slice)をさらに分割して関数の種類ごと(action,reducer,operation,selector,type)
+　にすることになる
 　オペレーション、セレクタ―
 　→副作用(非同期処理とか)含むactionがオペレーション、stateのどれ読み出すか選択がセレクターみたいな感じ
-　→dispatchとstate読出しに相当する？
 
-★★あとはコメント書いておくだけのもの
 ・reduxのstoreでrouteを管理？？
 　connected-react-routerつかったらできた。ただしver.4じゃないと挙動おかしい(笑)
+　→storeでrouteの管理ができるようになる。
+　これがないと<Link path="hoge"/>とか書く必要があるはずだが、
+　storeで管理しているのでdispatch(push('/path'));
+　のような感じで関数的に書くことができる。
+
 ・コンテナのcompose
 　引数に渡された複数の関数を右から左に順に合成する
 　渡される関数は各々一つだけ引数を受取ることができ
 　その戻り値は左の関数の引数となる
+　そもそもクラスコンポーネントにすることあまりないと思う
 
-★未完(ここからredux公式の件
 ・actionのタイプ命名しっかり
 　→アプリの主な機能として追跡したいstateを定義して初期stateを設計
 　　initialState = {todos: {...}, filters: {...}}
@@ -77,17 +60,16 @@
 　→selectorを設計する(必要に応じて？createSelector見て考える)
 　　関数名はselect+'選択したいstate'　かな
 
-
-・selectorに関してshallowEqualとReact.memo()とreselectのcreateSelector
-・todolistitem keyの所わからん
-・標準的なreduxのパターン(storeには配列使わないでオブジェクトとか・・・)
-・storeのメソッドまとめ？
-　getState(), dispatch(action), subscribe(listener), unsubscribe※subscribeの戻り値
-・react redux 各フック
-　useState,
-　useCallback,
+・react各フック
+　useState
+　　→クラスコンポーネントでの初期state設定、setState、state読み出しを便利に使える
 　useEffect
-　　→クラスコンポーネントのcomponentDidmount,componentWillunmountとかの処理を関数コンポーネントで使える上に一気にかける
+　　→クラスコンポーネントでのcomponentDidmount,componentWillunmountとかの処理を関数コンポーネントで使える上に一気にかける
+　useCallback
+　　→コールバック関数を何度も登録せずに済むやつ？　★★★未完★★★
+
+・redux各フック
+　以下フックをコンポーネントで使うにはコンポーネントを<Provider store={store}></Provider>で囲う
 　useDispatch
 　　→reactコンポーネント内でstore.dispatchが使えるようにする
 　useSelector
@@ -103,14 +85,22 @@
 　　　　渡す関数を書いているとき、selector関数の再計算は行われしまう。再計算を防ぎ、なおかつ再レンダリングをも防ぐもの
 　　　　基本createSelecotr使っとけば問題ないが、小規模ならuseSelectorにshallowEqualでも可
 
-・とりあえずそんなに大規模なもの作らないのでducksパターンで
-　stateフォルダつくってstoreとかいれてそのままducksパターンでそのフォルダ内に作る
-・view関係は共通要素のcomponentsとページ呼出し単位のpagesくらいの分け方で
-　componentsの中身はatomicデザインのざっくりした感じ。
-　pagesの中身はcomponentsのつなぎ合わせとpage固有の要素
-・assetsとかは？
-　スタイルは基本cssインポートと、materialUiならmakestyleでいいけど
-　assetsにいれるスタイルは共通のスタイル入れる？
-　imgは基本importでいいはず。publicフォルダはfaviconとか？？
+・storeのメソッドまとめ？
+　storeのメソッドには以下がある。createStoreしてその戻り値で使うことができるが、
+　大体フックを呼び出して使うことになる。
+　getState()
+　　→storeを介しstateそのものにアクセスできる。普通はuseSelector使う
+　dispatch(action)
+　　→actionをreducerに送ってstateの更新をさせる。普通はuseDispatch使う
+　subscribe(listener)
+　　→dispatch時に一緒に行うリスナーコールバックを登録。あまり使わない。多分middleWare的な感じでOK
+　unsubscribe※subscribeの戻り値
+　　→リスナー登録の解除
+
+★未完
+・非同期処理のやつとモックapiついでに
+
+・標準的なreduxのパターン(storeには配列使わないでオブジェクトとか・・・)
 
 ・firebase
+
