@@ -1,4 +1,5 @@
 import { createSelector } from "reselect";
+import { client } from "../api/client";
 
 // -------- 初期状態 --------
 // stateの初期状態を定義している
@@ -34,7 +35,7 @@ const initialState = {
 
 // -------- id更新関数 --------
 // sliceに必須なものではないよ！
-function nextTodoId(todos){
+function nextTodoId(todos) {
   const maxId = todos.reduce((maxId, todo) => Math.max(todo.id, maxId), -1);
   return maxId + 1;
 }
@@ -52,7 +53,8 @@ export const TodosReducer = (state = initialState, action) => {
         entities: [
           ...state.entities,
           {
-            id: nextTodoId(state.entities),
+            // id: nextTodoId(state.entities),
+            id: todo.id,
             text: todo.text,
             completed: false,
             color: "none"
@@ -131,11 +133,14 @@ export const selectTodoById = (state, id) => {
 // コンポーネント側でこれらの関数を実行してactionオブジェクトを取り出す
 // 基本typeプロパティとpayloadプロパティで構成されて
 // reducerに渡されるとtypeプロパティを元に処理分岐する
-export const todoAdd = (text) => {
+export const todoAdd = (todo) => {
+// export const todoAdd = (text) => {
   return {
     type: "TODOS/TODO_ADDED",
     payload: {
-      text: text,
+      id: todo.id,
+      text: todo.text,
+      // text: text,
       completed: false,
       color: "nothing"
     }
@@ -170,17 +175,16 @@ export const changeColor = (id, color) => {
 // コンポーネント側よりtextをもらって、APIにpostする
 // responseは従来のtodoAddアクションクリエイターによって処理してもらう
 export const saveNewTodo = (text) => async (dispatch) => {
-  const initTodo = {text};  //{text:'textの値'}
-  // const response = await client.post('fakeApi/todos', {todo: initTodo});
-  // dispatch(todoAdd(response.todo));
-  dispatch(todoAdd(text));
+  const initTodo = { text };  //{text:'textの値'}
+  const response = await client.post('http://localhost:3030/todos', initTodo);
+  dispatch(todoAdd(response));
 }
 
 
 export const fetchTodos = () => async (dispatch) => {
-  dispatch({type:"test",payload:{}});
+  dispatch({ type: "test", payload: {} });
   // const response = await client.get();
-  dispatch({type:"test",payload:{}})
+  dispatch({ type: "test", payload: {} })
 
 }
 
