@@ -4,31 +4,29 @@ import { client } from "../api/client";
 // -------- 初期状態 --------
 // stateの初期状態を定義している
 const initialState = {
-  entities:
-    // [todo.id]: {
-    [
-      {
-        id: 1,
-        text: "test1",
-        completed: false,
-        color: "none",
-      },
-      {
-        id: 2,
-        text: "test2",
-        completed: false,
-        color: "green",
-      },
-      {
-        id: 3,
-        text: "test3",
-        completed: true,
-        color: "none",
-      },
-
-    ]
-
-
+  entities: []
+  // entities:
+  //   // [todo.id]: {
+  //   [
+  //     {
+  //       id: 1,
+  //       text: "test1",
+  //       completed: false,
+  //       color: "none",
+  //     },
+  //     {
+  //       id: 2,
+  //       text: "test2",
+  //       completed: false,
+  //       color: "green",
+  //     },
+  //     {
+  //       id: 3,
+  //       text: "test3",
+  //       completed: true,
+  //       color: "none",
+  //     },
+  //   ]
   // fetching: false,
   // fetched: false
 }
@@ -60,6 +58,14 @@ export const TodosReducer = (state = initialState, action) => {
             color: "none"
           }
         ]
+      }
+    case "TODOS/FETCH_STATE_CHANGE":
+      return {
+        ...state,
+        fetchState: {
+          fetching: action.payload.fetching,
+          fetched: action.payload.fetched,
+        }
       }
     case "TODOS/CHANGE_COLOR":
       return {
@@ -105,6 +111,9 @@ export const TodosReducer = (state = initialState, action) => {
 export const selectTodos = (state) => {
   return state.todos.entities;
 }
+export const selectFetch = (state) => {
+  return state.todos.fetchState;
+}
 export const selectTodoIds = createSelector(
   selectTodos,
   todos => todos.map(todo => todo.id)
@@ -147,6 +156,24 @@ export const todoAdd = (todo) => {
   }
 }
 
+export const todoFetch = () =>{
+  return {
+    type: "TODOS/FETCH_STATE_CHANGE",
+    payload: {
+      fetching: true,
+      fetched: false
+    }
+  }
+}
+export const todoFetchFin = () => {
+  return {
+    type: "TODOS/FETCH_STATE_CHANGE",
+    payload: {
+      fetching: false,
+      fetched: true
+    }
+  }
+}
 export const changeComplete = (id, complete) => {
   return {
     type: "TODOS/CHANGE_COMPLETE",
@@ -175,16 +202,20 @@ export const changeColor = (id, color) => {
 // コンポーネント側よりtextをもらって、APIにpostする
 // responseは従来のtodoAddアクションクリエイターによって処理してもらう
 export const saveNewTodo = (text) => async (dispatch) => {
-  const initTodo = { text };  //{text:'textの値'}
+  // const initTodo = { text };  //{text:'textの値'}
+  const initTodo = { text, id: 100 };  //{text:'textの値'}
+  console.log(initTodo)
   const response = await client.post('http://localhost:3030/todos', initTodo);
   dispatch(todoAdd(response));
 }
 
-
+// 公式のやつはこんな感じなのか？確認
 export const fetchTodos = () => async (dispatch) => {
-  dispatch({ type: "test", payload: {} });
-  // const response = await client.get();
-  dispatch({ type: "test", payload: {} })
-
+  dispatch(todoFetch());
+  const response = await client.get('http://localhost:3030/todos');
+  dispatch(todoFetchFin());
+  for(const r of response){
+    dispatch(todoAdd(r));
+  }
 }
 

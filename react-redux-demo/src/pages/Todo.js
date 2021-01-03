@@ -11,7 +11,7 @@ import TodoListItem from "../components/TodoListItem"
 import { FullscreenExitTwoTone, TodayOutlined } from "@material-ui/icons";
 import { useState } from "react";
 
-import { todoAdd, changeComplete, selectTodos, selectFilteredTodos, selectCompletedTodos, selectTodoIds, saveNewTodo } from "../state/todosSlice";
+import { todoAdd, changeComplete, selectTodos, selectFilteredTodos, selectCompletedTodos, selectTodoIds, saveNewTodo, selectFetch } from "../state/todosSlice";
 import { selectFilters, filterColorChanged, filterCompleteChanged } from "../state/filtersSlice";
 
 const useStyles = makeStyles({
@@ -35,6 +35,7 @@ const Todo = () => {
   const todoIds = useSelector(selectTodoIds);
   const filteredTodos = useSelector(selectFilteredTodos);
   const completedTodosCount = useSelector(selectCompletedTodos);
+  const fetchState = useSelector(selectFetch);
   const filters = useSelector(selectFilters);
 
   const handleChangeText = (e) => {
@@ -79,6 +80,9 @@ const Todo = () => {
             Todoを登録する
           </Button>
         </div>
+        {
+          fetchState.fetching && <p>fetch中です!</p>
+        }
         <List>
           {filteredTodos.map((todo, index) =>
             <TodoListItem
