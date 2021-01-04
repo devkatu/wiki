@@ -54,10 +54,22 @@ export const TodosReducer = (state = initialState, action) => {
             // id: nextTodoId(state.entities),
             id: todo.id,
             text: todo.text,
-            completed: false,
-            color: "none"
+            completed: todo.completed,
+            color: todo.color
           }
         ]
+      }
+    case "TOODS/CHANGE_TODO":
+      return {
+        ...state,
+        entities: state.entities.map(entity => {
+          if(entity.id !== action.payload.id) return entity;
+          return {
+            ...entity,
+            completed: action.payload.completed,
+            color: action.payload.color,
+          }
+        })
       }
     case "TODOS/FETCH_STATE_CHANGE":
       return {
@@ -149,13 +161,22 @@ export const todoAdd = (todo) => {
     payload: {
       id: todo.id,
       text: todo.text,
-      // text: text,
-      completed: false,
-      color: "nothing"
+      completed: todo.completed,
+      color: todo.color
     }
   }
 }
-
+export const changeTodo = (todo) =>{
+  return {
+    type: "TOODS/CHANGE_TODO",
+    payload:{
+      id: todo.id,
+      text: todo.text,
+      completed: todo.completed,
+      color: todo.color
+    }
+  }
+}
 export const todoFetch = () =>{
   return {
     type: "TODOS/FETCH_STATE_CHANGE",
@@ -202,8 +223,7 @@ export const changeColor = (id, color) => {
 // コンポーネント側よりtextをもらって、APIにpostする
 // responseは従来のtodoAddアクションクリエイターによって処理してもらう
 export const saveNewTodo = (text) => async (dispatch) => {
-  // const initTodo = { text };  //{text:'textの値'}
-  const initTodo = { text, id: 100 };  //{text:'textの値'}
+  const initTodo = { text };  //{text:'textの値'}
   console.log(initTodo)
   const response = await client.post('http://localhost:3030/todos', initTodo);
   dispatch(todoAdd(response));
@@ -217,5 +237,24 @@ export const fetchTodos = () => async (dispatch) => {
   for(const r of response){
     dispatch(todoAdd(r));
   }
+}
+
+
+export const updateTodo = (id, todo) => async (dispatch) => {
+  const sendTodo = todo;
+  const response = await client.put('http://localhost:3030/todos/' + id, sendTodo);
+  dispatch(changeTodo(response));
+}
+
+export const updateComplete = (id, completed) => async (dispatch)  => {
+  const todo = {completed}
+  const response = await client.put('http://localhost:3030/todos/' + id, todo);
+  dispatch(changeTodo(response));
+}
+
+export const updateColor = (id, color) => async (dispatch)  => {
+  const todo = {color}
+  const response = await client.put('http://localhost:3030/todos/' + id, todo);
+  dispatch(changeTodo(response));
 }
 

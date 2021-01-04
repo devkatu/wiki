@@ -2,40 +2,34 @@
   "todos": [
     {
       "id": 1,
-      "text": "db1",
-      "completed": false,
-      "color": "none"
+      "completed": true
     },
     {
       "id": 2,
-      "text": "db2",
-      "completed": false,
-      "color": "none"
+      "completed": true
     },
     {
       "id": 3,
-      "text": "db3",
+      "completed": true
+    },
+    {
+      "id": 4,
+      "completed": false
+    },
+    {
+      "id": 5,
+      "completed": false
+    },
+    {
+      "id": 6,
+      "completed": false
+    },
+    {
       "completed": false,
-      "color": "red"
-    },
-    {
-      "text": "a",
-      "id": 4
-    },
-    {
-      "text": "あにしぃよう",
-      "id": 5
-    },
-    {
-      "text": "あああ",
-      "id": 6
-    },
-    {
-      "text": "あ",
       "id": 7
     },
     {
-      "text": "ああ",
+      "completed": false,
       "id": 8
     },
     {
@@ -97,6 +91,26 @@
     {
       "text": "ああ",
       "id": 100
+    },
+    {
+      "color": "red",
+      "id": 101
+    },
+    {
+      "text": "なんかやりたい",
+      "id": 102
+    },
+    {
+      "text": "nanisiyou",
+      "id": 103
+    },
+    {
+      "text": "",
+      "id": 104
+    },
+    {
+      "text": "",
+      "id": 105
     }
   ]
 }

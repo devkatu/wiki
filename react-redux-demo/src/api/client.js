@@ -13,6 +13,9 @@ export async function client(endpoint, { body, ...customConfig } = {}) {
     },
   }
 
+  // debug
+  console.log(config, body);
+
   if (body) {
     config.body = JSON.stringify(body)
   }
@@ -36,4 +39,8 @@ client.get = function (endpoint, customConfig = {}) {
 
 client.post = function (endpoint, body, customConfig = {}) {
   return client(endpoint, { ...customConfig, body })
+}
+
+client.put = function (endpoint, body, customConfig = {method: 'PUT'}){
+  return client(endpoint, {...customConfig, body})
 }
