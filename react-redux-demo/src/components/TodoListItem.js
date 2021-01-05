@@ -3,25 +3,28 @@ import { AppBar, Button, Checkbox, Container, IconButton, InputLabel, List, List
 import HomeIcon from "@material-ui/icons/Home";
 import SettingsIcon from '@material-ui/icons/Settings';
 import InfoIcon from '@material-ui/icons/Info';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { makeStyles } from "@material-ui/styles";
 import { push } from "connected-react-router";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { changeComplete, changeColor, updateTodo, updateComplete, updateColor, selectTodoById, changeTodos } from "../state/todosSlice";
+import { changeComplete, changeColor, updateTodo, updateComplete, updateColor, selectTodoById, changeTodos, deleteTodo } from "../state/todosSlice";
+
 
 const TodoListItem = (props) => {
   const todo = useSelector(state => selectTodoById(state, props.id));
-  const [todoState, setTodoState] = useState(todo);
-  console.log(todoState);
   const dispatch = useDispatch();
+
   const handleChangeCompleted = (e) => {
-    // dispatch(changeComplete(props.id, e.target.checked));
-    // dispatch(updateComplete(props.id, e.target.checked));
-    dispatch(updateTodo(props.id, todoState));
+    const newTodo = {...todo,completed: e.target.checked};
+    dispatch(updateTodo(props.id, newTodo));
   }
   const handleChangeColor = (e) => {
-    // dispatch(changeColor(props.id, e.target.value));
-    dispatch(updateColor(props.id, e.target.value))
+    const newTodo = {...todo,color: e.target.value};
+    dispatch(updateTodo(props.id, newTodo));
+  }
+  const handleDelete = () => {
+    dispatch(deleteTodo(props.id));
   }
 
   return (
@@ -29,24 +32,18 @@ const TodoListItem = (props) => {
       <ListItemIcon>
         <Checkbox
           edge="start"
-          // checked={props.todo.completed}
-          // checked={todo.completed}
-          checked={todoState.completed}
+          checked={todo.completed}
           disableRipple
           onChange={handleChangeCompleted}          
         />
       </ListItemIcon>
       <ListItemText
-        // primary={props.todo.text}
-        // primary={todo.text}
-        primary={todoState.text}
+        primary={todo.text}
       />
       <ListItemSecondaryAction>
         <Select
           edge="end"
-          // value={props.todo.color}
-          // value={todo.color}
-          value={todoState.color}
+          value={todo.color}
           onChange={handleChangeColor}
         >
           <MenuItem value={"green"}>green</MenuItem>
@@ -54,6 +51,12 @@ const TodoListItem = (props) => {
           <MenuItem value={"blue"}>blue</MenuItem>
 
         </Select>
+        <IconButton
+          aria-label="delete"
+          onClick={handleDelete}
+          >
+          <DeleteIcon/>
+        </IconButton>
       </ListItemSecondaryAction>
     </ListItem>
   )

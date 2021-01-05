@@ -79,6 +79,13 @@ export const TodosReducer = (state = initialState, action) => {
           fetched: action.payload.fetched,
         }
       }
+    case "TODOS/DELETED_TODO":
+      return {
+        ...state,
+        entities: state.entities.filter(entity => {
+          if(entity.id !== action.payload.id) return entity;
+        })
+      }
     case "TODOS/CHANGE_COLOR":
       return {
         ...state,
@@ -195,6 +202,14 @@ export const todoFetchFin = () => {
     }
   }
 }
+export const deletedTodo = (id) => {
+  return {
+    type: "TODOS/DELETED_TODO",
+    payload: {
+      id
+    }
+  }
+}
 export const changeComplete = (id, complete) => {
   return {
     type: "TODOS/CHANGE_COMPLETE",
@@ -239,22 +254,14 @@ export const fetchTodos = () => async (dispatch) => {
   }
 }
 
-
 export const updateTodo = (id, todo) => async (dispatch) => {
   const sendTodo = todo;
   const response = await client.put('http://localhost:3030/todos/' + id, sendTodo);
   dispatch(changeTodo(response));
 }
 
-export const updateComplete = (id, completed) => async (dispatch)  => {
-  const todo = {completed}
-  const response = await client.put('http://localhost:3030/todos/' + id, todo);
-  dispatch(changeTodo(response));
-}
-
-export const updateColor = (id, color) => async (dispatch)  => {
-  const todo = {color}
-  const response = await client.put('http://localhost:3030/todos/' + id, todo);
-  dispatch(changeTodo(response));
+export const deleteTodo = (id) => async (dispatch) => {
+  const response = await client.delete('http://localhost:3030/todos/' + id);
+  dispatch(deletedTodo(id));
 }
 

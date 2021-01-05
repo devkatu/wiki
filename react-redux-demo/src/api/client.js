@@ -44,3 +44,7 @@ client.post = function (endpoint, body, customConfig = {}) {
 client.put = function (endpoint, body, customConfig = {method: 'PUT'}){
   return client(endpoint, {...customConfig, body})
 }
+
+client.delete = function(endpoint, customConfig = {method: 'DELETE'}){
+  return client(endpoint, {...customConfig})
+}
