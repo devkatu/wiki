@@ -238,8 +238,7 @@ export const changeColor = (id, color) => {
 // コンポーネント側よりtextをもらって、APIにpostする
 // responseは従来のtodoAddアクションクリエイターによって処理してもらう
 export const saveNewTodo = (text) => async (dispatch) => {
-  const initTodo = { text };  //{text:'textの値'}
-  console.log(initTodo)
+  const initTodo = { text, completed: false, color: "none" };  //{text:'textの値'}
   const response = await client.post('http://localhost:3030/todos', initTodo);
   dispatch(todoAdd(response));
 }

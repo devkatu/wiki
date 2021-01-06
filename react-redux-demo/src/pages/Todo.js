@@ -90,33 +90,6 @@ const Todo = () => {
               id={todo.id}
             />
           )}
-
-          {/* フィルター済みtodosの表示 */}
-          {/* {filteredTodos.map((todo, index) =>
-            <ListItem key={index}>
-              <ListItemIcon>
-                <Checkbox
-                  edge="start"
-                  checked={todo.completed}
-                  disableRipple
-                  onChange={handleChangeCompleted}
-                />
-              </ListItemIcon>
-              <ListItemText primary={todo.text} />
-              <ListItemSecondaryAction>
-                <Select
-                  edge="end"
-                  value={todo.color}
-                // onChange={ }
-                >
-                  <MenuItem value={"green"}>green</MenuItem>
-                  <MenuItem value={"red"}>red</MenuItem>
-                  <MenuItem value={"blue"}>blue</MenuItem>
-
-                </Select>
-              </ListItemSecondaryAction>
-            </ListItem>
-          )} */}
         </List>
 
 

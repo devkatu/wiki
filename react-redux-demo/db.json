@@ -1,10 +1,16 @@
 {
   "todos": [
     {
-      "id": 3,
-      "text": "そんなになにもない",
+      "id": 1,
+      "text": "nanimo",
       "completed": true,
       "color": "blue"
+    },
+    {
+      "id": 2,
+      "text": "なんかする",
+      "completed": true,
+      "color": "red"
     }
   ]
 }
