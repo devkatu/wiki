@@ -132,9 +132,6 @@
 　にdevelopmentかproductのような値が入っているのでこれをif文で見て処理を分岐するといいかも
 　★★★あとmemoのみ作成する★★★
 
-・react、createreactの公式読む
+・createreactの公式読む
 
 ・firebase
-
-
-・フロントエンドロードマップ
