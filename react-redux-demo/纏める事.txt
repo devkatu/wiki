@@ -97,21 +97,44 @@
 　unsubscribe※subscribeの戻り値
 　　→リスナー登録の解除
 
-★未完
 ・非同期処理のやつとモックapiついでに
 　→モックAPIはとりあえずjson-server入れてみた
 　　npx json-server -w db.jsonで起動する
-　→非同期処理postだけ追加できたのであとはコメント入れる
-　→fetch追加したけどサンク関数はあんなもんでいいのか確認
-　→あとの削除とか色・完了フラグ変更とかはPUTか？？
-　→put実装中…レコードはマージできないっぽいので苦戦中
-　　リストアイテムにstate持たせてそれを送信するようにするかやっている最中
-　　→てか普通にtodoの項目selectorで呼出してるんだからそれdispatchでいいじゃん
-　　putもできたしdeleteもできたのであとはコメント入れるだけ
+　　db.jsonに初期dbを入れて、json-server.jsonにオプション設定できる
 
-・標準的なreduxのパターン(storeには配列使わないでオブジェクトとか・・・)
+・storeには配列使わないでオブジェクトとか・・・)
+　→stateの正規化といい、下記の要件がある
+　　各データのコピーが一つだけである
+　　IDで直接アイテムを検索できる方法でアイテムを保存する
+　　アイテム全体をコピーするのではなくIDによって他のアイテムを参照する
+　　つまりtodosの場合
+    initialState = {
+      entities: {
+        ...state.entities,
+        [todo.id]: {newTodo},    
+      }
+    }
+　　みたいな感じで配列でエンティティを保持せずにオブジェクトでキーがIDになるように保存することとなる。
+　　これのtodosを取り出すセレクタ―は
+    const selectTodos = createSelector(
+      state => state.entities,
+      entities => Object.values(entities) //オブジェクトの値をfor...inのように展開できる
+    )
+　　となる
+
+★未完
+・標準的なreduxのパターン
+　・非同期処理のリクエスト状態とか、コンポーネント側でもpromiseを返すサンク関数をdispatch
+　　したときにはasync,await使えるとかは完了　★★★あとmemoのみ作成する★★★
+
+・開発モードだとlogとかしないようにするやつは・・・？
+　process.env.NODE_ENV === 'development'
+　にdevelopmentかproductのような値が入っているのでこれをif文で見て処理を分岐するといいかも
+　★★★あとmemoのみ作成する★★★
+
+・react、createreactの公式読む
 
 ・firebase
 
-・開発モードだとlogとかしないようにするやつは・・・？
 
+・フロントエンドロードマップ

@@ -31,6 +31,7 @@ const Todo = () => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [inputText, setInputText] = useState("");
+  const [saveStatus, setSaveStatus] = useState("idle");
   const todos = useSelector(selectTodos);
   const todoIds = useSelector(selectTodoIds);
   const filteredTodos = useSelector(selectFilteredTodos);
@@ -38,17 +39,31 @@ const Todo = () => {
   const fetchState = useSelector(selectFetch);
   const filters = useSelector(selectFilters);
 
+  const handleKeyDown = async (e) => {
+    const trimedText = inputText.trim();
+    if (e.which === 13 && trimedText){
+      setSaveStatus("saving");
+      await dispatch(saveNewTodo(inputText));
+      setInputText("");
+      setSaveStatus("idle");
+    }
+  }
   const handleChangeText = (e) => {
     setInputText(e.target.value);
   }
-  const handleTodoAdd = () => {
+  const handleTodoAdd = async () => {
     // todoAddでdispatchするとstoreの更新するだけ
     // dispatch(todoAdd(inputText));
 
     // saveNewTodoでdispatchするとAPIにpostしたあと
     // responseがきたらstoreを更新する
-    dispatch(saveNewTodo(inputText));
-    setInputText("");
+    const trimedText = inputText.trim();
+    if(trimedText){
+      setSaveStatus("saving");
+      await dispatch(saveNewTodo(inputText));
+      setInputText("");
+      setSaveStatus("idle");
+    }
   }
   // const handleChangeCompleted = (e) => {
   //   dispatch(changeComplete(e.target.checked));
@@ -59,6 +74,7 @@ const Todo = () => {
   const handleFilterCompleteChanged = (e) => {
     dispatch(filterCompleteChanged(e.target.value));
   }
+  const isSaving = saveStatus === "saving";
   return (
     <>
       <Header />
@@ -73,7 +89,9 @@ const Todo = () => {
             placeholder="やることを入力してね"
             label="TODO"
             value={inputText}
-            onChange={handleChangeText} />
+            onKeyDown={handleKeyDown}
+            onChange={handleChangeText}
+            disabled={isSaving} />
           <Button
             variant="contained"
             onClick={handleTodoAdd}>

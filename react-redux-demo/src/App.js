@@ -8,6 +8,7 @@ import Todo from './pages/Todo';
 import Setting from './pages/Setting';
 
 function App() {
+  console.log(process.env.NODE_ENV);
   return (
     <div className="App">
       {/* <Router> ←ConnectedRouterがあるからいらない？*/}
