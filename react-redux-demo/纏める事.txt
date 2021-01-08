@@ -102,6 +102,12 @@
 　　npx json-server -w db.jsonで起動する
 　　db.jsonに初期dbを入れて、json-server.jsonにオプション設定できる
 
+・標準的なreduxのパターン
+・非同期処理で例えばAPIでデータ取りに行っている間とかの時はリクエスト状態をstoreに持たせて
+　値が帰ってきたときとかには都度dispatchしてリクエスト状態を変更してそれに従い読み込み中とかの表示をする。
+　また、storeに状態を持たせる程のものでもない場合はコンポーネント側にsetStateで状態をセットして、
+　APIリクエストするdispatch(大体promiseを返すサンク関数をdispatchするので)をawaitで待ち受け、
+　その間読込中とかinputをdisableにしたりする。
 ・storeには配列使わないでオブジェクトとか・・・)
 　→stateの正規化といい、下記の要件がある
 　　各データのコピーが一つだけである
@@ -122,16 +128,12 @@
     )
 　　となる
 
-★未完
-・標準的なreduxのパターン
-　・非同期処理のリクエスト状態とか、コンポーネント側でもpromiseを返すサンク関数をdispatch
-　　したときにはasync,await使えるとかは完了　★★★あとmemoのみ作成する★★★
-
 ・開発モードだとlogとかしないようにするやつは・・・？
 　process.env.NODE_ENV === 'development'
 　にdevelopmentかproductのような値が入っているのでこれをif文で見て処理を分岐するといいかも
-　★★★あとmemoのみ作成する★★★
+　開発中の仮サーバーではdevelpmentだが、buildするとproductionが入る
+
+★未完
 
 ・createreactの公式読む
-
 ・firebase

@@ -52,22 +52,26 @@ const Todo = () => {
     setInputText(e.target.value);
   }
   const handleTodoAdd = async () => {
-    // todoAddでdispatchするとstoreの更新するだけ
+    // todoAddをdispatchするとstoreの更新するだけ
     // dispatch(todoAdd(inputText));
 
     // saveNewTodoでdispatchするとAPIにpostしたあと
     // responseがきたらstoreを更新する
+    // なお、このコンポーネントでも自分でstateを持って
+    // dispatch開始と終了によってsaving状態にしてtextareaをdisableにしている
     const trimedText = inputText.trim();
     if(trimedText){
       setSaveStatus("saving");
-      await dispatch(saveNewTodo(inputText));
+      
+      // dispatchするものがアクションオブジェクトでなく、関数ならそのままその実行する
+      // ここで実行する関数はasync functionなので(async function はpromiseを返すので)
+      // その関数が終了するまで↓のawaitは待機する
+      await dispatch(saveNewTodo(inputText)); 
+
       setInputText("");
       setSaveStatus("idle");
     }
   }
-  // const handleChangeCompleted = (e) => {
-  //   dispatch(changeComplete(e.target.checked));
-  // }
   const handleFilterColorChanged = (e) => {
     dispatch(filterColorChanged(e.target.value));
   }

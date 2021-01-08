@@ -6,8 +6,17 @@ import { FiltersReducer } from "./filtersSlice";
 import { connectRouter, routerMiddleware } from "connected-react-router";
 import history from './history';
 
-// createLoggerはdevelopmentでは入れないようにもできる
-const middleware = applyMiddleware(routerMiddleware(history), thunk, createLogger());
+const middleware = [routerMiddleware(history), thunk];
+
+// createLoggerはdevelopmentでは入れない
+// process.env.NODE_ENVには開発中はdevelopment,buildするとproductionが入る
+// 他にも本番環境に残したくないものがあればこれを使う
+if(process.env.NODE_ENV === 'development'){
+  const logger = createLogger();
+  middleware.push(logger);
+}
+
+// const middleware = applyMiddleware(routerMiddleware(history), thunk, createLogger());
 
 // storeを作成する
 // 各sliceファイルのreducerの他connectRouter関連のやつもある
@@ -17,7 +26,7 @@ export default createStore(
     todos: TodosReducer,
     filters: FiltersReducer,
   }),
-  middleware
+  applyMiddleware(...middleware)
 );
 
 

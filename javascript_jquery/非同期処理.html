@@ -155,6 +155,15 @@
       }
 
       // 非同期な関数。asyncを頭につけると関数内でawaitが使える
+      // ★async functionは呼出されるとpromiseオブジェクトを返す
+      // 値をreturnするとその戻り値をresolve(await hoge()の値を返しそこから以下処理を再開)する
+      // 例外発生やthrowを実行するとrejectする(ここの例ではcatchを実行する)
+      // なので他の所でawait asyncfunc();と呼出すとreturnするまで、処理を一時停止して、
+      // returnしたらawaitの前の変数に値を返して処理を再開する
+      // または例外発生するかthrowするとcatchが走る
+
+      // ★awaitは指定した関数のPromiseの結果が返されるまでそこから以下の処理を一時停止する
+      // 結果が帰ってきたら(resolveするかreject)そこから以下の処理を再開する
       async function asyncfunc(){
         let str = await asyncpromise();  // promiseオブジェクトが解決されるのを待つ
                                           解決されるまではここから先の処理は実行されず、
@@ -166,7 +175,8 @@
 
       let async_start = document.querySelector('#async_start');
       async_start.addEventListener('click', () => {
-        asyncfunc().catch(str => {  // 実行するときに.eatchを付け加えられる。この辺ん上と同じ
+        asyncfunc().catch(str => {  // 実行するときに.catchを付け加えられる。この辺ん上と同じ
+                                    // asuncfuncは例外発生時点で即処理を中断する
             alert(str);
           }
         );

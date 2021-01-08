@@ -11,6 +11,12 @@
       "text": "なんかする",
       "completed": true,
       "color": "red"
+    },
+    {
+      "id": 3,
+      "text": "fff",
+      "completed": true,
+      "color": "none"
     }
   ]
 }
