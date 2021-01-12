@@ -14,6 +14,13 @@ import { useState } from "react";
 import { todoAdd, changeComplete, selectTodos, selectFilteredTodos, selectCompletedTodos, selectTodoIds, saveNewTodo, selectFetch } from "../state/todosSlice";
 import { selectFilters, filterColorChanged, filterCompleteChanged } from "../state/filtersSlice";
 
+// スタイルの読込
+// module.cssを以下のように読込んで使用すると、適用されるクラス名は一意のハッシュが付加される。
+// これにより他のファイルで同じクラス名が定義されていても名前の衝突が起きない
+// 以下のふたつのファイルでcompleteTodoクラスが定義されている
+import styles from '../assets/css/pages/Todo.module.css';
+import '../assets/css/pages/Todo.css';
+
 const useStyles = makeStyles({
   inputTodo: {
     display: "flex",
@@ -83,7 +90,9 @@ const Todo = () => {
     <>
       <Header />
       <Container maxWidth="sm">
-        <div>
+        {/* 通常のcssで読込したときは上ので。module.cssの時は下で */}
+        {/* <div className="completeTodo"> */}
+        <div className={styles.completeTodo}>
           <p>
             完了しているやる項目数　：　{completedTodosCount}
           </p>
