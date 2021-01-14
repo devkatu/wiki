@@ -8,17 +8,24 @@ import { useDispatch } from "react-redux";
 import Header from '../components/Header';
 import DrawerMenu from "../components/DrawerMenu";
 
+import styles from '../assets/css/setting/Setting.module.css';
+
+import image from '../assets/img/setting/hair_barcode.png';
+
 const useStyles = makeStyles({
 
 });
 
+
 const Setting = () => {
+  console.log(image);
   const dispatch = useDispatch();
   const classes = useStyles();
   return (
     <>
       <Header/>
-      <Typography>setting</Typography>
+      <img src={image} alt="barcode image"/>
+      <div className={styles.box}/>
     </>
   )
 }

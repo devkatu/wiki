@@ -17,6 +17,12 @@
       "text": "fff",
       "completed": true,
       "color": "none"
+    },
+    {
+      "id": 4,
+      "text": "as",
+      "completed": false,
+      "color": "none"
     }
   ]
 }

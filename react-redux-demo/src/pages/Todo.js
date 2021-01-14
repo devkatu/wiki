@@ -18,8 +18,8 @@ import { selectFilters, filterColorChanged, filterCompleteChanged } from "../sta
 // module.cssを以下のように読込んで使用すると、適用されるクラス名は一意のハッシュが付加される。
 // これにより他のファイルで同じクラス名が定義されていても名前の衝突が起きない
 // 以下のふたつのファイルでcompleteTodoクラスが定義されている
-import styles from '../assets/css/pages/Todo.module.css';
-import '../assets/css/pages/Todo.css';
+import styles from '../assets/css/todo/Todo.module.css';
+import '../assets/css/todo/Todo.css';
 
 const useStyles = makeStyles({
   inputTodo: {

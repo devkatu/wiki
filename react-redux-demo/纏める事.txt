@@ -133,13 +133,44 @@
 　にdevelopmentかproductのような値が入っているのでこれをif文で見て処理を分岐するといいかも
 　開発中の仮サーバーではdevelpmentだが、buildするとproductionが入る
 
+createreactの公式読む
+・パブリックフォルダの使用
+　publicフォルダ内のアセットを参照するにはPUBLIC_URLの環境変数を使用する。
+　例えば<link rel="icon" href"%PUBLIC_URL%/favicon.ico"/>のような感じで
+　javascript側からはprocess.env.PUBLIC_URLでアクセスできる...が色々欠点あるので
+　アセットはsrc側に置いておき、importして使うのが無難
+
+・環境変数(開発モードでは、のやつとかぶるけど)
+　NODE_ENVやREACT_APP_(こちらはカスタム可能)から始まる環境変数というものがあり、
+　あらかじめ宣言されている変数のように使用することができる。
+　html側からは %環境変数% 、javsscript側からはprocess.env.環境変数で使用できる。
+　特にprocess.env.NODE_ENVは
+　　npm start しているときは'development'
+　　npm test しているときは'test'
+　　npm run build したときは'production'となるので
+　　開発時、テスト時、のみ必要なコードを条件分岐して使用したりするのに良い。
+　カスタム環境変数REACT_APP_にはコマンドラインから一時的に変数の設定もできるし、
+　プロジェクトのルートから REACT_APP_HOGE = "foo" みたいに永続的な変数の定義もできる
+
+・スタイル(cssモジュール)について
+　cssの読み込みは各ページ等に対応したcssファイルを用意してある。
+　複数のcssを読込む場合があるときにクラス名の衝突が考えられるが、
+　用意したcssのファイル拡張子を.cssから.module.cssにして
+　import styles from 'style.module.css';
+　<div className={styles.class}/>
+　のようにすると与えられたクラス名に__ハッシュ値が付与されて名前の衝突が起きなくなる。
+　ちなみに普通にcssを読込むときは
+　import '../assets/css/styles.css';
+　みたいな感じ
+・画像等のassetの追加
+　import logo from './logo.png';
+　とするとlogoにはバンドル後のパス文字列が入る。これにもハッシュ値が付与される。
+　<img src={logo}/>で使用可能となる
+　css側でも
+　background: url(./logo.png);
+　とかで同じような感じになる。
+
 ★未完
 
-・createreactの公式読む
-　スタイル(cssモジュール)
-　画像、フォント、ファイルの追加
-　パブリックフォルダの使用
-　環境変数(開発モードでは、のやつとかぶるけど)
-　バックエンド？
-・コメント付与
+・各ファイルにコメント付与
 ・firebase
