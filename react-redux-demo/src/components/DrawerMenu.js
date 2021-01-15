@@ -20,6 +20,7 @@ const DrawerMenu = (props) => {
 
   return (
     <Drawer anchor="left" open={props.open} onClose={props.toggleDrawer(false)}>
+      {/* onColseにドロワー閉じる関数を設定しとかないとどこかクリックしたときにドロワーが閉じないよ！ */}
       <div className={classes.list}>
         <List>
           <ListItem>
@@ -27,6 +28,7 @@ const DrawerMenu = (props) => {
             <ListItemText primary="このサイトについて"></ListItemText>
           </ListItem>
           <Divider/>
+          {/* dispatch(push('./')) でページ遷移するよ */}
           <ListItem button onClick={() => {dispatch(push('./'))}}>
             <ListItemIcon><HomeIcon /></ListItemIcon>
             <ListItemText primary="ホーム"></ListItemText>

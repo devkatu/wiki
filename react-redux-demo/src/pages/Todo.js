@@ -46,8 +46,11 @@ const Todo = () => {
   const fetchState = useSelector(selectFetch);
   const filters = useSelector(selectFilters);
 
+  // 新規todoテキストでのkeydownハンドラ
   const handleKeyDown = async (e) => {
     const trimedText = inputText.trim();
+    // e.whitchはエンターキーのこと
+    // このif文の中身はhandleTodoAddと同じ
     if (e.which === 13 && trimedText){
       setSaveStatus("saving");
       await dispatch(saveNewTodo(inputText));
@@ -55,11 +58,13 @@ const Todo = () => {
       setSaveStatus("idle");
     }
   }
+  // 新規todoテキストonchangeハンドラ
   const handleChangeText = (e) => {
     setInputText(e.target.value);
   }
+  // 新規todo登録ボタンのonClickハンドラ
   const handleTodoAdd = async () => {
-    // todoAddをdispatchするとstoreの更新するだけ
+    // todoAddをdispatchすると自分のstoreの更新するだけ
     // dispatch(todoAdd(inputText));
 
     // saveNewTodoでdispatchするとAPIにpostしたあと
@@ -68,6 +73,8 @@ const Todo = () => {
     // dispatch開始と終了によってsaving状態にしてtextareaをdisableにしている
     const trimedText = inputText.trim();
     if(trimedText){
+
+      // まずsaveStatusをsavingにして新規todoのinputをdisableにする
       setSaveStatus("saving");
       
       // dispatchするものがアクションオブジェクトでなく、関数ならそのままその実行する
@@ -75,13 +82,17 @@ const Todo = () => {
       // その関数が終了するまで↓のawaitは待機する
       await dispatch(saveNewTodo(inputText)); 
 
+      // apiリクエストが正常に終わったらinputを空にしてsaveStatusをidleにする
       setInputText("");
       setSaveStatus("idle");
     }
   }
+
+  // フィルターする色を変更するハンドラ
   const handleFilterColorChanged = (e) => {
     dispatch(filterColorChanged(e.target.value));
   }
+  // フィルターするフラグを変更するハンドラ
   const handleFilterCompleteChanged = (e) => {
     dispatch(filterCompleteChanged(e.target.value));
   }

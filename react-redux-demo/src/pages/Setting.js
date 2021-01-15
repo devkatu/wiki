@@ -18,13 +18,15 @@ const useStyles = makeStyles({
 
 
 const Setting = () => {
-  console.log(image);
   const dispatch = useDispatch();
   const classes = useStyles();
   return (
     <>
       <Header/>
+      {/* 画像をインポートするとbuild後に使用されるパス文字列が返される。srcにそのパスを適用すればOK */}
       <img src={image} alt="barcode image"/>
+
+      {/* cssモジュールは変数にインポートして 変数.クラス名 とすれば適用できる */}
       <div className={styles.box}/>
     </>
   )

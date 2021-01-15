@@ -3,19 +3,19 @@
     {
       "id": 1,
       "text": "nanimo",
-      "completed": true,
+      "completed": false,
       "color": "blue"
     },
     {
       "id": 2,
       "text": "なんかする",
-      "completed": true,
+      "completed": false,
       "color": "red"
     },
     {
       "id": 3,
       "text": "fff",
-      "completed": true,
+      "completed": false,
       "color": "none"
     },
     {

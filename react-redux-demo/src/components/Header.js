@@ -27,6 +27,7 @@ const Header = () => {
     drawerOpen: false,
   });
 
+  // ドロワーメニューの開閉
   const toggleDrawer = (open) => (e) => {
     if(e.type == 'keydown' && ( e.key === 'Tab' || e.key === 'Shift')) return;
     setState({ ...state, drawerOpen: open})
@@ -37,6 +38,7 @@ const Header = () => {
       <AppBar position="static" className={classes.root}>
         <Toolbar>
           <IconButton edge="start" className={classes.menuButton} color="inherit">
+            {/* MenuIconをクリックすると必ずstate.drawerOpenをtrueにする。つまりドロワーを開く */}
             <MenuIcon onClick={toggleDrawer(true)}/>
           </IconButton>
           <Typography variant="h6" className={classes.title}>

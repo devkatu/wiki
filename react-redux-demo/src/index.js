@@ -16,6 +16,8 @@ const theme = createMuiTheme({
   
 });
 
+// ページ読込時にfetchTodosを行う。
+// provider外でdispatchしたいときはこのようにstore.dispatch()する
 store.dispatch(fetchTodos());
 
 // ConnectedRouterにより、storeでrouteの管理ができるようになる。

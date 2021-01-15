@@ -33,6 +33,8 @@ const initialState = {
 
 // -------- id更新関数 --------
 // sliceに必須なものではないよ！
+// api使わないで自分のstoreを更新するだけのときに使ってた
+// 多分大抵のapiはIDは更新して返してくると思う
 function nextTodoId(todos) {
   const maxId = todos.reduce((maxId, todo) => Math.max(todo.id, maxId), -1);
   return maxId + 1;
@@ -60,6 +62,8 @@ export const TodosReducer = (state = initialState, action) => {
         ]
       }
     case "TOODS/CHANGE_TODO":
+      // API側のtodoの色や完了フラグが変更された後に変更されたtodoがdispatchされてくる
+      // entitiesをmapして渡されたIDと一致するものを更新する
       return {
         ...state,
         entities: state.entities.map(entity => {
@@ -80,6 +84,8 @@ export const TodosReducer = (state = initialState, action) => {
         }
       }
     case "TODOS/DELETED_TODO":
+      // API側のtodoが削除された後に削除されたtodoのIDがdispatchされてくる
+      // entitiesをfilterして渡されたIDは取り除く
       return {
         ...state,
         entities: state.entities.filter(entity => {
@@ -141,6 +147,8 @@ export const selectCompletedTodos = createSelector(
   selectTodos,
   todos => todos.filter((todo) => todo.completed).length
 )
+// createSelectorの最後の引数が最終的なセレクター
+// その前のcreateSelectorの引数が最終的なセレクターの引数となる
 export const selectFilteredTodos = createSelector(
   selectTodos,
   state => state.filters.filterComplete,
@@ -238,12 +246,13 @@ export const changeColor = (id, color) => {
 // コンポーネント側よりtextをもらって、APIにpostする
 // responseは従来のtodoAddアクションクリエイターによって処理してもらう
 export const saveNewTodo = (text) => async (dispatch) => {
-  const initTodo = { text, completed: false, color: "none" };  //{text:'textの値'}
+  const initTodo = { text, completed: false, color: "none" };  //textについては→のように展開される {text:'textの値'}
   const response = await client.post('http://localhost:3030/todos', initTodo);
   dispatch(todoAdd(response));
 }
 
 // 公式のやつはこんな感じなのか？確認
+// 公式では纏めてdispatchしてreducer側で展開するような感じになっている
 export const fetchTodos = () => async (dispatch) => {
   dispatch(todoFetch());
   const response = await client.get('http://localhost:3030/todos');
