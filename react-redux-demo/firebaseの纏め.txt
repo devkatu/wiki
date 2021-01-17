@@ -1,0 +1,6 @@
+・npm install -g firebase-tools
+・npm install -s firebase
+・functionsフォルダ
+・src>firebase>config.js
+・src>firebase>index.js
+・firebase.rulesについて
