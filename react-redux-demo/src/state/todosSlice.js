@@ -1,5 +1,6 @@
 import { createSelector } from "reselect";
 import { client } from "../api/client";
+import { db } from '../firebase';
 
 // -------- 初期状態 --------
 // stateの初期状態を定義している
@@ -246,20 +247,50 @@ export const changeColor = (id, color) => {
 // コンポーネント側よりtextをもらって、APIにpostする
 // responseは従来のtodoAddアクションクリエイターによって処理してもらう
 export const saveNewTodo = (text) => async (dispatch) => {
+// export const saveNewTodo = (text) => (dispatch) => {
   const initTodo = { text, completed: false, color: "none" };  //textについては→のように展開される {text:'textの値'}
-  const response = await client.post('http://localhost:3030/todos', initTodo);
-  dispatch(todoAdd(response));
+  
+  // ローカルのjson serverで開発するときに活かしてたやつ
+  // const response = await client.post('http://localhost:3030/todos', initTodo);
+  // dispatch(todoAdd(response));
+
+  const todosRef = db.collection('todos');
+  const id = todosRef.doc().id;
+  initTodo.id = id;
+  await todosRef.doc(id).set(initTodo).catch(e => {throw new Error(e)});
+  dispatch(todoAdd(initTodo));
+
+  // asyncじゃない書き方
+  // todosRef.doc(id).set(initTodo)
+  //   .then(() => {
+  //     dispatch(todoAdd(initTodo));
+  //   }).catch((error) => {
+  //     throw new Error(error);
+  //   });
+  
+
 }
 
 // 公式のやつはこんな感じなのか？確認
 // 公式では纏めてdispatchしてreducer側で展開するような感じになっている
 export const fetchTodos = () => async (dispatch) => {
   dispatch(todoFetch());
-  const response = await client.get('http://localhost:3030/todos');
-  dispatch(todoFetchFin());
-  for(const r of response){
-    dispatch(todoAdd(r));
-  }
+
+  // json serverで使うやつ
+  // const response = await client.get('http://localhost:3030/todos');
+  // dispatch(todoFetchFin());
+  // for(const r of response){
+  //   dispatch(todoAdd(r));
+  // }
+
+  db.collection('todos').doc().get()
+  .then(response => {
+    console.log(response);
+    dispatch(todoFetchFin())
+  }).catch(e => {
+    throw new Error(e);
+  });
+
 }
 
 export const updateTodo = (id, todo) => async (dispatch) => {
