@@ -1,6 +1,6 @@
 import { createSelector } from "reselect";
 import { client } from "../api/client";
-import { db } from '../firebase';
+import { db, FirebaseTimestamp } from '../firebase';
 
 // -------- 初期状態 --------
 // stateの初期状態を定義している
@@ -68,7 +68,7 @@ export const TodosReducer = (state = initialState, action) => {
       return {
         ...state,
         entities: state.entities.map(entity => {
-          if(entity.id !== action.payload.id) return entity;
+          if (entity.id !== action.payload.id) return entity;
           return {
             ...entity,
             completed: action.payload.completed,
@@ -90,7 +90,7 @@ export const TodosReducer = (state = initialState, action) => {
       return {
         ...state,
         entities: state.entities.filter(entity => {
-          if(entity.id !== action.payload.id) return entity;
+          if (entity.id !== action.payload.id) return entity;
         })
       }
     case "TODOS/CHANGE_COLOR":
@@ -171,7 +171,7 @@ export const selectTodoById = (state, id) => {
 // 基本typeプロパティとpayloadプロパティで構成されて
 // reducerに渡されるとtypeプロパティを元に処理分岐する
 export const todoAdd = (todo) => {
-// export const todoAdd = (text) => {
+  // export const todoAdd = (text) => {
   return {
     type: "TODOS/TODO_ADDED",
     payload: {
@@ -182,10 +182,10 @@ export const todoAdd = (todo) => {
     }
   }
 }
-export const changeTodo = (todo) =>{
+export const changeTodo = (todo) => {
   return {
     type: "TOODS/CHANGE_TODO",
-    payload:{
+    payload: {
       id: todo.id,
       text: todo.text,
       completed: todo.completed,
@@ -193,7 +193,7 @@ export const changeTodo = (todo) =>{
     }
   }
 }
-export const todoFetch = () =>{
+export const todoFetch = () => {
   return {
     type: "TODOS/FETCH_STATE_CHANGE",
     payload: {
@@ -247,9 +247,14 @@ export const changeColor = (id, color) => {
 // コンポーネント側よりtextをもらって、APIにpostする
 // responseは従来のtodoAddアクションクリエイターによって処理してもらう
 export const saveNewTodo = (text) => async (dispatch) => {
-// export const saveNewTodo = (text) => (dispatch) => {
-  const initTodo = { text, completed: false, color: "none" };  //textについては→のように展開される {text:'textの値'}
-  
+  const timestamp = FirebaseTimestamp.now();
+  const initTodo = {
+    text,
+    completed: false,
+    color: "none",
+    timestamp
+  };  //textについては→のように展開される {text:'textの値'}
+
   // ローカルのjson serverで開発するときに活かしてたやつ
   // const response = await client.post('http://localhost:3030/todos', initTodo);
   // dispatch(todoAdd(response));
@@ -257,7 +262,7 @@ export const saveNewTodo = (text) => async (dispatch) => {
   const todosRef = db.collection('todos');
   const id = todosRef.doc().id;
   initTodo.id = id;
-  await todosRef.doc(id).set(initTodo).catch(e => {throw new Error(e)});
+  await todosRef.doc(id).set(initTodo).catch(e => { throw new Error(e) });
   dispatch(todoAdd(initTodo));
 
   // asyncじゃない書き方
@@ -267,7 +272,7 @@ export const saveNewTodo = (text) => async (dispatch) => {
   //   }).catch((error) => {
   //     throw new Error(error);
   //   });
-  
+
 
 }
 
@@ -283,13 +288,16 @@ export const fetchTodos = () => async (dispatch) => {
   //   dispatch(todoAdd(r));
   // }
 
-  db.collection('todos').doc().get()
-  .then(response => {
-    console.log(response);
-    dispatch(todoFetchFin())
-  }).catch(e => {
-    throw new Error(e);
-  });
+  // orderByで引数１のプロパティについて、引数２がascなら昇順、descなら降順でｿｰﾄする
+  db.collection('todos').orderBy('timestamp', 'asc').get()
+    .then(snapshots => {
+      const todosList = [];
+      snapshots.forEach(snapshot => {
+        const todo = snapshot.data();
+        todosList.push(todo);
+        dispatch(todoAdd(todo));
+      });
+    })
 
 }
 

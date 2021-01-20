@@ -4,3 +4,7 @@
 ・src>firebase>config.js
 ・src>firebase>index.js
 ・firebase.rulesについて
+
+・dbのメソッド色々
+　db.collection('todos').orderBy('timestamp', 'asc').get()
+　await db.collection('todos').doc(id).set(initTodo).catch(e => { throw new Error(e) });
