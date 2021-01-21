@@ -8,3 +8,5 @@
 ・dbのメソッド色々
 　db.collection('todos').orderBy('timestamp', 'asc').get()
 　await db.collection('todos').doc(id).set(initTodo).catch(e => { throw new Error(e) });
+　db.collection('todos').doc(id).update(sendTodo)
+　db.collection('todos').doc(id).delete()

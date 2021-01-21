@@ -291,6 +291,7 @@ export const fetchTodos = () => async (dispatch) => {
   // orderByで引数１のプロパティについて、引数２がascなら昇順、descなら降順でｿｰﾄする
   db.collection('todos').orderBy('timestamp', 'asc').get()
     .then(snapshots => {
+      dispatch(todoFetchFin());
       const todosList = [];
       snapshots.forEach(snapshot => {
         const todo = snapshot.data();
@@ -303,12 +304,23 @@ export const fetchTodos = () => async (dispatch) => {
 
 export const updateTodo = (id, todo) => async (dispatch) => {
   const sendTodo = todo;
-  const response = await client.put('http://localhost:3030/todos/' + id, sendTodo);
-  dispatch(changeTodo(response));
+  // json-serverのやつ
+  // const response = await client.put('http://localhost:3030/todos/' + id, sendTodo);
+
+  // set()メソッドでも第1引数にデータ、第二引数に{marge: true}ってすればいいみたいだけど・・・？
+  // updateとだと特定のﾌｨｰﾙﾄﾞのみ更新するようにして使える
+  db.collection('todos').doc(id).update(sendTodo)
+    .then(() => {
+      dispatch(changeTodo(sendTodo));
+    });
 }
 
 export const deleteTodo = (id) => async (dispatch) => {
-  const response = await client.delete('http://localhost:3030/todos/' + id);
-  dispatch(deletedTodo(id));
+  // const response = await client.delete('http://localhost:3030/todos/' + id);
+
+  db.collection('todos').doc(id).delete()
+    .then(() => {
+      dispatch(deletedTodo(id));
+    });
 }
 

@@ -18,7 +18,7 @@ export async function client(endpoint, { body, ...customConfig } = {}) {
   }
 
   // debug
-  console.log(config, body);
+  // console.log(config, body);
 
   if (body) {
     config.body = JSON.stringify(body)
