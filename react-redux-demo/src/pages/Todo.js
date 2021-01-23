@@ -1,6 +1,7 @@
 
 import { AppBar, Button, Checkbox, Container, IconButton, InputLabel, List, ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText, MenuItem, Select, TextField, Toolbar, Typography } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
+import AddPhotoAlternateIcon from "@material-ui/icons/AddPhotoAlternate"
 import { makeStyles } from "@material-ui/styles";
 import { push } from "connected-react-router";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,10 +10,12 @@ import Header from '../components/Header';
 import DrawerMenu from "../components/DrawerMenu";
 import TodoListItem from "../components/TodoListItem"
 import { FullscreenExitTwoTone, TodayOutlined } from "@material-ui/icons";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { todoAdd, changeComplete, selectTodos, selectFilteredTodos, selectCompletedTodos, selectTodoIds, saveNewTodo, selectFetch } from "../state/todosSlice";
 import { selectFilters, filterColorChanged, filterCompleteChanged } from "../state/filtersSlice";
+
+import { storage } from "../firebase"
 
 // スタイルの読込
 // module.cssを以下のように読込んで使用すると、適用されるクラス名は一意のハッシュが付加される。
@@ -31,6 +34,13 @@ const useStyles = makeStyles({
     display: "flex",
     alignItems: "center",
     justifyContent: "space-around"
+  },
+  inputFileLabel: {
+    width: 24,
+    height: 24
+  },
+  inputFile: {
+    display: "none"
   }
 });
 
@@ -97,6 +107,20 @@ const Todo = () => {
     dispatch(filterCompleteChanged(e.target.value));
   }
   const isSaving = saveStatus === "saving";
+
+  // firebaseへのファイルアップロード用ハンドラ
+  const uploadImage = useCallback((e) => {
+    const file = e.target.files;
+    let blob = new Blob(file, { type: "image/jpeg"});
+    const uploadTask = storage.ref('images').child('test_image').put(blob);
+    uploadTask.then(() => {
+      uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+        const newImage = {id: blob, path: downloadURL};
+        console.log(downloadURL)
+      })
+    });
+  }, [] )
+
   return (
     <>
       <Header />
@@ -121,6 +145,19 @@ const Todo = () => {
             onClick={handleTodoAdd}>
             Todoを登録する
           </Button>
+        </div>
+        <div className={classes.inputTodo}>
+          <span>画像登録</span>
+          <IconButton>
+            <label className={classes.inputFileLabel}>
+              <AddPhotoAlternateIcon/>
+              <input
+                className={classes.inputFile}
+                type="file"
+                onChange={uploadImage}
+                />
+            </label>
+          </IconButton>
         </div>
         {
           fetchState.fetching && <p>fetch中です!</p>
