@@ -6,6 +6,7 @@ import { db, FirebaseTimestamp } from '../firebase';
 // stateの初期状態を定義している
 const initialState = {
   entities: []
+
   // entities:
   //   // [todo.id]: {
   //   [
@@ -58,7 +59,8 @@ export const TodosReducer = (state = initialState, action) => {
             id: todo.id,
             text: todo.text,
             completed: todo.completed,
-            color: todo.color
+            color: todo.color,
+            image: todo.image
           }
         ]
       }
@@ -73,6 +75,7 @@ export const TodosReducer = (state = initialState, action) => {
             ...entity,
             completed: action.payload.completed,
             color: action.payload.color,
+            image: action.payload.image
           }
         })
       }
@@ -178,7 +181,8 @@ export const todoAdd = (todo) => {
       id: todo.id,
       text: todo.text,
       completed: todo.completed,
-      color: todo.color
+      color: todo.color,
+      image: todo.image
     }
   }
 }
@@ -189,7 +193,8 @@ export const changeTodo = (todo) => {
       id: todo.id,
       text: todo.text,
       completed: todo.completed,
-      color: todo.color
+      color: todo.color,
+      image: todo.image
     }
   }
 }
@@ -252,6 +257,7 @@ export const saveNewTodo = (text) => async (dispatch) => {
     text,
     completed: false,
     color: "none",
+    image: null,
     timestamp
   };  //textについては→のように展開される {text:'textの値'}
 

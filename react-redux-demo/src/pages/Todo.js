@@ -35,13 +35,6 @@ const useStyles = makeStyles({
     alignItems: "center",
     justifyContent: "space-around"
   },
-  inputFileLabel: {
-    width: 24,
-    height: 24
-  },
-  inputFile: {
-    display: "none"
-  }
 });
 
 const Todo = () => {
@@ -108,19 +101,6 @@ const Todo = () => {
   }
   const isSaving = saveStatus === "saving";
 
-  // firebaseへのファイルアップロード用ハンドラ
-  const uploadImage = useCallback((e) => {
-    const file = e.target.files;
-    let blob = new Blob(file, { type: "image/jpeg"});
-    const uploadTask = storage.ref('images').child('test_image').put(blob);
-    uploadTask.then(() => {
-      uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-        const newImage = {id: blob, path: downloadURL};
-        console.log(downloadURL)
-      })
-    });
-  }, [] )
-
   return (
     <>
       <Header />
@@ -145,19 +125,6 @@ const Todo = () => {
             onClick={handleTodoAdd}>
             Todoを登録する
           </Button>
-        </div>
-        <div className={classes.inputTodo}>
-          <span>画像登録</span>
-          <IconButton>
-            <label className={classes.inputFileLabel}>
-              <AddPhotoAlternateIcon/>
-              <input
-                className={classes.inputFile}
-                type="file"
-                onChange={uploadImage}
-                />
-            </label>
-          </IconButton>
         </div>
         {
           fetchState.fetching && <p>fetch中です!</p>

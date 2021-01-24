@@ -9,12 +9,14 @@ import { push } from "connected-react-router";
 import { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeComplete, changeColor, updateTodo, updateComplete, updateColor, selectTodoById, changeTodos, deleteTodo } from "../state/todosSlice";
+import ImageAdd from "./ImageAdd";
 
 
 // todo項目一個のコンポーネント
 const TodoListItem = (props) => {
   // このセレクターはpropsとして渡されたIDを元にtodoを取り出す
   const todo = useSelector(state => selectTodoById(state, props.id));
+  // const [image, setImage] = useState({});
   const dispatch = useDispatch();
 
   // 完了フラグチェックボックスを変更したときのハンドラ
@@ -38,6 +40,11 @@ const TodoListItem = (props) => {
     const newTodo = { ...todo, color: e.target.value };
     dispatch(updateTodo(props.id, newTodo));
   }
+  // 画像の追加ハンドラ
+  const handleImageAdd = (image) => {
+    const newTodo = {...todo, image: image};
+    dispatch(updateTodo(props.id, newTodo));
+  }
   // todo削除ボタン押し下げ時のハンドラ
   const handleDelete = () => {
     dispatch(deleteTodo(props.id));
@@ -54,8 +61,12 @@ const TodoListItem = (props) => {
         />
       </ListItemIcon>
       <ListItemText
-        primary={todo.text}
-      />
+        // primary={todo.text}
+      >
+        <a href={todo.image ? todo.image.path : null} target="_blank">
+          {todo.text}
+        </a>
+      </ListItemText>
       <ListItemSecondaryAction>
         <Select
           edge="end"
@@ -67,6 +78,7 @@ const TodoListItem = (props) => {
           <MenuItem value={"blue"}>blue</MenuItem>
 
         </Select>
+        <ImageAdd handleImageAdd={handleImageAdd} />
         <IconButton
           aria-label="delete"
           onClick={handleDelete}
