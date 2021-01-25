@@ -1,9 +1,39 @@
+・firebase導入方法ざっくり
+　ダッシュボードでの作業
+　　firebaseコンソール(ダッシュボードみたいなの)からプロジェクトを作成する
+　　ダッシュボードからreact等のウェブアプリに対して作成したfirebaseプロジェクトを追加する
+　　プロジェクトの設定からリソースロケーションを設定する
+　　　asia-northeast1のリージョンにしておく
+　　databaseについて本番環境で開始を行う。
+　コンソールからの作業
+　　アプリのディレクトリから firebase login を行い作成したプロジェクトにログインする
+　　firebase init で初期化を行う
+　　　使用サービスをスペースキーで選択する。firestoreとかfunctionsとかhostingとかstorageとか選べる
+　　　使用するプロジェクトを選択する。既存のプロジェクトや新規プロジェクトとか選べる
+　　　hostingの選択ではbuildディレクトリを選択しておく
+　　　あとはほとんどデフォルト
+　　npm run build してから firebase deploy をするとhostやらrulesなんやらがfirebaseへデプロイされる
+
 ・npm install -g firebase-tools
+　これをインストールするとfirebaseのCLIが使えるようになる
 ・npm install -s firebase
+　アプリでfirebaseを使うならこれをインストールしておく
+　ここからstorageやらdatabaseやらが使えるよになる
+
 ・functionsフォルダ
+　サーバー側での処理を記述するファイル。
+
 ・src>firebase>config.js
+　firebaseの設定を行うファイル。APIkeyとか入ってる。
+　firebaseコンソールの設定→Firebase SDK Snippet→構成から丸コピーしてこのファイルに張り付けている。
 ・src>firebase>index.js
-・firebase.rulesについて
+　上のconfig.jsを読込んでinitislizeApp(firebaseConfig)したり
+　使用するFirebaseサービスを読込んで使いやすくエクスポートしてあげたりする
+
+・firestore.rulesとかsotorage.rulesとかについて
+　firestoreやstorageとかのパーミッションを設定するファイル。
+　変更したらfirebase deployする必要がある。
+
 ・firebase deploy
 　以下ルールのみデプロイするオプションあり
 　--only hosting
@@ -16,6 +46,21 @@
 
 ・dbのメソッド色々
 　db.collection('todos').orderBy('timestamp', 'asc').get()
+　　→firestore上のtodosコレクションからtimestampのフィールドについて、
+　　ascなら昇順、descなら降順でドキュメントを取得する
 　await db.collection('todos').doc(id).set(initTodo).catch(e => { throw new Error(e) });
+　　→firestore上のtodosコレクションのid指定したドキュメントにinitTodoを登録する
 　db.collection('todos').doc(id).update(sendTodo)
+　　→firestore上のtodosコレクションのid指定したドキュメントにsendTodoを更新する
 　db.collection('todos').doc(id).delete()
+　　→firestore上のtodosコレクションのid指定したドキュメントを削除する
+
+・storageのメソッド色々
+　const uploadTask = storage.ref('images').child(fileName).put(blob);
+　uploadTask.then( () => {
+    uploadTasksnapshot.ref.getDownloadURL().then((downloadURL) => {
+
+    })
+})
+　→以下のメソッドでstorage上の/imagesディレクトリに、blob化したファイルを、fileNameという名前でアップロードして
+　そのアップロードしたファイルのダウンロード用URLを取得できる
