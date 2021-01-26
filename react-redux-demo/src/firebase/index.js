@@ -14,10 +14,11 @@ firebase.initializeApp(firebaseConfig);
 // エントリポイントとしてexportするもの
 // ここで一括しておけば他で使うとき楽
 // auth     : 認証関係で使う
-// db       : データ格納
-// storage  : ファイル関係格納？
+// db       : データベース格納
+// storage  : ファイル関係格納
 // functions: サーバー側の処理記述する？
-// FirebaseTimestamp: サーバーからタイムスタンプを取得する
+// FirebaseTimestamp: サーバーからタイムスタンプを取得する。このタイムスタンプをデータベースの
+//                    フィールドにセットしておいて、データのソートをしたりする。
 export const auth = firebase.auth();
 export const db = firebase.firestore();
 export const storage = firebase.storage();
