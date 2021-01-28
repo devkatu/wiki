@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import "../assets/css/SignUp/SignUp.css";
+import { signUp } from '../state/usersSlice';
 
 const SignUp = () => {
+
+  const dispatch = useDispatch();
 
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
@@ -19,6 +23,9 @@ const SignUp = () => {
   }
   const inputConfirmPassword = (e) => {
     setConfirmPassword(e.target.value);
+  }
+  const handleUserCreate = () => {
+    dispatch(signUp(userName, email, password, confirmPassword));
   }
 
   console.log("update", userName)
@@ -51,7 +58,7 @@ const SignUp = () => {
         </label>
       </p>
       <p>
-        
+        <button onClick={handleUserCreate}>登録する</button>
       </p>
     </div>
   )

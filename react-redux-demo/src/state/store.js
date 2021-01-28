@@ -3,6 +3,7 @@ import { createLogger } from "redux-logger";
 import thunk from "redux-thunk";
 import { TodosReducer } from "./todosSlice";
 import { FiltersReducer } from "./filtersSlice";
+import { UsersReducer } from "./usersSlice";
 import { connectRouter, routerMiddleware } from "connected-react-router";
 import history from './history';
 
@@ -25,6 +26,7 @@ export default createStore(
     router: connectRouter(history),
     todos: TodosReducer,
     filters: FiltersReducer,
+    users: UsersReducer
   }),
   applyMiddleware(...middleware)
 );
