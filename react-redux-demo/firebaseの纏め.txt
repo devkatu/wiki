@@ -71,5 +71,34 @@
 
 ★未完
 auth
+
 rulesの書き方
+　とりあえずはfirestore.rulesの書き方について
+rules_version = '2';
+service cloud.firestore {
+    match /databases/{database}/documents {
+        // ここにルール（ホワイトリスト形式）を書いていく
+        // →各オペレーションについて一つ一つ条件付で許可していく形
+        // 言い換えればルールを書く毎にセキュリティに穴を開けることとなる
+        match /<対象のコレクション・ドキュメントへのパス> {
+            // ここにルールを記述する
+            allow <許可する読み書きのオペレーション>: if <許可する条件>;
+        }
+    }
+}
+
+　下の箇所はおまじないで必須(Cloud Firestoreのルートを表しているみたい)
+rules_version = '2';
+service cloud.firestore {
+    match /databases/{database}/documents {
+        // ここにルール（ホワイトリスト形式）を書いていく
+    }
+}
+
+　ルールの書き方は
+　read(get, list)
+　write(create, update, delete)
+　の各々(オペレーションっていう)について記述していく。
+
+
 決済の方法

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import "../assets/css/SignUp/SignUp.css";
-import { signUp } from '../state/usersSlice';
+import { listenAuthState, signUp } from '../state/usersSlice';
 
 const SignUp = () => {
 
