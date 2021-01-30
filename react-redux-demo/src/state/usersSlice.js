@@ -108,6 +108,37 @@ export const todoAdd = (todo) => {
 // アクションクリエイターみたいにコンポーネント側で実行する
 // 実行するとasyncなfunctionを返す。これがそのままdispatch()に渡される
 
+
+// サインイン関数
+export const signIn = (email, password) => async (dispatch, getState) => {
+  return auth.signInWithEmailAndPassword(email, password)
+    .then(result => {
+      const user = result.user;
+      if(!user){
+        console.log('userIDない')
+      }
+      const uid = user.uid;
+      return db.collection('users').doc(uid).get()
+        .then(snapshot => {
+          const data = snapshot.data();
+          if(!data) {
+            console.log('userデータなし')
+          }
+          console.log(data)
+        })
+    }).catch(() => {
+      console.log('サインイン失敗')
+    })
+}
+
+// サインアウト関数
+export const signOut = () => async (dispatch) => {
+  auth.signOut().then(() => {
+    console.log('サインアウトしました');
+  })
+}
+
+
 // サインアップ関数
 export const signUp = (username, email, password, confirmPassword) => async (dispatch) => {
   return auth.createUserWithEmailAndPassword(email, password)

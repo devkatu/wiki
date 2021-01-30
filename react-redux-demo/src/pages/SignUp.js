@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import "../assets/css/SignUp/SignUp.css";
-import { listenAuthState, signUp } from '../state/usersSlice';
+import { listenAuthState, signIn, signUp, signOut } from '../state/usersSlice';
 
 const SignUp = () => {
 
@@ -25,7 +25,14 @@ const SignUp = () => {
     setConfirmPassword(e.target.value);
   }
   const handleUserCreate = () => {
-    dispatch(signUp(userName, email, password, confirmPassword));
+    // ★デバッグ
+    // dispatch(signUp(userName, email, password, confirmPassword));
+    // dispatch(signIn(email,password))
+    dispatch(signOut())
+  }
+  // ★デバッグ用
+  const handleListen = () => {
+    dispatch(listenAuthState())
   }
 
   console.log("update", userName)
@@ -59,6 +66,7 @@ const SignUp = () => {
       </p>
       <p>
         <button onClick={handleUserCreate}>登録する</button>
+        <button onClick={handleListen}>auth listen</button>
       </p>
     </div>
   )
