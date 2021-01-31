@@ -7,6 +7,7 @@ import Footer from './components/Footer';
 import Todo from './pages/Todo';
 import Setting from './pages/Setting';
 import SignUp from './pages/SignUp';
+import SignIn from './pages/SignIn';
 
 function App() {
   // console.log(process.env.NODE_ENV);
@@ -17,6 +18,7 @@ function App() {
           <Route exact path="/" component={Todo} />
           <Route exact path="/a" component={Setting} />
           <Route exact path="/SignUp" component={SignUp}/>
+          <Route exact path="/SignIn" component={SignIn}/>
           {/* <Route component={NotFound}/> */}
         </Switch>
       {/* </Router> */}

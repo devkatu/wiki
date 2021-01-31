@@ -1,3 +1,4 @@
+import { push } from "connected-react-router";
 import { createSelector } from "reselect";
 import { client } from "../api/client";
 import { auth, db, FirebaseTimestamp } from '../firebase';
@@ -111,7 +112,7 @@ export const todoAdd = (todo) => {
 
 // サインイン関数
 export const signIn = (email, password) => async (dispatch, getState) => {
-  return auth.signInWithEmailAndPassword(email, password)
+  auth.signInWithEmailAndPassword(email, password)
     .then(result => {
       const user = result.user;
       if(!user){
@@ -128,7 +129,9 @@ export const signIn = (email, password) => async (dispatch, getState) => {
         })
     }).catch(() => {
       console.log('サインイン失敗')
+      dispatch(push('/SignIn'));
     })
+  
 }
 
 // サインアウト関数
