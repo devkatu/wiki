@@ -3,10 +3,12 @@ import { AppBar, Button, Divider, Drawer, IconButton, List, ListItem, ListItemIc
 import HomeIcon from "@material-ui/icons/Home";
 import SettingsIcon from '@material-ui/icons/Settings';
 import InfoIcon from '@material-ui/icons/Info';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { makeStyles } from "@material-ui/styles";
 import { push } from "connected-react-router";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { signOut } from "../state/usersSlice";
 
 const useStyles = makeStyles({
   list: {
@@ -36,6 +38,10 @@ const DrawerMenu = (props) => {
           <ListItem button onClick={() => {dispatch(push('./a'))}}>
             <ListItemIcon><SettingsIcon /></ListItemIcon>
             <ListItemText primary="設定"></ListItemText>
+          </ListItem>
+          <ListItem button onClick={() => {dispatch(signOut())}}>
+            <ListItemIcon><ExitToAppIcon /></ListItemIcon>
+            <ListItemText primary="サインアウト"></ListItemText>
           </ListItem>
         </List>
       </div>

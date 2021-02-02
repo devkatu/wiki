@@ -8,6 +8,7 @@ import Todo from './pages/Todo';
 import Setting from './pages/Setting';
 import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
+import Auth from './Auth';
 
 function App() {
   // console.log(process.env.NODE_ENV);
@@ -15,10 +16,12 @@ function App() {
     <div className="App">
       {/* <Router> ←ConnectedRouterがあるからいらない？*/}
         <Switch>
-          <Route exact path="/" component={Todo} />
-          <Route exact path="/a" component={Setting} />
           <Route exact path="/SignUp" component={SignUp}/>
           <Route exact path="/SignIn" component={SignIn}/>
+          <Auth>
+            <Route exact path="/" component={Todo}/>
+            <Route exact path="/a" component={Setting} />
+          </Auth>
           {/* <Route component={NotFound}/> */}
         </Switch>
       {/* </Router> */}

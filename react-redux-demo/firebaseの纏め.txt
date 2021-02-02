@@ -100,5 +100,5 @@ service cloud.firestore {
 　write(create, update, delete)
 　の各々(オペレーションっていう)について記述していく。
 
-
+useEffectについて
 決済の方法
