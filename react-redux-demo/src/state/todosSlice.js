@@ -31,6 +31,11 @@ const initialState = {
   //   ]
   // fetching: false,
   // fetched: false
+
+  ,fetchState: {
+    fetching: false,
+    fetched: false,
+  }
 }
 
 // -------- id更新関数 --------

@@ -10,9 +10,9 @@ import Header from '../components/Header';
 import DrawerMenu from "../components/DrawerMenu";
 import TodoListItem from "../components/TodoListItem"
 import { FullscreenExitTwoTone, TodayOutlined } from "@material-ui/icons";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-import { todoAdd, changeComplete, selectTodos, selectFilteredTodos, selectCompletedTodos, selectTodoIds, saveNewTodo, selectFetch } from "../state/todosSlice";
+import { todoAdd, changeComplete, selectTodos, selectFilteredTodos, selectCompletedTodos, selectTodoIds, saveNewTodo, selectFetch, fetchTodos } from "../state/todosSlice";
 import { selectFilters, filterColorChanged, filterCompleteChanged } from "../state/filtersSlice";
 
 import { storage } from "../firebase"
@@ -48,6 +48,10 @@ const Todo = () => {
   const completedTodosCount = useSelector(selectCompletedTodos);
   const fetchState = useSelector(selectFetch);
   const filters = useSelector(selectFilters);
+
+  useEffect(() => {
+    dispatch(fetchTodos());
+  },[])
 
   // 新規todoテキストでのkeydownハンドラ
   const handleKeyDown = async (e) => {

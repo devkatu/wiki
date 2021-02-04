@@ -168,7 +168,7 @@ export const listenAuthState = () => async (dispatch) => {
         })
     } else {
       console.log('loginしてません')
-      // dispatch(push('./SignIn'));
+      dispatch(push('./SignIn'));
     }
   })
 }

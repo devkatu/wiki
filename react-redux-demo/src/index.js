@@ -18,7 +18,7 @@ const theme = createMuiTheme({
 
 // ページ読込時にfetchTodosを行う。
 // provider外でdispatchしたいときはこのようにstore.dispatch()する
-store.dispatch(fetchTodos());
+// store.dispatch(fetchTodos());
 
 // ConnectedRouterにより、storeでrouteの管理ができるようになる。
 // これがないと<Link path="hoge"/>とか書く必要があるはずだが、

@@ -12,9 +12,17 @@ const Auth = (props) => {
     }
   }, [])
 
-  return (
-    isSignedIn ? props.children : "loginして下さい"
-    )
+  // return (
+  //   isSignedIn ? props.children : "loginして下さい"
+  //   )
+
+  if(!isSignedIn){
+    return <></>
+  }else{
+    return props.children
+  }
+
 }
+
 
 export default Auth;
