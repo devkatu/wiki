@@ -135,7 +135,7 @@ export const signIn = (email, password) => async (dispatch, getState) => {
           }
           console.log(data)
           dispatch(signInAction());
-          dispatch(push('./'));
+          dispatch(push('./a'));
         })
     }).catch(() => {
       console.log('サインイン失敗')
