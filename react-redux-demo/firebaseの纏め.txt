@@ -102,4 +102,5 @@ service cloud.firestore {
 　の各々(オペレーションっていう)について記述していく。
 
 useEffectについて
+useCallbackも詳細
 決済の方法

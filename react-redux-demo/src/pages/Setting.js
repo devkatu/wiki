@@ -12,7 +12,10 @@ import styles from '../assets/css/setting/Setting.module.css';
 
 import image from '../assets/img/setting/hair_barcode.png';
 import { useState } from "react";
+
+// swiper関係のインポート
 import Swiper from "react-id-swiper";
+import 'swiper/css/swiper.css';
 
 const useStyles = makeStyles({
   swiperBox: {
@@ -27,18 +30,18 @@ const Setting = () => {
   const classes = useStyles();
   const [params] = useState({
     pagination: {
-      el: '.swiper-pagination',
-      type: 'bullets',
-      clickable: true,
-      dynamicBullets: true
+        el: '.swiper-pagination',
+        type: 'bullets',
+        clickable: true,
+        dynamicBullets: true
     },
     navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev'
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev'
     },
     loop: true,
     spaceBetween: 30
-  })
+})
   return (
     <>
       <Header/>
@@ -47,10 +50,11 @@ const Setting = () => {
 
       {/* cssモジュールは変数にインポートして 変数.クラス名 とすれば適用できる */}
       <div className={styles.box}/>
+
       <p>swiperのテストだよん</p>
-      <Swiper {...params} class={styles.swiperBox}>
-        <div><img src={image} alt=""/></div>
-        <div><img src={image} alt=""/></div>
+      <Swiper {...params} className={classes.swiperBox}>
+        <div><img src={image} alt="barcode"/></div>
+        <div><img src={image} alt="barcode"/></div>
       </Swiper>
     </>
   )

@@ -17,7 +17,7 @@ function App() {
       {/* <Router> ←ConnectedRouterがあるからいらない？*/}
         <Switch>
           <Route exact path="/SignUp" component={SignUp}/>
-          <Route exact path="/SignIn" component={SignIn}/>
+          <Route exact path="/SignIn" component={SignIn}/>          
           <Auth>
             <Route exact path="/" component={Todo}/>
             <Route exact path="/a" component={Setting} />

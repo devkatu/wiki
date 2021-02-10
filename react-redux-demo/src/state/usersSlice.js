@@ -163,7 +163,7 @@ export const listenAuthState = () => async (dispatch) => {
       db.collection('users').doc(uid).get()
         .then(snapshot => {
           const data = snapshot.data();
-          dispatch(signOutAction());
+          dispatch(signInAction());
           console.log(data);
         })
     } else {
