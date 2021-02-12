@@ -103,4 +103,5 @@ service cloud.firestore {
 
 useEffectについて
 useCallbackも詳細
+action,selector等の命名規則ちゃんとする
 決済の方法

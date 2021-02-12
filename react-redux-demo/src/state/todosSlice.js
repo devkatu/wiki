@@ -323,6 +323,7 @@ export const updateTodo = (id, todo) => async (dispatch) => {
   db.collection('todos').doc(id).update(sendTodo)
     .then(() => {
       dispatch(changeTodo(sendTodo));
+      // console.log('todoを更新しました')
     });
 }
 
