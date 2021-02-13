@@ -43,12 +43,12 @@ const Header = () => {
             case 'added':
               console.log("added", data);
               // useEffectの第二引数にtodosを渡すと動く
-              // console.log(todos);
+              console.log(todos);
               break;
             // collectionが変更されたとき
             case 'modified':
               console.log("modified", data);
-              // console.log(todos);
+              console.log(todos);
               break;
             // collectionが削除されたとき
             case 'removed':
