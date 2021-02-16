@@ -13,5 +13,9 @@ service cloud.firestore {
       allow update;
       allow delete;
     }
+    match /order/{orderId} {
+      allow read;
+      allow write;
+    }
   }
 }

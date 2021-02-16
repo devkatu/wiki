@@ -65,6 +65,15 @@
 ・react各フック
 　useState
 　　→クラスコンポーネントでの初期state設定、setState、state読み出しを便利に使える
+　　[value, setValue] = useState(initial);
+　　とあるときに、valueが初期initialを初期stateとしてvalueに設定し、その更新用関数がsetValueとなる
+　　setValue()にはそのまま更新したい値を渡してもいいが、関数を渡すとその関数の引数には更新前のstateが渡される
+　　setValue(prev => prev + 1);　みたいな感じ。
+　　これは以下のようにuseCallbackでstate更新関数をメモ化するときに使える。
+　　useCallback(() => {
+      setValue(prev => prev + 1);
+　　},[setValue])
+　　このsetValueの所をsetValue(value+1)とかにしちゃうとvalueが最初のcallback作ったときの値に固定されてしまう
 　useEffect
 　　→クラスコンポーネントでのcomponentDidmount,componentWillunmountとかの処理を関数コンポーネントで使える上に一気にかける
 　　第一引数は副作用時(副作用のタイミングは第二引数によってきまる)に実行したい処理を書く。第一引数のreturnする値はクリーンアップするためのものであり、
@@ -76,7 +85,7 @@
 　useCallback
 　　→コールバック関数の再計算をせずにすむ
 　　一つ目の引数に普通にコンポーネントに渡す感じの関数を書いて、
-　　二つ目の引数にはその依存する変数の配列を渡す。
+　　二つ目の引数(配列リテラルで渡す)にはその依存する変数の配列を渡す。
 　　二つ目の配列の中身が変化しなければ関数の再計算はせずにキャッシュした関数の戻り値のみを使用する
 
 ・redux各フック

@@ -320,11 +320,24 @@ export const updateTodo = (id, todo) => async (dispatch) => {
 
   // set()メソッドでも第1引数にデータ、第二引数に{marge: true}ってすればいいみたいだけど・・・？
   // updateとだと特定のﾌｨｰﾙﾄﾞのみ更新するようにして使える
-  db.collection('todos').doc(id).update(sendTodo)
+  // db.collection('todos').doc(id).update(sendTodo)
+  //   .then(() => {
+  //     dispatch(changeTodo(sendTodo));
+  //   });
+
+  const batch = db.batch();
+  batch.update(db.collection('todos').doc(id),sendTodo);
+  batch.set(db.collection('order').doc(id), {id, update_at: FirebaseTimestamp.now()}, {marge: true});
+  batch.commit()
     .then(() => {
       dispatch(changeTodo(sendTodo));
-      // console.log('todoを更新しました')
-    });
+    })
+    .catch(() => {
+      alert('todo更新失敗！')
+      
+    })
+
+
 }
 
 export const deleteTodo = (id) => async (dispatch) => {
