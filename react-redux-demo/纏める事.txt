@@ -74,6 +74,9 @@
       setValue(prev => prev + 1);
 　　},[setValue])
 　　このsetValueの所をsetValue(value+1)とかにしちゃうとvalueが最初のcallback作ったときの値に固定されてしまう
+　　なお、このsetValueは更新前のstateとマージされないのでオブジェクトや配列のセット時は
+　　setValue(prev => [...prev, newValue])
+　　のようにスプレッドで前回stateを反映すること
 　useEffect
 　　→クラスコンポーネントでのcomponentDidmount,componentWillunmountとかの処理を関数コンポーネントで使える上に一気にかける
 　　第一引数は副作用時(副作用のタイミングは第二引数によってきまる)に実行したい処理を書く。第一引数のreturnする値はクリーンアップするためのものであり、
