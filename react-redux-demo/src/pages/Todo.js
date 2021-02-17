@@ -98,10 +98,17 @@ const Todo = () => {
   // フィルターする色を変更するハンドラ
   const handleFilterColorChanged = (e) => {
     dispatch(filterColorChanged(e.target.value));
+    
+    // フィルターされたtodosを受取りにいく
+    // dispatch(fetchTodos(e.target.value))
+    dispatch(fetchTodos(e.target.value, filters.filterComplete))
   }
   // フィルターするフラグを変更するハンドラ
   const handleFilterCompleteChanged = (e) => {
     dispatch(filterCompleteChanged(e.target.value));
+    
+    // フィルターされたtodosを受取りにいく
+    dispatch(fetchTodos(filters.filterColor, e.target.value))
   }
   const isSaving = saveStatus === "saving";
 
@@ -134,7 +141,16 @@ const Todo = () => {
           fetchState.fetching && <p>fetch中です!</p>
         }
         <List>
-          {filteredTodos.map((todo, index) =>
+          {/* ①全部のtodosを受取ってからフィルターする方法 */}
+          {/* {filteredTodos.map((todo, index) =>
+            <TodoListItem
+              key={index}
+              id={todo.id}
+            />
+          )} */}
+
+          {/* ②dbにクエリを投げてフィルターされたtodosを受取る方法 */}
+          {todos.map((todo, index) => 
             <TodoListItem
               key={index}
               id={todo.id}

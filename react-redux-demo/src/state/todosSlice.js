@@ -32,7 +32,7 @@ const initialState = {
   // fetching: false,
   // fetched: false
 
-  ,fetchState: {
+  , fetchState: {
     fetching: false,
     fetched: false,
   }
@@ -83,6 +83,11 @@ export const TodosReducer = (state = initialState, action) => {
             image: action.payload.image
           }
         })
+      }
+    case "TODOS/FETCH_TODO_ACTION":
+      return {
+        ...state,
+        entities: action.payload
       }
     case "TODOS/FETCH_STATE_CHANGE":
       return {
@@ -203,6 +208,12 @@ export const changeTodo = (todo) => {
     }
   }
 }
+export const fetchTodoAction = (todoLists) => {
+  return {
+    type: "TODOS/FETCH_TODO_ACTION",
+    payload: todoLists
+  }
+}
 export const todoFetch = () => {
   return {
     type: "TODOS/FETCH_STATE_CHANGE",
@@ -289,7 +300,7 @@ export const saveNewTodo = (text) => async (dispatch) => {
 
 // 公式のやつはこんな感じなのか？確認
 // 公式では纏めてdispatchしてreducer側で展開するような感じになっている
-export const fetchTodos = () => async (dispatch) => {
+export const fetchTodos = (color = 'none', filter = "none") => async (dispatch) => {
   dispatch(todoFetch());
 
   // json serverで使うやつ
@@ -300,15 +311,22 @@ export const fetchTodos = () => async (dispatch) => {
   // }
 
   // orderByで引数１のプロパティについて、引数２がascなら昇順、descなら降順でｿｰﾄする
-  db.collection('todos').orderBy('timestamp', 'asc').get()
+  // 複合クエリを使うときはFirestore indexを設定しなければならない
+  // エラーメッセージをクリックして自動で作る事もできるし、ローカルからfirestore.indexes.jsonを更新してデプロイしてもOK
+  let query = db.collection('todos').orderBy('timestamp', 'asc');
+  query = (color !== "none") ? query.where('color', '==', color) : query
+  query = (filter !== "none") ? query.where('completed', '==', filter) : query
+  console.log(filter)
+  query.get()
     .then(snapshots => {
       dispatch(todoFetchFin());
       const todosList = [];
       snapshots.forEach(snapshot => {
         const todo = snapshot.data();
         todosList.push(todo);
-        dispatch(todoAdd(todo));
+        // dispatch(todoAdd(todo));  //これでやると何回もactionが走るので下の方法で
       });
+      dispatch(fetchTodoAction(todosList))
     })
 
 }
@@ -326,15 +344,15 @@ export const updateTodo = (id, todo) => async (dispatch) => {
   //   });
 
   const batch = db.batch();
-  batch.update(db.collection('todos').doc(id),sendTodo);
-  batch.set(db.collection('order').doc(id), {id, update_at: FirebaseTimestamp.now()}, {marge: true});
+  batch.update(db.collection('todos').doc(id), sendTodo);
+  batch.set(db.collection('order').doc(id), { id, update_at: FirebaseTimestamp.now() }, { marge: true });
   batch.commit()
     .then(() => {
       dispatch(changeTodo(sendTodo));
     })
     .catch(() => {
       alert('todo更新失敗！')
-      
+
     })
 
 
