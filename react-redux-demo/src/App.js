@@ -9,9 +9,10 @@ import Setting from './pages/Setting';
 import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import Auth from './Auth';
+import Detail from './pages/Detail';
+// import NotFound from './pages/NotFound.js';
 
 function App() {
-  // console.log(process.env.NODE_ENV);
   return (
     <div className="App">
       {/* <Router> ←ConnectedRouterがあるからいらない？*/}
@@ -20,6 +21,7 @@ function App() {
           <Route exact path="/SignIn" component={SignIn}/>          
           <Auth>
             <Route exact path="/" component={Todo}/>
+            <Route exact path="/detail" component={Detail}/>
             <Route exact path="/a" component={Setting} />
           </Auth>
           {/* <Route component={NotFound}/> */}

@@ -106,6 +106,9 @@ auth関係について
 　追加/編集/削除/一覧/詳細
 　★編集の項目あたりでurlから商品IDを取得してうんぬんやってた
 　　routeの方も正規表現あったりもするのでそれも
+    window.location.pathname.split('/product/edit')[1]  useEffectで編集するのやつ
+    selector.router.location.search.split('?id=')[1]    複合クエリのやつ
+    と二通りあり
 カート機能
 　追加/削除/知覧
 注文履歴

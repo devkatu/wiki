@@ -31,7 +31,7 @@ const TodoListItem = (props) => {
   const handleChangeCompleted = useCallback(
     (e) => {
       const newTodo = { ...todo, completed: e.target.checked };
-      dispatch(updateTodo(props.id, newTodo));
+      dispatch(updateTodo(props.id, newTodo));      
     },
     [todo]
   )
@@ -50,6 +50,12 @@ const TodoListItem = (props) => {
     dispatch(deleteTodo(props.id));
   }
 
+  const handleShowDetail = () => {
+    const id = props.id;
+    dispatch(push('./detail/?id=' + id));
+    
+  }
+
   return (
     <ListItem>
       <ListItemIcon>
@@ -62,6 +68,7 @@ const TodoListItem = (props) => {
       </ListItemIcon>
       <ListItemText
         // primary={todo.text}
+        onClick={handleShowDetail}
       >
         <a href={todo.image ? todo.image.path : null} target="_blank">
           {todo.text}
