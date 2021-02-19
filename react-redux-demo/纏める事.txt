@@ -53,7 +53,11 @@
 　→stateの各プロパティについてのactionを設計する
 　　{type: "TODOS/TODOADDED", payload: todoText}
 　　{type: "FILTERS/FILTER_CHANGED", payload: filter}
-　　typeは "'stateのプロパティ'/'具体的なアクション名'"とする
+　　typeは "'stateのプロパティ'/'具体的なアクション名'"とし、
+　　具体的なアクション名は、このオブジェクトを返すアクションクリエイターと同じくし、
+　　"システムが行う事"ではなく"外の世界で実際に起こったこと"から命名する
+　　例)コメントの投稿
+      ×CREATE_COMMENT  → 〇POST_COMMENT
 　→各actionに対するreducerを設計する
 　　function todosReducer(state, action){}
 　　function filtersReducer(state, action){}
