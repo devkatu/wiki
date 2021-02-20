@@ -106,9 +106,18 @@ auth関係について
 　追加/編集/削除/一覧/詳細
 　★編集の項目あたりでurlから商品IDを取得してうんぬんやってた
 　　routeの方も正規表現あったりもするのでそれも
-    window.location.pathname.split('/product/edit')[1]  useEffectで編集するのやつ
+    window.location.pathname.split('/detail')[1]  useEffectで編集するのやつ
+    →クエリパラーメタではなく普通にURLを入力する感じで表示したいならこっち
+    　自分で今のpathnameを取得してばらして、、とする
+    props.match.params.id.split('/detail')[1]
+    →react-router使ってるならこれでもいいかも。pathの:idが...idに入っている
+    　上記二つはRouterコンポーネントはpath="/detail/:id"でexact付きでもOK
+
     selector.router.location.search.split('?id=')[1]    複合クエリのやつ
-    と二通りあり
+    →クエリパラメータがあるときはこっち。historyでかな？storeに入ってる
+    　location.pathnameでもとれるけどこっちには直接クエリパラメータが入っているので
+    　Routeコンポーネントはpath="/detail"でexact付きでもOK
+    　exact付けてもクエリまではみていないみたい
 カート機能
 　追加/削除/知覧
 注文履歴

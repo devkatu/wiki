@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { db } from "../firebase";
 
-const Detail = () => {
+const Detail = (props) => {
   const selector = useSelector(state => state);
   const dispatch = useDispatch();
   const [complete, setComplete] = useState("");
@@ -13,16 +13,19 @@ const Detail = () => {
   const query = selector.router.location.search;
   const id = query.split('?id=')[1];
 
+  // const id = window.location.pathname.split('/detail/')[1];   // パスから自分でそのあとに続くidを出す
+  // const id = props.match.params.id;    //パスに付けたものを引数として取得できる。ここではpath="/detail/:id"の:id
+
   useEffect(() => {
     if (id) {
       db.collection('todos').doc(id).get()
-        .then(snapshot => {
-          const data = snapshot.data();
-          setComplete(data.completed)
-          setText(data.text)
-          setColor(data.color)
-          setImgpath(data.image.path)
-        })
+      .then(snapshot => {
+        const data = snapshot.data();
+        setComplete(data.completed)
+        setText(data.text)
+        setColor(data.color)
+        setImgpath(data.image.path)
+      })
     }
   }, [])
 

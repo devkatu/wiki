@@ -22,6 +22,7 @@ function App() {
           <Auth>
             <Route exact path="/" component={Todo}/>
             <Route exact path="/detail" component={Detail}/>
+            {/* <Route exact path="/detail/:id" component={Detail}/> */}
             <Route exact path="/a" component={Setting} />
           </Auth>
           {/* <Route component={NotFound}/> */}

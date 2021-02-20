@@ -52,7 +52,8 @@ const TodoListItem = (props) => {
 
   const handleShowDetail = () => {
     const id = props.id;
-    dispatch(push('./detail/?id=' + id));
+    dispatch(push('./detail?id=' + id));
+    // dispatch(push('./detail/' + id));
     
   }
 
