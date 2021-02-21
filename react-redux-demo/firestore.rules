@@ -8,10 +8,13 @@ service cloud.firestore {
       allow delete;
     }
     match /users/{usersId} {
+      // allow read: if request.auth != null
+      // && userId == request.auth.uid;
       allow read;
       allow create;
       allow update;
       allow delete;
+      
     }
     match /order/{orderId} {
       allow read;

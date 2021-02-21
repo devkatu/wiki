@@ -57,6 +57,20 @@
 　　→firestore上のtodosコレクションのid指定したドキュメントにsendTodoを更新する
 　db.collection('todos').doc(id).delete()
 　　→firestore上のtodosコレクションのid指定したドキュメントを削除する
+　db.collection('todos').onSnapshot(snapshots => {
+    snapshots.docChagnges().forEach(change=>{
+        const data = change.doc.data();
+        const changeType = change.type;
+        // added, modified, removedの値をとる
+    })
+　})
+　　→firestore上のtodosコレクションの変化をリッスンする事ができるようになる
+　　changeTypeの値を用いて処理を分岐する。db上の値が確実に変更された事が分かるので
+　　db上の値を変更する処理の後、storeを更新したりするときはコレが良いかも
+　　dbにset()とかを投げて.then()とかでも同じかもだけど
+　　このonsnapshotの戻り値にはリスナー登録の解除関数が入っているみたいなので
+　　コンポーネントのマウント解除時に呼出すようにすること。
+　　コンポーネント呼出すたびにコールバック登録されちゃう
 
 ・storageのメソッド色々
 　const uploadTask = storage.ref('images').child(fileName).put(blob);
