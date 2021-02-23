@@ -1,16 +1,51 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+  // ここまでの記述はお約束
+  // firestoreのルールだよ、の宣言みたいなもん
+  // あとはこの括弧内にドキュメントを指定し、それに対する
+  // ルールを一つ一つ条件付きで許可する形で書いていく(ホワイトリスト)
+
+    // ★ドキュメントの指定
+    // match /コレクション/ドキュメント{...}
+    // のように"ドキュメント"を指定する
+    // 直接文字列を指定してもいいし、{xxx}のようなワイルドカード指定もできる
     match /todos/{todosId} {
-      allow read;
-      allow create;
-      allow update;
-      allow delete;
+
+      allow read, write: if true;
+
+      // ★ルールの設定
+      // allow 読み書きオペレーション: if 条件式;
+      // のような形で書いていく。
+      // オペレーションの種類は
+      // read
+      //    get
+      //    list
+      // write
+      //    create
+      //    update
+      //    delete
+      // とあり、 , でまとめて書くことができる。
+
+      // ドキュメントの中にさらにコレクションをネスト(サブコレクション)しているときは
+      // このようなルールになる。場合によってはルールの記述はネストせずに直接全パスを
+      // 記述してもOK。(match /todos/{todosId}/subcollection/{subId} のような感じ)
+      // match /subcollection/{subId}{
+      //   allow read;
+      // }
+      
+      // ルールが深い階層に適用されるようにするには、再帰ワイルドカード構文{name=**}を使う
+      // match /subcollection/{document=**}{
+      //    この中でのdocument変数の値は対象のドキュメントのパスと一致するものになる
+      //    /subcollection/landmark/tower のドキュメントのルールを設定するときには
+      //    document変数にはsubcollection/landmark/towerが入っている
+      // }
     }
     match /users/{usersId} {
       // allow read: if request.auth != null
       // && userId == request.auth.uid;
-      allow read;
+      allow get;
+      allow list;
       allow create;
       allow update;
       allow delete;
