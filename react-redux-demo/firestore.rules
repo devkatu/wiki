@@ -41,9 +41,23 @@ service cloud.firestore {
       //    document変数にはsubcollection/landmark/towerが入っている
       // }
     }
-    match /users/{usersId} {
-      // allow read: if request.auth != null
-      // && userId == request.auth.uid;
+    match /users/{userId} {
+      // usersコレクションに含まれている{userId}をIDとするドキュメントと、
+      // 認証情報のuid(データ要求しているユーザーのID…サインアップしたときとかに帰ってくる値にも含まれていると思う)が一致する時のみ許可
+      // ※request.authへ数はでーたを要求しているクライアントの認証情報が入る
+      // allow read, update, delete: if request.auth != null && request.auth.uid == userId;
+      
+      // ログインしていれば許可
+      // allow create: if request.auth != null;
+
+
+      // resource.dataにはすべてのドキュメントに格納されているフィールドと値が入る
+      // requset.resourceには更新しようしている値が入りその整合性チェックのようなことをできる
+      // allow read: if resource.data.visibility == 'public';
+      // allow update:if request.resorce.data.population > 0 
+      //               && requset.resource.data.name == resource.data.name;
+
+
       allow get;
       allow list;
       allow create;
