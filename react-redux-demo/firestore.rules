@@ -12,11 +12,16 @@ service cloud.firestore {
     // 直接文字列を指定してもいいし、{xxx}のようなワイルドカード指定もできる
     match /todos/{todosId} {
 
-      allow read, write: if true;
+
+      allow read: if resource.data.color == 'none';
+      // allow read: if true;
+      allow write: if request.resource.data.color == 'none';
+      
+
 
       // ★ルールの設定
       // allow 読み書きオペレーション: if 条件式;
-      // のような形で書いていく。
+      // のような形で書いていく。 ※allow オペレーション; は allow オペレーション: if true;と同じ
       // オペレーションの種類は
       // read
       //    get
@@ -42,17 +47,18 @@ service cloud.firestore {
       // }
     }
     match /users/{userId} {
-      // usersコレクションに含まれている{userId}をIDとするドキュメントと、
+      // ★usersコレクションに含まれている{userId}をIDとするドキュメントと、
       // 認証情報のuid(データ要求しているユーザーのID…サインアップしたときとかに帰ってくる値にも含まれていると思う)が一致する時のみ許可
-      // ※request.authへ数はでーたを要求しているクライアントの認証情報が入る
+      // ※request.authへはでーたを要求しているクライアントの認証情報が入る
       // allow read, update, delete: if request.auth != null && request.auth.uid == userId;
       
-      // ログインしていれば許可
+      // ★ログインしていれば許可
       // allow create: if request.auth != null;
 
-
-      // resource.dataにはすべてのドキュメントに格納されているフィールドと値が入る
-      // requset.resourceには更新しようしている値が入りその整合性チェックのようなことをできる
+      // ★ドキュメントに格納されているデータによってもオペレーションを制御できる
+      // resource.dataにはすべてのドキュメントに格納されているフィールドが指定でき、中身を参照できる
+      // 書込み時にはrequset.resource.dataにはやろうとしているオペレーション後のドキュメント(の状態)
+      // を指定できる
       // allow read: if resource.data.visibility == 'public';
       // allow update:if request.resorce.data.population > 0 
       //               && requset.resource.data.name == resource.data.name;
@@ -66,6 +72,7 @@ service cloud.firestore {
       
     }
     match /order/{orderId} {
+      // ★他にも頻出する条件は関数化できたりするけど必要になったら見てみよう
       allow read;
       allow write;
     }
