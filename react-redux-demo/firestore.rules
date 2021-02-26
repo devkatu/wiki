@@ -63,6 +63,8 @@ service cloud.firestore {
       // allow update:if request.resorce.data.population > 0 
       //               && requset.resource.data.name == resource.data.name;
 
+      // ★複雑な条件はコンソールからルールのプレイグラウンドでテストしたりもできる
+
 
       allow get;
       allow list;
@@ -72,7 +74,8 @@ service cloud.firestore {
       
     }
     match /order/{orderId} {
-      // ★他にも頻出する条件は関数化できたりするけど必要になったら見てみよう
+      // ★他にも頻出する条件は関数化できたり、条件を記述するドキュメントとは別の
+      // パスの状態をチェックすることもできるけど必要になったら見てみよう
       allow read;
       allow write;
     }

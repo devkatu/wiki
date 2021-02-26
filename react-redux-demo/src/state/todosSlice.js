@@ -316,9 +316,9 @@ export const fetchTodos = (color = 'none', filter = "none") => async (dispatch) 
   let query = db.collection('todos').orderBy('timestamp', 'asc');
   query = (color !== "none") ? query.where('color', '==', color) : query
   query = (filter !== "none") ? query.where('completed', '==', filter) : query
-  console.log(filter)
   query.get()
     .then(snapshots => {
+      console.log(1)
       dispatch(todoFetchFin());
       const todosList = [];
       snapshots.forEach(snapshot => {
@@ -328,6 +328,7 @@ export const fetchTodos = (color = 'none', filter = "none") => async (dispatch) 
       });
       dispatch(fetchTodoAction(todosList))
     })
+    console.log(2)
 
 }
 
