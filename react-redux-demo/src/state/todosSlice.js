@@ -314,11 +314,11 @@ export const fetchTodos = (color = 'none', filter = "none") => async (dispatch) 
   // 複合クエリを使うときはFirestore indexを設定しなければならない
   // エラーメッセージをクリックして自動で作る事もできるし、ローカルからfirestore.indexes.jsonを更新してデプロイしてもOK
   let query = db.collection('todos').orderBy('timestamp', 'asc');
+  // query = query.where('color', '==', color);   // test クエリを投げる場合はfirestore.rulesのread(list)で見ている条件を必ず書かなければならない
   query = (color !== "none") ? query.where('color', '==', color) : query
   query = (filter !== "none") ? query.where('completed', '==', filter) : query
   query.get()
     .then(snapshots => {
-      console.log(1)
       dispatch(todoFetchFin());
       const todosList = [];
       snapshots.forEach(snapshot => {
@@ -328,7 +328,6 @@ export const fetchTodos = (color = 'none', filter = "none") => async (dispatch) 
       });
       dispatch(fetchTodoAction(todosList))
     })
-    console.log(2)
 
 }
 

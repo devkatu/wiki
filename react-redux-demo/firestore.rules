@@ -13,9 +13,7 @@ service cloud.firestore {
     match /todos/{todosId} {
 
 
-      allow read: if resource.data.color == 'none';
-      // allow read: if true;
-      allow write: if request.resource.data.color == 'none';
+      allow read, write;
       
 
 
@@ -58,7 +56,10 @@ service cloud.firestore {
       // ★ドキュメントに格納されているデータによってもオペレーションを制御できる
       // resource.dataにはすべてのドキュメントに格納されているフィールドが指定でき、中身を参照できる
       // 書込み時にはrequset.resource.dataにはやろうとしているオペレーション後のドキュメント(の状態)
-      // を指定できる
+      // を指定できる。
+      // ここではusersコレクションの任意のドキュメントのフィールドが(request.)resource.dataとなる
+      // ※クエリを投げる場合はfirestore.rulesのread(list)で見ている条件を必ず書かなければならない
+      // 以下のような条件があるならクエリは ...where('visibility', '==', visibility)のような感じ
       // allow read: if resource.data.visibility == 'public';
       // allow update:if request.resorce.data.population > 0 
       //               && requset.resource.data.name == resource.data.name;

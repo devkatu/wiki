@@ -33,6 +33,7 @@ const Header = () => {
   useEffect(() => {
     // collectionの変化をリッスンするよう指示する関数
     // トラハックではこの中でstoreを変更していた
+    
     const unsubscribe = db.collection('todos')
       .onSnapshot(snapshots => {
         snapshots.docChanges().forEach(change => {

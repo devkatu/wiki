@@ -44,10 +44,22 @@
 　　上のconfig.jsを読込んでinitislizeApp(firebaseConfig)したり
 　　使用するFirebaseサービスを読込んで使いやすくエクスポートしてあげたりする
 
-・authenticationについて
+・auth(firebase.auth)について
 　・まずはコンソールから、signin方法を選択して有効にする。
+　　動画ではこの後にconfig.jsへ設定コピーしていたがいつでもいいと思う
+　auth.createUserWithEmailAndPassword(email, password).then(result => {})
+　　→メールアドレスとパスワードでユーザーアカウントを作成する。resultにはuser情報とかが入っているオブジェクトが入る
+　　作成に成功したら、dbにもresult.user.uidをidとするドキュメントを登録するとよい。
+　auth.signInWithEmailAndPassword(email, password).then(result => {})
+　　→メールアドレスとパスワードでログインする。resultにはuser情報とかが入っているオブジェクトが入る
+　auth.signOut().then(() => {})
+　　→ログアウトを行う。
+　auth.onAuthStateChanged(user => {})
+　　→現在のログイン状態を確認できる。userにはユーザー情報が入りuser.uidがユーザーIDとなる。
+　　このrulesでのresource.auth.uidとかと一緒
+  
 
-・dbのメソッド色々
+・db(firebase.firestore)のメソッド色々
 　db.collection('todos').orderBy('timestamp', 'asc').get()
 　　→firestore上のtodosコレクションからtimestampのフィールドについて、
 　　ascなら昇順、descなら降順でドキュメントを取得する
@@ -72,6 +84,23 @@
 　　コンポーネントのマウント解除時に呼出すようにすること。
 　　コンポーネント呼出すたびにコールバック登録されちゃう
 
+・dbのルール
+　firestore.rulesにdbへのオペレーションを制御するルールを記述できる
+　基本的にはデフォルト状態では全てのドキュメントへのオペレーションはfalseで
+　許可するオペレーションを一つ一つ条件付きで許可する形で書く。
+　書き方はfirestore.rulesにコメント書いてあるので参照。
+　更新したら firebase deploy --only firestore:rules でデプロイすること
+　新しいコレクションを追加したときには忘れずに。。
+
+・dbの設計しっかりとやるのが大事
+　→reduxのように！DBで保存したい項目(コレクション)をリストアップして予めしっかり設計しておくこと
+　例えば
+    category
+    product
+    user
+        cart
+        orders  みたいな。エクセルとかで書いておくといいかも
+
 ・storageのメソッド色々
 　const uploadTask = storage.ref('images').child(fileName).put(blob);
 　uploadTask.then( () => {
@@ -86,50 +115,25 @@
 ★未完
 
 
-rulesの書き方
-　とりあえずはfirestore.rulesの書き方について
-rules_version = '2';
-service cloud.firestore {
-    match /databases/{database}/documents {
-        // ここにルール（ホワイトリスト形式）を書いていく
-        // →各オペレーションについて一つ一つ条件付で許可していく形
-        // 言い換えればルールを書く毎にセキュリティに穴を開けることとなる
-        match /<対象のコレクション・ドキュメントへのパス> {
-            // ここにルールを記述する
-            allow <許可する読み書きのオペレーション>: if <許可する条件>;
-        }
-    }
-}
 
-　下の箇所はおまじないで必須(Cloud Firestoreのルートを表しているみたい)
-rules_version = '2';
-service cloud.firestore {
-    match /databases/{database}/documents {
-        // ここにルール（ホワイトリスト形式）を書いていく
-    }
-}
-
-　ルールの書き方は
-　read(get, list)
-　write(create, update, delete)
-　の各々(オペレーションっていう)について記述していく。
-
-auth関係について
-　サインアップ、サインイン、サインアウト、リッスン
+〇ここはどんな感じに作るかざっくり書いておきたい
 商品管理
 　追加/編集/削除/一覧/詳細
 　★編集の項目あたりでurlから商品IDを取得してうんぬんやってた
 　　routeの方も正規表現あったりもするのでそれも
-    window.location.pathname.split('/detail')[1]  useEffectで編集するのやつ
-    →クエリパラーメタではなく普通にURLを入力する感じで表示したいならこっち
-    　自分で今のpathnameを取得してばらして、、とする
+    window.location.pathname.split('/detail')[1]  動画のuseEffectで編集するのやつ
+    →クエリパラーメタで商品を表示するイメージではなく、普通に商品詳細URLを入力する感じで
+    　表示したいならこっち。windowオブジェクトはreactでなくても使えるグローバルオブジェクトなので
+    　自分で今のpathnameを取得してばらしてやるイメージ
     props.match.params.id.split('/detail')[1]
-    →react-router使ってるならこれでもいいかも。pathの:idが...idに入っている
+    →react-router使ってるならこれでもいいかも。Routeコンポーネントで設定したpath属性に
+    　detail/:idとしておくとprops.match.params.idで取得できる
     　上記二つはRouterコンポーネントはpath="/detail/:id"でexact付きでもOK
 
-    selector.router.location.search.split('?id=')[1]    複合クエリのやつ
-    →クエリパラメータがあるときはこっち。historyでかな？storeに入ってる
-    　location.pathnameでもとれるけどこっちには直接クエリパラメータが入っているので
+    selector.router.location.search.split('?id=')[1]    動画の複合クエリのやつ
+    →クエリパラメータがあるときはこっち。reduxのstoreに入ってるのでselectorで指定して取得してやる。
+    　(connected-react-routerを使っていればstoreに入っているはず)
+    　location.pathnameでもとれるけどこっちには直接クエリパラメータが入っているので多少楽かも
     　Routeコンポーネントはpath="/detail"でexact付きでもOK
     　exact付けてもクエリまではみていないみたい
 カート機能
@@ -139,6 +143,6 @@ auth関係について
 検索
 　性別/カテゴリ
 
-dbの設計しっかりとやるのが大事
+
 
 決済の方法
