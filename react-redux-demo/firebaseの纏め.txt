@@ -63,6 +63,9 @@
 　db.collection('todos').orderBy('timestamp', 'asc').get()
 　　→firestore上のtodosコレクションからtimestampのフィールドについて、
 　　ascなら昇順、descなら降順でドキュメントを取得する
+　const id = db.collection('todos').doc()
+　　→対象コレクションの新しいドキュメントにセットするIDを取得できる
+　　これをやらずに次のset()をやってもID自動採番されるけど、アプリ側で他にもID使いたい処理が多いのでこれだと楽にできる
 　await db.collection('todos').doc(id).set(initTodo).catch(e => { throw new Error(e) });
 　　→firestore上のtodosコレクションのid指定したドキュメントにinitTodoを登録する
 　db.collection('todos').doc(id).update(sendTodo)
@@ -159,7 +162,14 @@
         →クエリパラメータが複数あるときは上の方法では無理かも？？こっちなら？？
 
 　カート機能
-　　追加　※ざっくりすぎ( ´∀｀ )
+　　追加
+        productDetailページではルーティングにて/product/[ID]にて呼び出される
+        selector.router.location.pathnameからIDを取り出し
+        コンポーネントマウント時(useEffect)に取り出したID(商品ID)をもとに
+        productコレクションから対象IDのデータを取り出し自分のstateにセットする
+        カートに追加するボタンを押すと、自分のstateにセットされている商品IDとかの情報と
+        このコンポーネント内で選ぶ"サイズ"をオブジェクトにして
+        usersコレクションの、認証(auth)を受けているUIDのドキュメント内の、cartサブコレクションにセット
         基本的にはusersコレクション内にカート内の商品を保存するフィールドがあり、そこに追加していくイメージ
         pdoductコレクションからの情報をusersコレクション内にあるcartサブコレクションに新しくIDを採番して
         追加していく
@@ -169,6 +179,7 @@
 　検索
 　　性別/カテゴリ
 
+db.collection...のwhereとか　あとそれにまつわるルール(whereとルールのマッチ)
 
 
 決済の方法
