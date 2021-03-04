@@ -72,7 +72,7 @@
 　　→firestore上のtodosコレクションのid指定したドキュメントにsendTodoを更新する
 　db.collection('todos').doc(id).delete()
 　　→firestore上のtodosコレクションのid指定したドキュメントを削除する
-　db.collection('todos').onSnapshot(snapshots => {
+　const unsubscribe = db.collection('todos').onSnapshot(snapshots => {
     snapshots.docChagnges().forEach(change=>{
         const data = change.doc.data();
         const changeType = change.type;
@@ -83,9 +83,16 @@
 　　changeTypeの値を用いて処理を分岐する。db上の値が確実に変更された事が分かるので
 　　db上の値を変更する処理の後、storeを更新したりするときはコレが良いかも
 　　dbにset()とかを投げて.then()とかでも同じかもだけど
-　　このonsnapshotの戻り値にはリスナー登録の解除関数が入っているみたいなので
-　　コンポーネントのマウント解除時に呼出すようにすること。
-　　コンポーネント呼出すたびにコールバック登録されちゃう
+　　このonsnapshotの戻り値(unsubscribe)にはリスナー登録の解除関数が入っているみたいなので
+　　コンポーネントのマウント解除時(useEffectの第一引数コールバックの戻り値)にreturn () => unsubscribe()で
+　　呼出すようにすること。コンポーネント呼出すたびにコールバック登録されちゃうので
+　慣例的に
+　　const todosRef = db.collection('todos')
+　　　コレクションを変数に入れるときは…Ref
+　　db.collection('todos').doc(id).get().then(snapshots => {...})
+　　　なんかのdocを取得したときは引数はsnapshotsに　それをforEachで回す
+　　const query = db.collection('todos').orderBy('update', 'asc')
+　　　なんかのコレクションを条件付きで変数に入れるときはquery
 
 ・dbのルール
 　firestore.rulesにdbへのオペレーションを制御するルールを記述できる
@@ -163,17 +170,36 @@
 
 　カート機能
 　　追加
-        productDetailページではルーティングにて/product/[ID]にて呼び出される
+        productDetailページではルーティングにてURLが/product/[ID]にて呼び出される
         selector.router.location.pathnameからIDを取り出し
-        コンポーネントマウント時(useEffect)に取り出したID(商品ID)をもとに
-        productコレクションから対象IDのデータを取り出し自分のstateにセットする
+        コンポーネントマウント時(useEffect)に取り出したID(これは商品IDになる)をもとに
+        productコレクションから対象IDのデータを取り出し自コンポーネントのstateにセットする
         カートに追加するボタンを押すと、自分のstateにセットされている商品IDとかの情報と
-        このコンポーネント内で選ぶ"サイズ"をオブジェクトにして
-        usersコレクションの、認証(auth)を受けているUIDのドキュメント内の、cartサブコレクションにセット
-        基本的にはusersコレクション内にカート内の商品を保存するフィールドがあり、そこに追加していくイメージ
-        pdoductコレクションからの情報をusersコレクション内にあるcartサブコレクションに新しくIDを採番して
-        追加していく
-/削除/知覧
+        このコンポーネント内で選ぶ"サイズ"をオブジェクトにまとめて
+        usersコレクションの、認証(auth)を受けているUIDのドキュメント内の、cartサブコレクションにセット(db.collection('users).doc(uid).collection('cart').doc().set(addproduct))
+        …基本的にはusersコレクション内にカート内の商品を保存するフィールドがあり、そこに追加していくイメージ
+        ★HeaderMenuコンポーネントがマウントされると(useEffectが働き)、dbのusersコレクションの認証(auth)しているUIDドキュメントの、
+        cartサブコレクションに変更があって初めてstoreを更新するようになっている。(onSnapshotで)
+        productDetailコンポーネントではdb更新しに行っているけど、storeは更新する処理記述していないので
+        わかりずらい！注意。ホントは一緒のところに書いたほうが分かりやすいのかもだけどheadermenu内に
+        カートiconがあるので、これがマウントされるとこの処理を記述したいためこうなっている
+        尚、headermenuアンマウント時にはこのリスナを削除するようになっている。何回もリスナ登録されちゃうので
+　　一覧
+        CartListコンポーネントでカートに追加を行うと、store内のusers.cartの配列が更新されるが、
+        その内容をセレクタで参照して、mapにてCartListItemコンポーネントに展開する流れとなる。
+        storeのusers.cartは
+        const productsInCart = getProductsInCart(selector);
+        {productsInCart.length > 0 && (
+          productsInCart.map(product => <CartListItem product={product} key={product.cartId}/>)
+        )}
+　　削除
+        イテラブルに呼び出されるCartListItemにてpropsとしてusersコレクション内にあるcartサブコレクションが
+        渡されてくるのでそのID情報を用いてcart内のコレクションを削除する
+        db.collection('users').doc(uid).collection('cart').doc(id).delete();
+        (usersのuidはstoreの情報から取得する)
+        これはオペレーションにては行わずコンポーネント側にて行っている。
+
+
 　注文履歴
 　　追加/一覧
 　検索

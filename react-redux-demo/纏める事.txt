@@ -7,6 +7,8 @@
 ・view関係は共通要素のcomponentsとページ呼出し単位のpagesくらいの分け方で
 　componentsの中身はatomicデザインのざっくりした感じ。
 　pagesの中身はcomponentsのつなぎ合わせとpage固有の要素
+　普通にpagesとして作っていって使いまわした要素がでてきたらcomponentsに纏める感じでもいいかも
+　componentsもその中でフォルダ分けしてpage毎に分けたりreducer毎に分けたりするのもいいかも
 ・assetsとかは？
 　スタイルは基本cssインポートと、materialUiならmakestyleでいいけど
 　assetsにいれるスタイルは共通のスタイル入れる？
