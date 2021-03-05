@@ -93,7 +93,21 @@
 　　　なんかのdocを取得したときは引数はsnapshotsに　それをforEachで回す
 　　const query = db.collection('todos').orderBy('update', 'asc')
 　　　なんかのコレクションを条件付きで変数に入れるときはquery
+　const batch = db.batch();
+　batch.update(
+    todosRef.doc(id),{text: "test"}
+　);
+　batch.commit().then(() => {
 
+　}).catch(() => {
+    throw new Error("batch error")
+　});
+　　一つ以上のfirestoreへのバッチ書き込み処理(読み取りは別)を行う。最初に作ったbatchへ
+　　.update(書き込みしたいドキュメント, {書き込むデータ})としてどんどん書いていく。
+　　.update()は複数回書いてもOK。batch.commit()時に実際に書き込み処理をまとめて行い、
+　　一つでも失敗した場合は全てのupdateに記述したdb書き込みの処理をロールバックし、成功した場合は
+　　.thenの処理を行う。
+　　
 ・dbのルール
 　firestore.rulesにdbへのオペレーションを制御するルールを記述できる
 　基本的にはデフォルト状態では全てのドキュメントへのオペレーションはfalseで
@@ -201,7 +215,9 @@
 
 
 　注文履歴
-　　追加/一覧
+　　追加
+        一連の注文処理が完了すると注文履歴に注文した商品を追加する。batchとか使っている！
+    一覧
 　検索
 　　性別/カテゴリ
 
