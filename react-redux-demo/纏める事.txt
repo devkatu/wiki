@@ -65,6 +65,8 @@
 
 　　　}
 　　}
+　　この中で例えばAPIからデータを拾ってきてそのデータをdispatchしたいときは
+　　そのaction名は operationの関数名 + Action とかがいいかも
 
 ・react各フック
 　useState

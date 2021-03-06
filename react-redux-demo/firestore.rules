@@ -14,7 +14,9 @@ service cloud.firestore {
 
 
       allow read, write;
-      
+      //以下の制約があるなら、クエリを投げる側も同じwhere文を書かなければならない
+      //allow read: if resource.data.color == 'none';
+      //allow write;
 
 
       // ★ルールの設定
