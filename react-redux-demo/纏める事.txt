@@ -40,6 +40,7 @@
 
 ・redux関係の設計について　actionタイプ、関数名の命名しっかりしないとあとからめんどくさい
 　→アプリの主な機能として追跡したいstateを定義して初期stateを設計
+　　最初にアプリのワイヤーフレームを作ってviewから必要なstateｗ検討するといいかも
 　　initialState = {todos: {...}, filters: {...}}
 　→stateの各プロパティについてのactionを設計する
 　　{type: "TODOS/TODOADDED", payload: todoText}
