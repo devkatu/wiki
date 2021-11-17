@@ -1,2 +1,2 @@
 # javascript memo
-## [基本](base.md)
+## [基礎](basic.md)
