@@ -22,6 +22,15 @@ expoで標準で用意されているAPIとかもあってめっちゃ便利
 http://localhost:8081/debugger-ui/ 上でエミュレーターの  
 開始をすると開発スタートできる状態になる
 
+### デバッグ環境について
+
+attention: 
+chromeデバッグ画面にて
+- 更新
+- メニュー表示
+リモートデバッグの開始の仕方
+reactnativedevtoolのこと
+
 --- 
 
 ## コンポーネントについて
@@ -33,23 +42,25 @@ http://localhost:8081/debugger-ui/ 上でエミュレーターの
 あくまで画面上に表示されるのはネイティブのコンポーネントなので、同じコードでも機種によっては見た目が違う事もある
 代表的なのはこんなの
 
-| コンポーネント | 説明                                                                          |
-| -------------- | ----------------------------------------------------------------------------- |
-| View           | スクロール無いdiv                                                             |
-| Text           | p                                                                             |
-| Image          | img                                                                           |
-| ScrollView     | div                                                                           |
-| TextInput      | input:text                                                                    |
-| FlatList       | リストスタイル無しのul。itemはdata属性でオブジェクト配列で渡す。<br> renderItem属性でどのようにレンダリングするかコールバックで指定                |
+| コンポーネント | 説明                                                                                                                                                                                                                            |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| View           | スクロール無いdiv                                                                                                                                                                                                               |
+| Text           | p                                                                                                                                                                                                                               |
+| Image          | img                                                                                                                                                                                                                             |
+| ScrollView     | div                                                                                                                                                                                                                             |
+| TextInput      | input:text                                                                                                                                                                                                                      |
+| FlatList       | リストスタイル無しのul。itemはdata属性でオブジェクト配列で渡す。<br> renderItem属性でどのようにレンダリングするかコールバックで指定                                                                                             |
 | SectionList    | セクションヘッダー付きのul。itemはsections属性でオブジェクト配列で渡す<br>renderItem属性でitemをどのようにレンダリングするかコールバックで指定<br>renderSectionHeader属性でheaderをどのようにレンダリングするかコールバック指定 |
 
 ### スタイルの設定
 スタイルの設定はコンポーネントにstyle属性を記述し、そこにcssっぽいオブジェクトを渡す。  
-cssっぽいオブジェクトは、プロパティをcssのケバブケースではなく、キャメルケースで、  
-値はあくまでオブジェクトなので  
+cssっぽいオブジェクトのプロパティに、cssのプロパティを記述(ただしケバブケースではなく、キャメルケースで)<<br>、  
+値もcssっぽい値を書いていくが、あくまでオブジェクトなので、数値のみならそのまま数値を、<br>
+単位のある数値や、なんらかの文字列であれば`""` で括って記述する。 
 
-attention! 多分こんな感じだったと思うけど久々に書いたから自信ない(笑)
 ```javascript
+// styleの一番外側の{}はjsを記述するためのもの
+// 内側の{}はオブジェクトの括弧
 <View
     style={{
         width: 100,
@@ -59,7 +70,65 @@ attention! 多分こんな感じだったと思うけど久々に書いたから
 >
     BOX
 </View>
+// 以下も同じ
+const styles = {
+    box:{
+        width: 100,
+        height: 100,
+        bacgroundColor: "red"
+    }
+}
+<View
+    style={styles.box}
+>
+    box
+</View>
 ```
-attention! StyleSheet.createの効果について書いておく
 
+コンポーネントのstyle属性に直書き(インライン)で書くのはモジュールがしっかり分かれていれば<br>
+保守しづらくない思う。しかし複雑化してきたときや、特にパフォーマンスの観点から、<br>下のようにしたほうがいいらしい
 
+note: オブジェクトを記述する場合に比べ、sytlesにはプリミティブな数値(id)が入るらしい。実際に使用するときにはそのIDからオブジェクトを復元するみたい
+
+```javascript
+const styles = StyleSheet.create({
+    box:{
+        width: 100,
+        height: 100,
+        bacgroundColor: "red"
+    }
+})
+<View
+    style={styles.box}
+>
+```
+
+プラットフォームごとに違う処理やスタイルを実装したいときは`Platform`を使用すると良い<br>
+`Platform.OS`の値はiosなら'ios'、アンドロイドなら'android'になる<br>
+`Platform.select()`メソッドは引数にios,android,native,defaultをキーにとるオブジェクトを渡し、
+実行されている環境にふさわしいものを返す。
+
+    ```javascript
+    // 以下のstylesにスタイルが設定されるので
+    // コンポーネントのstyle属性に
+    // styles.containerとかしてあげればスタイル適用される
+    import {Platform} from 'react-native';
+    const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        ...Platform.select({
+        ios: {
+            backgroundColor: 'red'
+        },
+        android: {
+            backgroundColor: 'green'
+        },
+        default: {
+            // other platforms, web for example
+            backgroundColor: 'blue'
+        }
+        })
+    }
+    });
+    ```
+---
