@@ -1,4 +1,4 @@
-# オレオレフロントエンジニアwiki
+# オレオレフロントエンドwiki
 [HOME](index.md)
 [LPとかの練習作品]()
 
@@ -20,7 +20,7 @@
   - [フルスクリーン](library/full_screen/index.html)
   - [グリッド](library/grid/index.html)
 
-[html](memo.html)
+[html](html/index.md)
 [css](cssサンプル/cssサンプル.html)
 [javascript/jquery]()
 
