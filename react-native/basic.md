@@ -29,14 +29,18 @@ http://localhost:8081/debugger-ui/ 上でエミュレーターの
 コンソールからホームディレクトリにて`npm start`または`[npx] expo start`などを  
 行うとexpoでの開発がすぐに始まる。  
 該当のコンソールから`r`でリロード、`m`かエミュ上で`ctrl+M`で開発者メニューが開く  
-`Debug JS Remotely`を選択しなければならないデバッガーもある。
+JSコードのデバッグにおいてはの`Debug JS Remotely`を選択しなければデバッガーが動作しないものも。
 
 ### エミュレーター
-バッチファイルにエミュレーターを起動するコマンド書いてあるのでそれを起動してから開発開始
-こんな感じのやつ  
-`C:\Users\katu\AppData\Local\Android\Sdk\emulator\emulator.exe -avd Pixel_3a_API_30_x86`  
-開発者メニューを開くとコンポーネントの簡単なスタイルをみられる  
-React Native Inspectorというのが入っている
+AndroidStudioのAVDマネージャーから、エミュのセットアップを行い、起動する。  
+毎回AVDマネージャー開くのは面倒なので、コマンドで起動できるようにバッチ化してある。
+`C:\Users\katu\AppData\Local\Android\Sdk\emulator\emulator.exe -avd Pixel_3a_API_30_x86`    
+起動後、初回の`expo start`で自動でexpogoをインストールし、立ち上がる
+
+開発者メニューを開いて`Shoe Inspector`をクリックするとコンポーネントの  
+簡単なスタイルをみられるReact Native Inspectorが予め入っており開かれる
+
+動作がおかしくなったら同じくAVDマネージャーからリセット(actions > wipe data)を行うとよい
 
 ### 実機
 expo goアプリをインストールしておく
@@ -52,7 +56,7 @@ expo goが立ち上がり、実機デバッグが始まる。
 hint: localhost:19000/debugger-ui/の方ではjsのブレークポイントとか設定してデバッグ  
 できるらしいがやったことない
 
-### ReactDevTools
+### ReactNativeDebugger > ReactDevTools
 `npm install -g react-devtools`でこのツールをインストールできる。  
 デバッグ開始し、このツールを起動し、エミュレーターまたは実機のメニューから`Debug JS Remotely`  
 を選択すると各階層のコンポーネントのprops、state、styleを見ることができる様子。便利そう
