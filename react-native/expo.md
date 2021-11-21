@@ -50,8 +50,11 @@ attention:
 
 ---
 
-## 使ったもの
+## 使ったもの、使えそうなもの
 ### 通知
 attention: ローカル通知のみつかったよ
+ImagePicker
+ImageSharering
+
 
 --- 

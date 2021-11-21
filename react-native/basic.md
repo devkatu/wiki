@@ -92,7 +92,7 @@ hint: これとは別にReactNativeDebuggerというのを入れるとReactDevTo
 | コンポーネント | 説明(htmlのタグでいうと)                                                                                                                                                                                                        |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | View           | スクロール無いdiv                                                                                                                                                                                                               |
-| Text           | p                                                                                                                                                                                                                               |
+| Text           | p  &lt;Text&gt;&lt;/Text&gt;のなかに&lt;Text&gt;&lt;/Text&gt;をネストすると<br>内側のtextはインラインっぽくなってくれるらしい                                                                                                                               |
 | Image          | img                                                                                                                                                                                                                             |
 | ScrollView     | div                                                                                                                                                                                                                             |
 | TextInput      | input:text                                                                                                                                                                                                                      |
@@ -311,18 +311,59 @@ const {height, width} = Dimensions.get('window');
 
 ---
 
-## 画像の使用方法
-attention: expoと少し違うので纏める
+## 画像の表示方法
+
+以下reacatnativeとexpoで少し違ったがどちらでもいけるみたい
+
+> react native公式で紹介されていた例
+> ```
+> // importと変わらない
+> // 構文の違いだけ
+> // ちなみにrequireに変数を渡すとかの動的な読込はできない
+> // やりかたはあるみたいだけど面倒なのでexpoの方のimport使う法がいいかも
+> <Image
+>     source={require('./icon.png')}
+> >
+> 
+> // backgroundに画像を指定したいときは
+> // ImageBackgroundを使うといいらしい
+> <ImageBackground source={...} style={{width: '100%', height: '100%'}}>
+>   <Text>Inside</Text>
+> </ImageBackground>
+> ```
+
+> expoで紹介されていた例
+> ```
+> import {Image, ...} from 'react-netive';
+> import logo from './assets/logo.png';
+> ...
+> 
+> // 静的な画像リソースを読込みたい時は
+> // 予め画像ファイルをimportし、それをsource属性に指定する
+> <Image
+>     source={logo}
+>     style={{width:300, height: 300}}
+> >
+> 
+> // webから画像を読込たい時は
+> // source属性にuriキーと値としてアドレスの文字列を持つオブジェクトを指定する
+> <Image
+>     source={{uri: "https://~~~~~~/.jpg}}
+>     style={{width:300, height: 300}}
+> >
+> 
+> ```
 
 ---
 
 ## インタラクティブ
 大体のボタンとかのインタラクティブな要素は以下の属性があり、そこにコールバックを渡してイベント処理ができる。
+
 - onPress  
 要素をタップしたときに発火
 - onLongPress
 要素をロングタップしたときに発火
 
-コールバック関数に渡される引数には`PresseEvent`オブジェクトであり、これを参照するとタッチした箇所の座標が取得できたりする。
-自分で`TouchableXXXX`コンポーネントをカスタマイズしてタップ時の座標を取得してなんかしたいときに使えるかも
+コールバック関数に渡される引数には`PresseEvent`オブジェクトであり、これを参照するとタッチした箇所の座標が取得できたりする。自分で`TouchableXXXX`コンポーネントをカスタマイズしてタップ時の座標を取得してなんかしたいときに使えるかも
+
 ---
