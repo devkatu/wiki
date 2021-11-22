@@ -1,22 +1,77 @@
-attention: headタグに入れるもの  
-以下のメモ纏める
-テスト項目
+# HTML
 
-ランディングページとかのメモ
+## HTML5
+htmlとしての役割は文書構造を表すこと。しっかり文書構造を定義することでクローラも認識しやすく、SEOにも強くなる。  
+特に以下の要素はよく使う。
 
-  ◎headタグに入れるもの
-  
-  ◎各種まとめておくもの
-  ・font
-  　基本となる本文とかはbodyにfont-size,font-weight,font-familyとかまとめておく
-  　あとは適宜割り当てていく
-  ・color maincolor,subcolor
-  ・各操作品　ボタンのテーマ
-  ・border-radiusやbox-shadow等のテーマ
-  ・リンクのテーマ
-  ・疑似要素
-  ・slick、ハンバーガーメニュー等のテーマ
+- header
+- nav
+- section
+- aside
+- footer
 
+```
+<!-- section,article,aside,nav,hgroup,header,footerなどを用いてアウトラインが整えられる -->
+<!-- ヘッダー情報にはheader要素を使用 -->
+<header>
+<!-- 見出しが隣接して関連性があればhgroup要素で囲む -->
+  <hgroup>
+    <h1>h1の内容</h1>
+    <h2>h2の内容</h2>
+  </hgroup>
+<!-- ナビ情報にはnav要素を使用 -->
+  <nav>
+    <ul>
+      <li>ナビ1</li>
+      <li>ナビ2</li>
+    </ul>
+  </nav>
+</header>
+<!-- 記事情報にはarticle要素を使用 -->
+  <article>
+    <header>
+      <h2>h2の内容</h2>
+      <time datetime="2011-08-20">2011年8月20日</time>
+    </header>
+    <h3>h3の内容</h3>
+    <p>文章ほげほげ。</p>
+<!-- 階層構造を明確にしたい箇所にはsection要素を使用 -->
+    <section>
+      <h4>h4の内容</h4>
+      <p>文章ほげほげ。</p>
+   </section>
+  </article>
+<!-- 本文とは関係が浅い箇所にはaside要素を使用 -->
+  <aside>
+    <img src="hoge.png" alt="広告A">
+  </aside>
+</div><!-- /#contents -->
+<!-- フッター情報にはfooter要素を使用 -->
+<footer>
+  <p><small>Copyright</small></p>
+</footer>
+```
+
+## アウトラインを書きだす　SEO対策
+    ・アウトラインをきれいにするために、
+    ①最初のマークアップ時にデザインはあまり考えずにアウトラインだけを書きだす
+    (そもそもhtml自体が文書構造を表すのでcssがなくてもある程度意味が伝わらなくてはだめ
+    クローラが読み取るのはhtmlだけ…だとおもう)
+    imgタグは文脈的に必須の画像ならpタグで囲い、挿絵的に使いたければfigureで囲い(figcaptionも)
+    それ以外のデザイン的に使うならpictureやdivで囲う
+    ②そこからcssでデザインを行うときの為のdiv、span等を追加していく。
+    なるべくアウトラインを作る要素にはcssを設定せずdivやspan等に着けていくほうが
+    後々の保守性に良いみたい？
+    その他に各要素に色々属性付けられるみたいだけどそこまではしないでもいいか
+    ・画像、js、cssの圧縮も
+    ・cssスプライト(イメージ画像は纏めて一つにしておいてpositionを指定して表示するやつ)
+    ・meta descriptionの内容を充実させる
+
+    ・最後にアウトライン解析、バリデーションを行っておくといいかも
+    ・客先で必要ならgoogleアナリティクスのコードをもらって張り付ける
+    　黄色副業本参考
+
+## デザインを意識して要素を追加していく
   ◎div.contain等　レスポンシブ化等のメモ
   　・基本はsection(widthいっぱい＆上下padding指定＆heigth:auto;)>div.contain
   　(width各種用意 & margin: 0 auto & 左右padding指定(レスポンシブ時に便利))の中にいろいろ書いていく
@@ -37,7 +92,22 @@ attention: headタグに入れるもの
   　　だめ。。。　absoluteしたときもレンダリングに影響あることあり!!注意
   　または横幅がoverしそうな要素のみoverflow:hidden;しておく
 
-  ◎吉本式BEM設計のめも
+## headタグに入れるメタ情報
+  
+## 各種まとめておくもの??
+  ・font
+  　基本となる本文とかはbodyにfont-size,font-weight,font-familyとかまとめておく
+  　あとは適宜割り当てていく
+  ・color maincolor,subcolor
+  ・各操作品　ボタンのテーマ
+  ・border-radiusやbox-shadow等のテーマ
+  ・リンクのテーマ
+  ・疑似要素
+  ・slick、ハンバーガーメニュー等のテーマ
+
+
+
+## 吉本式BEM設計のめも
   吉本式BEM設計抜粋
 ・ .block-element  ._modifire が基本
 　自分で使うときは
@@ -106,26 +176,9 @@ attention: headタグに入れるもの
   ◎作成前にしっかりワイヤーフレームでクラス名やID名、等のデザインを決めておいたほうがいい。
   　下のSEO対策と同時に実施していくのがいいかも
 
-  ◎SEO対策
-    ・アウトラインをきれいにするために、
-    ①最初のマークアップ時にデザインはあまり考えずにアウトラインだけを書きだす
-    (そもそもhtml自体が文書構造を表すのでcssがなくてもある程度意味が伝わらなくてはだめ
-    クローラが読み取るのはhtmlだけ…だとおもう)
-    imgタグは文脈的に必須の画像ならpタグで囲い、挿絵的に使いたければfigureで囲い(figcaptionも)
-    それ以外のデザイン的に使うならpictureやdivで囲う
-    ②そこからcssでデザインを行うときの為のdiv、span等を追加していく。
-    なるべくアウトラインを作る要素にはcssを設定せずdivやspan等に着けていくほうが
-    後々の保守性に良いみたい？
-    その他に各要素に色々属性付けられるみたいだけどそこまではしないでもいいか
-    ・画像、js、cssの圧縮も
-    ・cssスプライト(イメージ画像は纏めて一つにしておいてpositionを指定して表示するやつ)
-    ・meta descriptionの内容を充実させる
 
-    ・最後にアウトライン解析、バリデーションを行っておくといいかも
-    ・客先で必要ならgoogleアナリティクスのコードをもらって張り付ける
-    　黄色副業本参考
 
-  ◎テストについて
+## テストについて
   フォント、配色、誤字脱字→difとかつかう?
   アウトライン→chrome拡張
   TDK(タイトル、ディスクリプション、キーワード)→目視確認
@@ -160,19 +213,9 @@ wordpress化MEMO
 
 
 
+## ランディングページのレイアウト集
+画像入れる？
 
 
 
-  </pre>
 
-  <p>ランディグページのレイアウト例</p>
-  <ul style="display:flex;">
-    <li style="list-style:none;margin-left:10px;"><img src="lpsite.gif" width=200></li>
-    <li style="list-style:none;margin-left:10px;"><img src="web60_lp_koosei.gif" width=290></li>
-    <li style="list-style:none;margin-left:10px;"><img src="e984bb3a3478aaf71841377406e08920.png" width=350></li>
-  </ul>
-
-
-
-</body>
-</html>
