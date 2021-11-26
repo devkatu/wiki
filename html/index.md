@@ -100,6 +100,148 @@ HTML5で定義さている以下の要素を使ってきちんとした文書構
 
 ---
 
+## レスポンシブ対応を意識した各セクションのスタイリングとその他留意事項
+
+基本的な考え方は以下となる
+
+- PC版(例:1220px～)
+width,height,font-size等は固定値でカチッとスタイリングして問題なし
+  - `<section>`は
+  width: 100%;
+  padding: XXpx 0;
+  heigth: auto;
+  とし、横幅いっぱい、上下に余白を取り、中のコンテンツエリアを設定。高さは内容物次第とする
+  - `<section>`の中に入れる子要素として`<div class="contain">`は
+  width: XXXXpx;
+  margin: 0 auto;
+  padding: 0 XXpx;
+  固定幅のコンテンツをmargin調整で中央に揃えて、paddingを左右に用意しておく
+  - その他の要素のfont,width,height等は固定値でも問題ない
+- タブレット版(例:769px～1219px)
+各スタイルの値の指定は％やvw,fontはvwやemやremを使用し、各用品の配置が画面幅によって崩れないように気を付ける。
+特に縦方向の値marginやheight等に固定値pxを入れたままにせず、vwを使用する事を忘れずに。
+コンテナにはmax,min-widthを付与して、レスポンシブする上下限を決めておくいい。画像はフルードにする。
+  - `<section>`は
+  padding: XXvw 0;
+  等に直し、上下余白が画面幅に比例するようにする。
+  - `<section>` > `<div class="contain">`は
+  width: XXvw;
+  max-width: XXXXpx;
+  padding: 0 XXvw;
+  等に直し、左右幅、左右余白が画面幅に比例するようにする。
+  あまり広がりすぎると不格好な時はmax-width: XXXXpx;を入れる
+  - `<img>`は
+  width: 100%;
+  height: auto;
+  等のフルードにし、コンテナサイズに合わせて拡縮するようにする。
+  - font-sizeは任意の画面幅(例えば340pxとか)で、font-size: XXpx;になるようなvwの指定方法がscssのmixinとか使えば簡単に実装できる。
+  - emは親要素からの相対的な単位で1.0で親と同じ
+  - remは`<html>`からの相対的な単位
+  →remを使うならhtmlに62.5%(16px(デフォルト) × 62.5% = 10px)とすると指定が楽
+- スマホ版(例:～768px)
+  - 基本はタブレットのスタイルを踏襲するが、フォント等で見た目イマイチになるところがあれば適宜スタイル当てて行く(勿論%やvwで)
+  - スマホ用の画面でfixedにした要素があるとなぜかwidthが親要素ではなく一番横幅とっている要素基準になる
+  どうしても横幅がオーバーしてしまいそうならその親要素にoveflow:hidden;しておく
+  
+---
+
+## 各種まとめておくもの
+
+頻繁に出て来るスタイルはクラスにしてまとめて置く。
+以下が良く使う
+
+- font関係のもの
+- 各UI用品のテーマ
+- 見出しのテーマ
+- 本文のテーマ
+- リンクのテーマ
+- ヘッダーフッターのテーマ
+- ハンバーガーメニュー、等のテーマ
+
+---
+
+## BEM設計(クラス名の命名について)
+
+クラス名を付けていくときに、悩んでしまって制作スピードが落ちたり、制作が進んでいくと似たようなクラス名がでてきてしまったりして混乱をするのを防ぐために、命名規則を設ける。
+
+- Block
+読んで字のごとく一つの塊。この塊を抜出して違う箇所に再配置してもスタイルが崩れないようにすること
+- Element
+blockの中に配置される要素。
+- Modifier
+フォーカスされた、とか選択された時に付加される
+
+吉本式BEM設計より
+
+> - クラス名は`.block-element._modifire`が基本
+
+自分で使うときは`.block_element.-modifire`にしようかな
+
+> - blockになるタグは
+> `<header>`,`<footer>`,`<main>`,`<section>`,`<article>`,`<nav>`,`<aside>`,`<div>`(注)
+> のみとする。これ以外はelementとする。但しdivのみはelementになりえる
+> - blcokはそれをそのまま抜き出して違うところに置いてもcssが正しく機能するのが基本(再配置可)
+> なのでblockのみにに対するcssはトップに書く。下のようなscssはNG
+> ```
+> 　.block{
+> 	.他のblock{}
+> 　｝
+> ```
+> htmlの方ははblockにblockが入ることはあるが中のblockは独立とする(再配置可)
+> ```
+> 　<main class="main">
+> 　<div class="main_inner">
+> 　	<section class="about"> <!-- class="main_～"とはならない。blockとして独立させる -->
+> 　	</section>
+> 　</div>
+> 　</main>
+> ```
+> - blockのクラス名は基本固定
+>
+> | タグ | block名 | 用途 |
+> | --- | --- | --- |
+> | header | header | サイトヘッダー |
+> | footer | footer | サイトフッター |
+> | main | main | メインコンテンツ |
+> | nav | gnav | グローバルナビ |
+> | nav | snav | サイドナビ |
+> | nav | fnav | フッターナビ |
+> | nav | share | シェアナビ |
+> | section | 可変 | * |
+
+> - elementも基本は固定
+
+> | タグ | element名 |
+> | --- | --- |
+> | p | txt,ttl,btn,logo,data(input系) |
+> | div | inner,outer,wrap,box |
+> | hn | ttl |
+> | table | table |
+> | th | tttl |
+> | td | tdat |
+> | ul | list |
+> | ol | list |
+> | li | item |
+> | dl | def |
+> | dt | dttl |
+> | dd | ddat |
+> | form | form |
+> | figure | pic |
+
+基本インライン要素にはクラス名はつけないとしている　
+しかしblock内に配置するものが明らかに少ししかないときはelementも省略してもいいかも！
+
+> - 小規模ならblock_elementで済むが規模が大きくなってくると
+> 同じクラス名が出てきてしまう。その場合にmodifireを使って区別するのもあり
+> なるべく手戻りしないような名前にすること
+> - 画像に関しては
+>   - サイト共通で使うならicon,pic,bg,txt,btnのいずれか＋連番
+>   - その他で使うならblock＋element＋連番や画像のタイプ(上記のやつ)にしてimgフォルダ内にcssのフォルダ構成と同じように振り分ける
+
+作成前にしっかりワイヤーフレームでクラス名やID名、等をデザインをもとに決めておいたほうがスムーズ。
+
+---
+
 ## headタグに入れるメタ情報
 
 ### 文字コード指定
@@ -132,7 +274,7 @@ ie対応のおまじない。過去バージョン互換モードではなく最
 ```
 
 ### OGP
-SNSでの拡散時に自動的に画像表示されたり文章表示されたりするアレ。
+SNSでの拡散時に自動的にサムネ画像表示されたり説明文表示されたりするアレ。
 
 - `<head>` か`<html>`にprefixを入れること
 - og:title
@@ -235,196 +377,47 @@ windowsタイルの設定
 ```
 ---
 
-## BEM設計(クラス名の命名について)
-
-クラス名を付けていくときに、悩んでしまって制作スピードが落ちたり、制作が進んでいくと似たようなクラス名がでてきてしまったりして混乱をするのを防ぐために、命名規則を設ける。
-
-- Block
-読んで字のごとく一つの塊。この塊を抜出して違う箇所に再配置してもスタイルが崩れないようにすること
-- Element
-blockの中に配置される要素。
-- Modifier
-フォーカスされた、とか選択された時に付加される
-
-吉本式BEM設計より
-
-> - クラス名は`.block-element._modifire`が基本
-
-自分で使うときは`.block_element.-modifire`にしようかな
-
-> - blockになるタグは
-> `<header>`,`<footer>`,`<main>`,`<section>`,`<article>`,`<nav>`,`<aside>`,`<div>`(注)
-> のみとする。これ以外はelementとする。但しdivのみはelementになりえる
-> - blcokはそれをそのまま抜き出して違うところに置いてもcssが正しく機能するのが基本(再配置可)
-> なのでblockのみにに対するcssはトップに書く。下のようなscssはNG
-> ```
-> 　.block{
-> 	.他のblock{}
-> 　｝
-> ```
-> htmlの方ははblockにblockが入ることはあるが中のblockは独立とする(再配置可)
-> ```
-> 　<main class="main">
-> 　<div class="main_inner">
-> 　	<section class="about"> <!-- class="main_～"とはならない。blockとして独立させる -->
-> 　	</section>
-> 　</div>
-> 　</main>
-> ```
-> - blockのクラス名は基本固定
->
-> | タグ | block名 | 用途 |
-> | --- | --- | --- |
-> | header | header | サイトヘッダー |
-> | footer | footer | サイトフッター |
-> | main | main | メインコンテンツ |
-> | nav | gnav | グローバルナビ |
-> | nav | snav | サイドナビ |
-> | nav | fnav | フッターナビ |
-> | nav | share | シェアナビ |
-> | section | 可変 | * |
-
-> - elementも基本は固定
-
-> | タグ | element名 |
-> | --- | --- |
-> | p | txt,ttl,btn,logo,data(input系) |
-> | div | inner,outer,wrap,box |
-> | hn | ttl |
-> | table | table |
-> | th | tttl |
-> | td | tdat |
-> | ul | list |
-> | ol | list |
-> | li | item |
-> | dl | def |
-> | dt | dttl |
-> | dd | ddat |
-> | form | form |
-> | figure | pic |
-
-基本インライン要素にはクラス名はつけないとしている　
-しかしblock内に配置するものが明らかに少ししかないときはelementも省略してもいいかも！
-
-> - 小規模ならblock_elementで済むが規模が大きくなってくると
-> 同じクラス名が出てきてしまう。その場合にmodifireを使って区別するのもあり
-> なるべく手戻りしないような名前にすること
-> - 画像に関しては
->   - サイト共通で使うならicon,pic,bg,txt,btnのいずれか＋連番
->   - その他で使うならblock＋element＋連番や画像のタイプ(上記のやつ)にしてimgフォルダ内にcssのフォルダ構成と同じように振り分ける
-
-作成前にしっかりワイヤーフレームでクラス名やID名、等をデザインをもとに決めておいたほうがスムーズ。
-
----
-
-## スタイル設定のこと??
-
-attention: 書きかけの項目
-
-### レスポンシブ対応を意識した各セクションのスタイリングとその他留意事項
-
-基本的な考え方は以下となる
-
-- PC版(XXXXpx～)
-ほとんどの値のwidth,height等は固定値でカチッとスタイリングして問題なし
-  - `<section>`は
-  width: 100%;
-  padding: XXpx 0;
-  heigth: auto;
-  とし、横幅いっぱい、上下に余白を取り、中のコンテンツエリアを設定。高さは内容物次第とする
-  - `<section>`の中に入れる子要素として`<div class="contain">`は
-  width: XXXXpx;
-  margin: 0 auto;
-  padding: 0 XXpx;
-  固定幅のコンテンツをmargin調整で中央に揃えて、paddingを左右に用意しておく
-  - その他の要素のfont,width,height等は固定値でも問題ない
-- タブレット版(XXXXpx～XXXXpx)
-各スタイルの値の指定は％やvw,fontはvwやemやremを使用し、各用品の配置が崩れないように気を付ける。
-特に縦方向の値marginやheight等にvwを使用する事を忘れずに。
-コンテナにはmax,min-widthを付与して、レスポンシブする上下限を決めておくいい。画像はフルードにする。
-  - `<section>`は
-  padding: XXvw 0;
-  等に直し、上下余白が画面幅に比例するようにする。
-  - `<section>` > `<div class="contain">`は
-  width: XXvw;
-  max-width: XXXXpx;
-  padding: 0 XXvw;
-  等に直し、左右幅、左右余白が画面幅に比例するようにする。
-  あまり広がりすぎると不格好な時はmax-width: XXXXpx;を入れる
-  - `<img>`は
-  width: 100%;
-  height: auto;
-  等のフルードにし、コンテナサイズに合わせて拡縮するようにする。
-
-- スマホ版(～XXXXpx)
-  - 横幅
-  
-    レスポンシブの数に応じてcssメディアセレクタでサイズを変更していく
-    大：PCで見るときでfontやwidth,height等は決め打ち。画像も元サイズ等の固定サイズ
-    中：タブレットで見るときでfontやwidth,height等は％やvw,em,rem使用し、各用品の配置が崩れないようにコンテナにはmax,min-widthを付与するとよい。画像はフルードにするのが基本
-    ・vwは100vwをviewport-widthいっぱいとする単位
-    ・emは親要素からの相対的な単位で1.0で親と同じ
-    ・remはhtml要素からの相対的な単位
-    　→remを使うならhtmlに62.5%(16px(デフォルト) × 62.5% = 10px)とすると指定が楽
-    任意の画面幅で、XXpxになるようなvwの指定方法がscssのmixinとか使えばできるよ！
-    また、height、縦方向のmarginはvw指定しておくと画面幅が変わっても同じレイアウトとなるので活用すべし！
-    ライブラリにあり！
-    小：スマホで中に同じ
-  　・レスポンシブ用にbodyの直下にdivを設けてoverflow:hidden;にするといいかも？
-  　→スマホ用の画面でfixedにした要素があるとなぜかwidthが親要素ではなく一番横幅とっている要素基準になる
-  　　これを解消するのに全体にoverflow:hidden;しておきたい…bodyに指定するとスクロールできなくなってしまうので
-  　　だめ。。。　absoluteしたときもレンダリングに影響あることあり!!注意
-  　または横幅がoverしそうな要素のみoverflow:hidden;しておく
-  
----
-
-## 各種まとめておくもの??
-attention: 書きかけの項目
-
-  ・font
-  　基本となる本文とかはbodyにfont-size,font-weight,font-familyとかまとめておく
-  　あとは適宜割り当てていく
-  ・color maincolor,subcolor
-  ・各操作品　ボタンのテーマ
-  ・border-radiusやbox-shadow等のテーマ
-  ・リンクのテーマ
-  ・疑似要素
-  ・slick、ハンバーガーメニュー等のテーマ
-
-
-
-
-
-
-
-
-
-wordpress化MEMO
-　・テーマとなるhtml、cssをいい感じに編集して、wordpressをインストールした
-　　サーバーにアップロードするが、アップするときはフォルダ分けせずindex.phpと
-　　style.cssは同じディレクトリに。
-　・style.cssにはコメントの形でthemenameだとかthemeuriだとかを入れる。
-　・phpでエラーこくとわかりずらいのでオプションでエラー表示にしておくとよい
-　・あとは基本テンプレ(ドットインストールのやつ)で対応できると思う
-　★スタイル、スクリプトの読み込みはどうするのがベストか？
-　　自作のはいいけどjqueryとかslickとか
-
-
-ハイブリッドアプリmemo
-  ・android10だとajaxしようとしてもできない
-  　→デバッグアプリだとできるけどビルドするとできなくなる笑
-  以下をいれること
-  &lt;widget xmlns:android="http://schemas.android.com/apk/res/android"&gt;
-  &lt;platform name="android"&gt;
-  &lt;edit-config file="AndroidManifest.xml" target="/manifest/application" mode="merge"&gt;
-  &lt;application android:usesCleartextTraffic="true" /&gt;
-  &lt;/edit-config&gt;
-  &lt;/platform&gt;
-
-
 
 ## ランディングページのレイアウト集
-画像入れる？
+サイトの全体のレイアウトはこんな感じ
+
+> ![デザイン例](./lpsite1.gif)こんな感じ
+> ![デザイン例](./lpsite2.gif)こんな感じ
+> ![デザイン例](./lpsite3.png)こんな感じ
+
+---
+
+
+
+
+
+
+## wordpress化MEMO(余談)
+
+- テーマとなるhtml、cssをいい感じに編集して、wordpressをインストールした
+- サーバーにアップロードするが、アップするときはフォルダ分けせずindex.phpと
+- style.cssは同じディレクトリに。
+- style.cssにはコメントの形でthemenameだとかthemeuriだとかを入れる。
+- phpでエラーこくとわかりずらいのでオプションでエラー表示にしておくとよい
+- あとは基本テンプレ(ドットインストールのやつ)で対応できると思う
+
+
+
+## ハイブリッドアプリmemo(余談)
+
+- android10だとajaxしようとしてもできない
+→デバッグアプリだとできるけどビルドするとできなくなる笑
+  以下をいれること
+```
+  <widget xmlns:android="http://schemas.android.com/apk/res/android">
+  <platform name="android">
+  <edit-config file="AndroidManifest.xml" target="/manifest/application" mode="merge">
+  <application android:usesCleartextTraffic="true" />
+  </edit-config>
+  </platform>
+```
+
+
 
 
 
