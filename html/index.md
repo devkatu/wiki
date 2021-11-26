@@ -148,18 +148,18 @@ SNS上でシェアされた際に表示させたい画像を*絶対パスで指�
 Facebookでは画像サイズを1200×630p、比率で「1.91：1」を推奨しています。
 - og:site_name
 ページのサイト名を記述します。サイト名やブランド情報は「og:title」ではなく、この「og:site_neme」に設定します。
-
-- twitter:card
-Twitter上での表示タイプを指定するタグになります。
-カードの種類はブログやwebサイト用、アプリ配布用、動画サイト用と全部で4種類あり、それぞれ見せ方が変わってきます。
-Summary Card：タイトル、説明、およびサムネイル。
-Summary with Large Image：summary cardと同じ形ですが、画像の大きさが大きいものになります。
-App Card：アプリ配布用の表示カード。
-Player Card：ビデオ/オーディオ/メディアを表示できるカード。
-- twiter:site
-@から始まる、Twitterのアカウント名を入力します
-- fb:app_id
-サイトやブログの管理者をFacebookに伝えるためのタグになります。
+- SNS個別のもの
+  - twitter:card
+  Twitter上での表示タイプを指定するタグになります。
+  カードの種類はブログやwebサイト用、アプリ配布用、動画サイト用と全部で4種類あり、それぞれ見せ方が変わってきます。
+  Summary Card：タイトル、説明、およびサムネイル。
+  Summary with Large Image：summary cardと同じ形ですが、画像の大きさが大きいものになります。
+  App Card：アプリ配布用の表示カード。
+  Player Card：ビデオ/オーディオ/メディアを表示できるカード。
+  - twiter:site
+  @から始まる、Twitterのアカウント名を入力します
+  - fb:app_id
+  サイトやブログの管理者をFacebookに伝えるためのタグになります。
 
 ```
 <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# website: http://ogp.me/ns/website#">
@@ -175,8 +175,8 @@ Player Card：ビデオ/オーディオ/メディアを表示できるカード�
 ```
 
 ### ファビコン
-ルートにfavicon.icoを置いてもいい。
-.icoファイルはオンラインでフリーで作成できるツールがある。
+ルートディレクトリにfavicon.icoを置いても勝手にブラウザが解釈してくれる。
+.icoファイルはオンラインでフリーで作成できるツールがあるのでそれを使うと便利。
 .icoファイルをおいてもいいし、下のようにサイズ指定して複数画像ファイルをリンクしても良い。
 ブラウザが適切な画像を勝手に選択してくれる
 ```
@@ -189,6 +189,7 @@ Player Card：ビデオ/オーディオ/メディアを表示できるカード�
 ```
 
 ### スタイルシート
+スタイルシートの読込
 ```
 <link rel="stylesheet" href="./css/style.css">
 ```
@@ -196,7 +197,8 @@ Player Card：ビデオ/オーディオ/メディアを表示できるカード�
 ### 検索避け
 低品質なページ、開発中のページ等で使う。
 contentがnoindex,nofollowだとクローラーはクロールもインデックスもしない。
-noindex,followだとクロールはするけどインデックスはしない。開発中はこちらをいれることも
+noindex,followだとクロールはするけどインデックスはしない。
+開発中はnoindex,followにしておいてwebサイトは認識してもらってインデックスはさせないようなこともある
 ```
 <meta name="robots" content="noindex,nofollow">
 ```
@@ -319,9 +321,44 @@ blockの中に配置される要素。
 
 attention: 書きかけの項目
 
-  ◎div.contain等　レスポンシブ化等のメモ
-  　・基本はsection(widthいっぱい＆上下padding指定＆heigth:auto;)>div.contain
-  　(width各種用意 & margin: 0 auto & 左右padding指定(レスポンシブ時に便利))の中にいろいろ書いていく
+### レスポンシブ対応を意識した各セクションのスタイリングとその他留意事項
+
+基本的な考え方は以下となる
+
+- PC版(XXXXpx～)
+ほとんどの値のwidth,height等は固定値でカチッとスタイリングして問題なし
+  - `<section>`は
+  width: 100%;
+  padding: XXpx 0;
+  heigth: auto;
+  とし、横幅いっぱい、上下に余白を取り、中のコンテンツエリアを設定。高さは内容物次第とする
+  - `<section>`の中に入れる子要素として`<div class="contain">`は
+  width: XXXXpx;
+  margin: 0 auto;
+  padding: 0 XXpx;
+  固定幅のコンテンツをmargin調整で中央に揃えて、paddingを左右に用意しておく
+  - その他の要素のfont,width,height等は固定値でも問題ない
+- タブレット版(XXXXpx～XXXXpx)
+各スタイルの値の指定は％やvw,fontはvwやemやremを使用し、各用品の配置が崩れないように気を付ける。
+特に縦方向の値marginやheight等にvwを使用する事を忘れずに。
+コンテナにはmax,min-widthを付与して、レスポンシブする上下限を決めておくいい。画像はフルードにする。
+  - `<section>`は
+  padding: XXvw 0;
+  等に直し、上下余白が画面幅に比例するようにする。
+  - `<section>` > `<div class="contain">`は
+  width: XXvw;
+  max-width: XXXXpx;
+  padding: 0 XXvw;
+  等に直し、左右幅、左右余白が画面幅に比例するようにする。
+  あまり広がりすぎると不格好な時はmax-width: XXXXpx;を入れる
+  - `<img>`は
+  width: 100%;
+  height: auto;
+  等のフルードにし、コンテナサイズに合わせて拡縮するようにする。
+
+- スマホ版(～XXXXpx)
+  - 横幅
+  
     レスポンシブの数に応じてcssメディアセレクタでサイズを変更していく
     大：PCで見るときでfontやwidth,height等は決め打ち。画像も元サイズ等の固定サイズ
     中：タブレットで見るときでfontやwidth,height等は％やvw,em,rem使用し、各用品の配置が崩れないようにコンテナにはmax,min-widthを付与するとよい。画像はフルードにするのが基本
