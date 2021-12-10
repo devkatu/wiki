@@ -35,8 +35,8 @@
   - [実践的知識](javascript_jquery/実践的知識.md)
   ---
   - # jquery
-  - [基礎](jqueryサンプル_基礎編.html)
-  - [応用](jqueryサンプル_実用的なやつ.html)
+  - [基礎](javascript_jquery/jqueryサンプル_基礎編.html)
+  - [応用](javascript_jquery/jqueryサンプル_実用的なやつ.html)
 
 [React]()
 
