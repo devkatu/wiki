@@ -7,7 +7,8 @@ attention: 書きかけの項目
 ## expoの開発流れ
 
 ### プロジェクト初期化
-attention:
+`$ expo init my-app`でmy-appディレクトリが作成され新規expoプロジェクトが作られる。
+該当ディレクトリに移動して、`$ expo start`または`$ npm start`でMetroBundlerが起動して開発スタートできる。
 
 ### expoのワークフローについて
 プロジェクト初期化時に以下のワークフローを選択できるはず。
