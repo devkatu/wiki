@@ -4,7 +4,8 @@
 
 ### React Native CLI
 プロジェクトでネイティブコード(javaとかswiftとか)をビルドする必要があるならこちら  
-そこまで凝ったもの作らないなら必要なし。しかも環境構築めんどくさい。expo使用中のため省略
+そこまで凝ったもの作らないなら必要なし。しかも環境構築めんどくさい。expo使用中のため省略。
+てかexpoつかってもある程度使えるSDKに制限はあるもののベアワークフローでネイティブコードいじれるみたい
 
 ### Expo CLI
 expoなるフレームワークを使った超便利なやつ  
@@ -83,6 +84,9 @@ hint: これとは別にReactNativeDebuggerというのを入れるとReactDevTo
 ## コンポーネントとスタイリングについて
 いろいろコンポーネントはあるが基本`View`と`ScrollView`を押さえておけばほとんど問題ない  
 自分でいろいろスタイルをいじくりたいなら別だけど、[react native directory](https://reactnative.directory/)やら[npm js](https://www.npmjs.com/)で便利なUIセットがたくさん用意されているので基本はそっちを使うと思う
+
+一応は[コアコンポーネントとAPI](https://reactnative.dev/docs/components-and-apis)とかに標準で用意されているものいろいろ記載されている
+[expoのAPIリファレンス](https://docs.expo.dev/versions/latest/)の方にもreact nativeのコンポーネントとAPI含め使えそうなexpoSDK記載されているのでここから探してみるのもいいかも
 
 ### コアコンポーネント
 これらコアコンポーネントを記述するとネイティブのコンポーネント(android,iphone上でのコンポーネント)を呼出す。  
