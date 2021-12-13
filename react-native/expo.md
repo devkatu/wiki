@@ -46,7 +46,37 @@ expo開発時のlocalhost:19002の"PRODUCTION MODE"スイッチをオフにす�
 開発モード中は非推奨のプロパティを使用している場合や、必要なプロパティをコンポーネントに渡すのを忘れた場合に警告が表示される。
 本番モードでは、本番環境でしか発生しないようなバグを探すときに役立つので覚えておくといいかも
 
+[ここ](https://docs.expo.dev/introduction/walkthrough/#use-the-expo-sdk-and-community-standard)にあるApp.web.jsとは？
+たぶんwebアプリ版の事を言っていると思うんだけど
+
 ### app.jsonを編集してiconやバージョン情報を編集
+プロジェクトのルートにあるapp.json内でアプリに関するいろんな設定を行うことができる。
+
+#### icon
+以下のような感じで`android.adaptiveIcon.foregroundImage`と`android.adaptiveIcon.backgroundColor`にそれぞれ前景の画像と背景色を各々設定できる。
+デフォルトの背景色は白。自分で作成した好きな画像を設定したいときは、
+`android.adaptiveIcon.badckgroundImage`に置き換えることもできる。
+
+androidのアダプティブアイコンは
+- アイコンサイズ108dp
+- アイコンは72dpの内側にはいっていること(サイズの66%くらい)
+- アイコンそのものは
+- 残りの18dp分はパララックスとか点滅とかの視覚効果のために使われるの
+
+```javascript
+"android": {
+  "adaptiveIcon": {
+    "foregroundImage": "./assets/icon_front.png",
+    "backgroundImage": "./assets/icon_back.png"
+  },
+  "package": "com.katu.TrainingMemoApp",
+  "versionCode": 1
+},
+```
+
+#### スプラッシュ画面
+
+
 attention: icon,versionについて
 
 ### ビルド、OTA、publish
@@ -67,6 +97,7 @@ attention:
 attention: ローカル通知のみつかったよ
 ImagePicker
 ImageSharering
+
 
 
 --- 
