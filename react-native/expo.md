@@ -46,6 +46,7 @@ expo開発時のlocalhost:19002の"PRODUCTION MODE"スイッチをオフにす�
 開発モード中は非推奨のプロパティを使用している場合や、必要なプロパティをコンポーネントに渡すのを忘れた場合に警告が表示される。
 本番モードでは、本番環境でしか発生しないようなバグを探すときに役立つので覚えておくといいかも
 
+attention:
 [ここ](https://docs.expo.dev/introduction/walkthrough/#use-the-expo-sdk-and-community-standard)にあるApp.web.jsとは？
 たぶんwebアプリ版の事を言っていると思うんだけど
 
@@ -53,31 +54,69 @@ expo開発時のlocalhost:19002の"PRODUCTION MODE"スイッチをオフにす�
 プロジェクトのルートにあるapp.json内でアプリに関するいろんな設定を行うことができる。
 
 #### icon
-以下のような感じで`android.adaptiveIcon.foregroundImage`と`android.adaptiveIcon.backgroundColor`にそれぞれ前景の画像と背景色を各々設定できる。
-デフォルトの背景色は白。自分で作成した好きな画像を設定したいときは、
+アイコンに使う画像は
+
+- iosにも共通で使うなら1024px×1024pxの.pngファイルを用意する。android単体で良いなら512px×512pxの.pngファイルでOK。ビルドするとexpoが勝手に他のサイズの画像を用意してくれる
+- 以下のような感じで`app.json`中の`android.adaptiveIcon.foregroundImage`と`android.adaptiveIcon.backgroundColor`にそれぞれ前景の画像と背景色を各々設定できる。デフォルトの背景色は白。自分で作成した好きな画像を設定したいときは、
 `android.adaptiveIcon.badckgroundImage`に置き換えることもできる。
 
-androidのアダプティブアイコンは
-- アイコンサイズ108dp
-- アイコンは72dpの内側にはいっていること(サイズの66%くらい)
-- アイコンそのものは
-- 残りの18dp分はパララックスとか点滅とかの視覚効果のために使われるの
+
+androidのアダプティブアイコンについては
+
+- アイコンサイズは前景、背景どちらも108×108dp(512px)
+- アイコンの内側72×72dp(512pxなら341px相当)分に表示される部分を設定する。大体外側サイズの66%くらい
+- 残りの18dp(512pxなら28px相当)分はパララックスとか点滅とかの視覚効果のために使われる領域になっているので、ここにアイコンが描画されていると見切れたりする
+- 古いデバイスではアダプティブアイコンをサポートしていない場合もあるのでandroid.iconで前景と背景を組み合わせた画像ファイルを設定することもできる
+
 
 ```javascript
-"android": {
-  "adaptiveIcon": {
-    "foregroundImage": "./assets/icon_front.png",
-    "backgroundImage": "./assets/icon_back.png"
-  },
-  "package": "com.katu.TrainingMemoApp",
-  "versionCode": 1
-},
+// app.jsonファイル
+// documentではandroid.adaptiveIcon...だけど
+// 実際につくったアプリではexpo.android.adaptiveIcon...
+// となっている。多分後者が正解？
+{
+  "expo": {
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon_front.png",
+        "backgroundImage": "./assets/icon_back.png"
+      },
+      "package": "com.katu.TrainingMemoApp",
+      "versionCode": 1
+    },
+    ...
+  }
+}
 ```
 
 #### スプラッシュ画面
+スプラッシュ画面で使う画像は
+
+- 1242×2436pxの.png画像を使用する(iphoneの最大サイズ)
+- splash.imageには上記の.png画像ファイルを
+- splash.backgroundColorには背景色を
+- splash.resizeModeには"contain"もしくは"cover"を。cssのbackground-sizeと同様に"contain"なら画像全体を表示できるように、"cover"なら表示領域を全て覆うようにできる
+- 通常は以下のようにするといいと思う
+  1. 画像ファイルが画面大の縦長の大きさを意識して作って、
+  2. splash.resizeModeを"contain"にして画像全体を表示できるようにして、
+  3. 表示領域が余ると、そこが白く表示されてしまい格好悪いので、指定した画像の背景色と一緒になるようにsplash.backgroundColorへ設定する
+
+```javascript
+// app.jsonファイル
+{
+  "expo": {
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    ...
+  }
+}
+```
 
 
-attention: icon,versionについて
+attention: versionについて
 
 ### ビルド、OTA、publish
 attention: ビルドして初回のストアアップロードのみ審査がいるが、チャネルを使った公開を用いればストア通さずに更新できる
