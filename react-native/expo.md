@@ -155,9 +155,24 @@ attention: ドメインの逆引きのやつを設定するはず
 #### androidでのパーミッション
 `expo.android.permissions`にてアプリに必要な権限のみを指定する。
 これを指定しないとexpo標準では余計な権限も含まれてしまうのでユーザーに不信感を与えかねない。
-例えばただのメモアプリでカメラ使用しないのに、カメラ権限を使用するとか
+例えばただのメモアプリでカメラ使用しないのに、カメラ権限を使用したりすると怪しいアプリに思えてしまう。
+値として、[使用する権限](https://docs.expo.dev/versions/latest/config/app/#permissions)を配列で与える
 
-### ビルド、OTA、publish
+```javascript
+{
+...
+  "permissions" : [ "CAMERA", "ACCESS_FINE_LOCATION" ]
+
+}
+
+```
+
+### publish
+アプリをストアに公開刷る前にでもpublishを使えば、
+CDNにアプリが配置され、expo goアプリを使用してこのアプリを試すことができる
+もしくはアプリ公開後にOTA目的のためにpublish機能があるはず
+
+### ビルド、OTA、
 attention: ビルドして初回のストアアップロードのみ審査がいるが、チャネルを使った公開を用いればストア通さずに更新できる
 ただしjavasciptで書いてる部分のみ。アイコン変えたいとかスプラッシュ画面変えたいとかはビルドしなきゃだめ
 
@@ -165,7 +180,8 @@ attention: ビルドして初回のストアアップロードのみ審査がい
 attention: .apkは署名が必要。だけどexpoがやってくれるはず
 .aabはgoogleが署名を行ってくれるが、結局アップロードするための署名が必要
 
-### アプリの更新
+### ストア公開後のアプリの更新
+ストア公開後に更新するのがいわゆるexpopublishによるota
 attention:
 
 ---
@@ -173,9 +189,11 @@ attention:
 ## 使ったもの、使えそうなもの
 ### 通知
 attention: ローカル通知のみつかったよ
-ImagePicker
-ImageSharering
 
+- ImagePicker
+- ImageSharering
+- [App.Loadingを使ってUIの準備できてから表示する](https://docs.expo.dev/versions/latest/sdk/app-loading/)
+- [アセットのプリロード](https://docs.expo.dev/guides/preloading-and-caching-assets/)
 
 
 --- 
