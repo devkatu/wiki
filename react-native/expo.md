@@ -28,7 +28,10 @@ my-appディレクトリが作成され新規expoプロジェクトが作られ�
 MetroBundlerが起動して開発スタートできる。
 
 ### 各ライブラリのコンポーネントを組み合わせていく
-[react native directory](https://reactnative.directory/)やら[npm js](https://www.npmjs.com/)でサードパーティのライブラリを検索できるが、*ExpoGo*タグがついているか確認する事。  
+基本最低限のコンポーネントreact nativeの組み込みのコンポーネントとして準備されていて、[コアコンポーネントとAPI](https://reactnative.dev/docs/components-and-apis)リファレンス記載されている
+expoではカメラ、オーディオ、バーコードスキャン、カレンダー、マップとかのデバイス、システム機能へのアクセスを提供するものがたくさんある。[expoのAPIリファレンス](https://docs.expo.dev/versions/latest/)の方にreact nativeのコアコンポーネントとAPI含め使えそうなexpoSDK記載されているのでexpoを使う場合はここから探してみるのもいいかも
+
+サードパーティのライブラリは[react native directory](https://reactnative.directory/)やら[npm js](https://www.npmjs.com/)で検索できるが、*ExpoGo*タグがついているか確認する事。  
 *ExpoGo*タグがないものはexpoで使用できないっぽい。ベアワークフローにイジェクトすればなんとかなるっぽいけど…またそのライブラリで 
 
 - ディレクトリに`ios`や`android`がある
@@ -36,8 +39,6 @@ MetroBundlerが起動して開発スタートできる。
 
 とかだと使えない可能性大  
 
-一応は[コアコンポーネントとAPI](https://reactnative.dev/docs/components-and-apis)とかに標準で用意されているものいろいろ記載されている
-[expoのAPIリファレンス](https://docs.expo.dev/versions/latest/)の方にreact nativeのコンポーネントとAPI含め使えそうなexpoSDK記載されているのでここから探してみるのもいいかも
 
 ### プロダクションモード、開発モード
 expo開発時のlocalhost:19002の"PRODUCTION MODE"スイッチをオフにすると開発モードとなる。
