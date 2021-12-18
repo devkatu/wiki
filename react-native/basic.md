@@ -42,6 +42,8 @@ AndroidStudioのAVDマネージャーから、エミュのセットアップを�
 
 hint: 動作がおかしくなったら同じくAVDマネージャーからリセット(actions > wipe data)を行うとよい
 
+hint: [react native公式](https://reactnative.dev/docs/environment-setup)や[expo公式](https://docs.expo.dev/workflow/android-studio-emulator/)が参考になるかも
+
 ### 実機
 expo goアプリをインストールしておくだけ。
 
