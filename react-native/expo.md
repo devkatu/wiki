@@ -53,10 +53,12 @@ attention:
 
 ### app.jsonを編集してiconやバージョン情報を編集
 プロジェクトのルートにあるapp.json内でアプリに関するいろんな設定を行うことができる。
-expoを使用する場合は全ての親に`expo`を設定するみたい
+expoを使用する場合は全ての親に`expo`を設定するみたい。
+適宜必要なものについて記述していくとよい
 また、コード中からapp.jsonの値を使用したいときは`expo-constants`でアクセスすることができる。
+以下重要そうな奴は**太字**タイトルで
 
-#### slug
+#### **slug**
 expoサーバー内で使われるIDのようなもの。
 publishしたときのURL末尾に使用される。
 
@@ -68,7 +70,7 @@ publishしたときのURL末尾に使用される。
 `updates.fallbackToCacheTimeout`でOTAのアップデートのリクエストタイムアウトの設定を行える。
 ミリ秒で指定するか、`enabled`を追加して`false`に設定するとアップデートを無効にできる
 
-#### icon
+#### **icon**
 ホーム画面に使うアイコン画像は
 
 - `expo.icon`でも設定可能1024x1024pxのpngファイルを使用推奨。
@@ -105,13 +107,13 @@ androidのアダプティブアイコンについては
 
 
 
-#### スプラッシュ画面
+#### **スプラッシュ画面**
 スプラッシュ画面で使う画像は
 
 - 1242×2436pxの.png画像を使用する(iphoneの最大サイズ)
-- splash.imageには上記の.png画像ファイルを
-- splash.backgroundColorには背景色を
-- splash.resizeModeには"contain"もしくは"cover"を。cssのbackground-sizeと同様に"contain"なら画像全体を表示できるように、"cover"なら表示領域を全て覆うようにできる
+- `expo.splash.image`には上記の.png画像ファイルを
+- `expo.splash.backgroundColor`には背景色を
+- `expo.splash.resizeMode`には`contain`もしくは`cover`を。cssのbackground-sizeと同様に"contain"なら画像全体を表示できるように、"cover"なら表示領域を全て覆うようにできる
 - 通常は以下のようにするといいと思う
   1. 画像ファイルが画面大の縦長の大きさを意識して作って、
   2. splash.resizeModeを"contain"にして画像全体を表示できるようにして、
@@ -131,7 +133,7 @@ androidのアダプティブアイコンについては
 }
 ```
 
-#### versionについて
+#### **versionについて**
 
 - `expo.version`  
 ユーザー向けに表示することのみを目的としたもの。純粋なandroidでいうところの`versionName`に相当する。
@@ -140,13 +142,13 @@ androidのアダプティブアイコンについては
   2. 後方互換性があり機能性を追加した場合はマイナーバージョンを、
   3. 後方互換性を伴うバグ修正をした場合はパッチバージョン(ポイント)を上げます。
 - `expo.android.versionCode`  
-ユーザーには表示されない内部バージョンを示す。正の整数で表現される。更新のごとに＋１する。これを比較することでアプリの新しい、古いを判断するためだけに使用される
+ユーザーには表示されない内部バージョンを示す。正の整数で表現される。更新のごとに＋１する。これを比較することでアプリの新しい、古いを判断するためだけに使用され、古いバージョンのアプリをインストールしないようにできている。
 - 実行時にこれらの値を使用したいときは`expo-constants`でアクセスすることができる。バージョン表示したいときとかにいいかも
+- ios向けにもビルドするなら`expo.ios.buildNumber`もメンテ必要となる。詳細未確認
 
-
-
-#### package
-`expo.android.package`にアンドロイドでのパッケージ名を設定する。
+#### **package**
+`expo.android.package`にアンドロイドでのパッケージ名を設定する。英数字とアンダースコアで記述する。これはアプリのクラスの名前空間解決に使用したり(？)、アプリのIDとしても使われる。アプリの名前が異なっても、このpackage名が同じなら同じアプリとして認識される。
+このため一意のものであることが必須であり、他のものと被りにくいことから、ドメイン名の逆順にしたものを使用することが一般的。ドメインがなければ一意のパッケージを登録するサービスもあるが、特に被らないような名前ならなんでもいいのかも
 attention: ドメインの逆引きのやつを設定するはず
 
 #### androidでのパーミッション
@@ -164,6 +166,62 @@ attention: ドメインの逆引きのやつを設定するはず
 
 ```
 
+#### app.jsonの構成例
+```javascript
+{
+  "expo": {
+    "name": "my-app-name",
+    "slug": "my-app-slug",
+    "privacy": "unlisted",
+    "sdkVersion": "35.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "version": "1.3.2",
+    "orientation": "portrait",
+    "primaryColor": "#FFE483",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFE483"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 10000
+    },
+    "ios": {
+      "bundleIdentifier": "my-app-id",
+      "buildNumber":"1.3.2",
+      "icon": "./assets/icon_ios.png",
+      "splash": {
+        "backgroundColor": "#FFE483",
+        "image": "./assets/splash.png"
+      },
+      "config": {
+        "googleMobileAdsAppId": "abc123"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon_front.png",
+        "backgroundImage": "./assets/icon_back.png"
+      },
+      "package": "com.katu.TrainingMemoApp",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ], 
+      "versionCode": 23,
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=abc123",
+      "config": {
+        "googleMobileAdsAppId": "abc123"
+      }
+    }
+  }
+}
+```
+
 hint: 
 app.config.jsを使って動的に設定情報を編集することもできる(未使用)
 開発モード、プロダクションモードで設定を変更したりとかいろいろできる。
@@ -171,22 +229,28 @@ app.config.jsを使って動的に設定情報を編集することもできる(
 vscodeの拡張でapp.jsonのプロパティの補完機能もあったりするので便利かも
 
 ### アプリをビルドする
-ビルドして初回のストアアップロードのみ審査がいるが、チャネルを使った公開を用いればストア通さずに更新できる
-ただしjavasciptで書いてる部分のみ。アイコン変えたいとかスプラッシュ画面変えたいとかはビルドしなきゃだめ
-
-ストアに提出するためのapkまたはaab等のバイナリファイルを作成することをビルドという。
+ストアに提出するための.apkまたは.aab等のバイナリファイルを作成することをビルドという。
 `$ expo build:android --release-channel production`
 のコマンドを実行するとapk、aabの選択があったのち、expoサーバーにコードがアップロードされてビルドが開始されてしばらくするとサーバー上にバイナリができあがる。
 `--release-channel production`
 の部分はオプションになり、ストアアップロード後のOTAの時にリリースチャネルを使用するときに生きてくる。
 `--release-channel`を指定しないときは`default`チャネルにアプリが公開される
+ios向けや、web向けのビルドも別途ある。
 
-attention: ビルドしたときもデフォルトでOTA配布がされるので注意。初回のビルドならいいが、ストアアップロード後の変更でビルドをするときはビルドして即OTAが配布されてしまうことがあるので注意。ビルド後にいろいろテストしたくても即ユーザー配布されちゃうよ！
-アップデート等でビルドをしたいときはapp.jsonの`expo.updates.enabled`をfalseにしておくとよい
+ビルドして初回のストアアップロードのみ審査がいるが、公開を用いればストア通さずに更新できる
+ただしjavasciptで書いてる部分のみ。アイコン変えたいとかスプラッシュ画面変えたいとかはビルドしなきゃだめ
+
+attention: ビルドしたときもデフォルトでOTA配布がされるので注意。初回のビルドならいいが、ストアアップロード後の変更でビルドをするときはビルドして即OTAが配布されてしまうことがあるので注意。ビルドするときは大体OTA配布で賄えないときに(アイコン更新とか細かい修正じゃないもの)行うはずなので**予め`expo.updates.enabled`をfalseに設定**しおくといいかも。ビルド後にいろいろテストしたくても即ユーザー配布されちゃうよ！
+
+hint: ストアの提出が便利なEASbuildというのもあるのでいずれ使ってみたい
 
 #### .apk .aabとは
 attention: .apkは署名が必要。だけどexpoがやってくれるはず
 .aabはgoogleが署名を行ってくれるが、結局アップロードするための署名が必要
+
+#### リリースチャネルとは
+build、publishを行うチャンネルが色々あり、それぞれ設定できる。
+build時、publish時にオプションで指定すると該当のチャンネルへ更新したものが公開される。
 
 ### ストア公開後にアプリをOTAアップデートする
 expoで作成したアプリはインストール後の起動毎にCDN上の同じチャネルにリリースがあるか確認して、新しいリリースがあればそれを読込む動作をする。これがOTA(Over The Air)
@@ -195,13 +259,12 @@ expoで作成したアプリはインストール後の起動毎にCDN上の同�
 
 また、このpublishとはプロジェクトをexpoのサーバーにデプロイすることであり、アプリをストアに公開しなくても、CDN上にアプリが配置されるので、expo goアプリを使用してこのアプリを試すことができる
 
-attention: ストアにアプリを公開した後にOTA配布を行っている場合、インストールしたアプリは初回起動時にはOTAの分が反映されていない。その後起動するたびにOTAの分が順次反映されていく。なので細かい修正であればpublishでいいがあまり回数はたくさんやらないほうがいい。
+attention: ストアにアプリを公開した後にOTA配布を行っている場合、インストールしたアプリは初回起動時にはOTAの分が反映されていない。その後起動するたびにOTAの分が順次反映されていく。なので**細かい修正であればpublishでいいがあまり回数はたくさんやらないほうがいい。**
 `$ expo publish --release-channel production`
 
 OTAについて[ここ](https://zenn.dev/marin_a___/articles/7eec197a8c3579)で紹介している。わかりやすい。
 
 javascriptで記述しているところのみがOTA可能であり、アイコンの変更やスプラッシュ画面の変更はビルドしなおしてストアに提出する必要がある。またpublishやりすぎるのもあまりよくないので極端にpublish回数多くなってきたらこれもビルドし直しの方がいいかも
-
 
 ---
 
