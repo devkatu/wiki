@@ -294,8 +294,18 @@ gitぽくいろいろなコマンドが使えるみたい
 - `expo publish:rollback --release-channel production --sdk-version 36.0.0`
   sdkバージョンのロールバックを行いたいときに使う。指定したsdkバージョンの最後のリリースを公開する。⇒該当の公開IDを指定して`expo publish:set`するのと同じ
 
+#### 更新するアプリの最適化
+OTAにて更新をダウンロードする際に更新サイズを縮小しておくのがよい。
+
+- 更新サイズの見積は、`expo export`で更新をエクスポートして、そのファイルを`gzip <file>`するとサイズが分かる
+- `expo-optimize`、`jpegoptim`、`guetzli`、`pngcrush`、`optipng`、`imagemin`、等のツールで画像サイズの圧縮をしておく
+- npmであまり大きなサイズの依存関係をつくらない
+- アプリにそこまで必要でない画像は`<Image source={{ uri: url }}>`のような感じでweb上から読み込む用にしてもいいかも
+
 ### web向けの開発
 expoのサービスとしてwebアプリ向けのビルドができたり、App.web.jsを別のエントリポイントとして使ってストアへ案内するようなこともできるみたい(未使用にて詳細不明)
+
+`npx serve web-build`で http://localhost:5000 にてweb版がみられるらしい
 
 ---
 
