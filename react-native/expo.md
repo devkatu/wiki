@@ -311,12 +311,93 @@ expoのサービスとしてwebアプリ向けのビルドができたり、App.
 
 ## 使ったもの、使えそうなもの
 ### 通知
-attention: ローカル通知のみつかったよ
+`expo-notifications`を使うと簡単にローカル通知が設定できる
 
-- ImagePicker
-- ImageSharering
-- [App.Loadingを使ってUIの準備できてから表示する](https://docs.expo.dev/versions/latest/sdk/app-loading/)
-- [アセットのプリロード](https://docs.expo.dev/guides/preloading-and-caching-assets/)
+- 通知トレイに表示されるアイコンや通知トレイの表示色の設定はapp.jsonで行う
+  ```javascript
+  {
+    "expo":{
+      "notification":{
+        // アイコンはローカルパスかリモートのURLを指定。96*96の.pngが良いみたい
+        "icon": "path",
+        "color": "#000000"
+      }
+    }
+  }
+  ```
+- アプリを開いている時の通知ができるようにしておく
+  デフォルトではアプリを開いているときは通知が表示されないが、以下で通知がされるようになる
+  ```javascript
+  import * as Notifications from 'expo-notifications';
+
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+    }),
+  });
+  ```
+- 通知の権限確認と要求
+  起動時に通知に関する権限があるか確認し、なければ権限を要求する
+  ```javascript
+  const requestPermissionsAsync = async () => {
+  const { granted } = await Notifications.getPermissionsAsync();
+  if (granted) {
+    console.log('notification granted')
+    return
+  }
+  console.log('notification not granted')
+  await Notifications.requestPermissionsAsync();
+  }
+
+  // ---- このuseEffectはapp.js等にて(アプリ起動時に一回はしればOK)
+  useEffect(() => {
+    // 通知の権限の確認と要求
+    requestPermissionsAsync()
+  });
+  ```
+- ローカル通知のキャンセル、設定、設定済み通知の確認
+  筋トレメモアプリの計画作成の部分抜粋
+  ```javascript
+  if (notificationId) {
+    // 通知IDを指定して、スケジュールされた通知を削除する
+    // 通知IDはスケジュール時に決定する
+    await Notifications.cancelScheduledNotificationAsync(notificationId)
+  }
+
+  // 通知のスケジュールを行う。
+  // 戻り値は設定した通知IDでキャンセルするとき等に使うのでstorage等に保存しておく
+  // 引数にはオブジェクトを渡し、
+  // content.titleに通知トレイに表示されるタイトル、
+  // content.bodyに通知トレイに表示される本文、
+  // content.dataに通知トレイからアプリに渡すデータ(あまり使わないと思う)
+  // triggerにはスケジュールする日時等を設定する
+  //   Date型でやるのが一番弄りやすそうかな。他にもnumberでもいいし
+  //   {seconds: number}  とか  {hour: number, minute: number, repeats: boolean} ができる
+  newNotificationId = await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "トレーニング予定時間です！",
+      body: trainingTitleInput !== "" ? trainingTitleInput : "no title",
+      data: { data: 'goes here' },
+    },
+    trigger
+  }).catch(e => console.log(e))
+
+  // スケジュール済みの通知の確認
+  // 戻り値に通知日時や通知ID、通知内容等のオブジェクトが返ってくる
+  const notifications = await Notifications.getAllScheduledNotificationsAsync();
+  ```
+
+hint: ローカルでのみの通知はこれだけだが、外部からのなんらかの通知をしたいときはFCM(Firebase CloudMessaging)とかと組合せて使う事ができる。FCMで使用する場合はクレデンシャル関係の設定とか、通知時にデバイス起動するためのpermissionとかが必要になる
+
+### ImagePicker
+
+### ImageSharering
+
+### [App.Loadingを使ってUIの準備できてから表示する](https://docs.expo.dev/versions/latest/sdk/app-loading/)
+
+### [アセットのプリロード](https://docs.expo.dev/guides/preloading-and-caching-assets/)
 
 
 --- 
