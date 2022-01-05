@@ -351,7 +351,7 @@ expoのサービスとしてwebアプリ向けのビルドができたり、App.
   await Notifications.requestPermissionsAsync();
   }
 
-  // ---- このuseEffectはapp.js等にて(アプリ起動時に一回はしればOK)
+  // ---- このuseEffectはapp.js等にて(アプリ起動時に走ればOK)
   useEffect(() => {
     // 通知の権限の確認と要求
     requestPermissionsAsync()
@@ -361,12 +361,12 @@ expoのサービスとしてwebアプリ向けのビルドができたり、App.
   筋トレメモアプリの計画作成の部分抜粋
   ```javascript
   if (notificationId) {
-    // 通知IDを指定して、スケジュールされた通知を削除する
+    // ★通知IDを指定して、スケジュールされた通知を削除する
     // 通知IDはスケジュール時に決定する
     await Notifications.cancelScheduledNotificationAsync(notificationId)
   }
 
-  // 通知のスケジュールを行う。
+  // ★通知のスケジュールを行う。
   // 戻り値は設定した通知IDでキャンセルするとき等に使うのでstorage等に保存しておく
   // 引数にはオブジェクトを渡し、
   // content.titleに通知トレイに表示されるタイトル、
@@ -374,7 +374,7 @@ expoのサービスとしてwebアプリ向けのビルドができたり、App.
   // content.dataに通知トレイからアプリに渡すデータ(あまり使わないと思う)
   // triggerにはスケジュールする日時等を設定する
   //   Date型でやるのが一番弄りやすそうかな。他にもnumberでもいいし
-  //   {seconds: number}  とか  {hour: number, minute: number, repeats: boolean} ができる
+  //   その他{seconds: number}  とか  {hour: number, minute: number, repeats: boolean} ができる
   newNotificationId = await Notifications.scheduleNotificationAsync({
     content: {
       title: "トレーニング予定時間です！",
@@ -384,7 +384,7 @@ expoのサービスとしてwebアプリ向けのビルドができたり、App.
     trigger
   }).catch(e => console.log(e))
 
-  // スケジュール済みの通知の確認
+  // ★スケジュール済みの通知の確認
   // 戻り値に通知日時や通知ID、通知内容等のオブジェクトが返ってくる
   const notifications = await Notifications.getAllScheduledNotificationsAsync();
   ```
@@ -392,6 +392,50 @@ expoのサービスとしてwebアプリ向けのビルドができたり、App.
 hint: ローカルでのみの通知はこれだけだが、外部からのなんらかの通知をしたいときはFCM(Firebase CloudMessaging)とかと組合せて使う事ができる。FCMで使用する場合はクレデンシャル関係の設定とか、通知時にデバイス起動するためのpermissionとかが必要になる
 
 ### ImagePicker
+expoの画像選択ライブラリ
+```
+export default function App() {
+  const [selectedImage, setSelectedImage] = React.useState(null);
+
+  let openImagePickerAsync = async () => {
+    // メディアライブラリへのアクセス権限の確認
+    let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    // 権限無し時の処理
+    if (permissionResult.granted === false) {
+      alert('Permission to access camera roll is required!');
+      return;
+    }
+
+    // メディアライブラリを起動する
+    let pickerResult = await ImagePicker.launchImageLibraryAsync();
+
+    if (pickerResult.cancelled === true) {
+      return;
+    }
+
+    setSelectedImage({ localUri: pickerResult.uri });
+  };
+
+  if (selectedImage !== null) {
+    return (
+      <View style={styles.container}>
+        <Image
+          // sourceにuriを指定して選択した画像を表示するようにする
+          source={{ uri: selectedImage.localUri }}
+          style={styles.thumbnail}
+        />
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      {/* Our logo, instructions, and picker button are hidden here to keep the example brief */}
+    </View>
+  );
+}
+```
 
 ### ImageSharering
 
