@@ -392,12 +392,16 @@ expoのサービスとしてwebアプリ向けのビルドができたり、App.
 hint: ローカルでのみの通知はこれだけだが、外部からのなんらかの通知をしたいときはFCM(Firebase CloudMessaging)とかと組合せて使う事ができる。FCMで使用する場合はクレデンシャル関係の設定とか、通知時にデバイス起動するためのpermissionとかが必要になる
 
 ### ImagePicker
-expoの画像選択ライブラリ
+ReactNative自体には画像ピッカーが存在しない。
+expo側にて画像ピッカーが提供されている。
 ```
 export default function App() {
+  
+  // ピッカーで選択した画像を覚えておくstate
   const [selectedImage, setSelectedImage] = React.useState(null);
 
   let openImagePickerAsync = async () => {
+
     // メディアライブラリへのアクセス権限の確認
     let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -410,13 +414,16 @@ export default function App() {
     // メディアライブラリを起動する
     let pickerResult = await ImagePicker.launchImageLibraryAsync();
 
+    // メディアライブラリでキャンセルされた時はここで関数を終了する
     if (pickerResult.cancelled === true) {
       return;
     }
 
+    // 画像が選択されたら選択された画像のuriをオブジェクトにしてsetする
     setSelectedImage({ localUri: pickerResult.uri });
   };
 
+  // 画像が選択されていれば表示する
   if (selectedImage !== null) {
     return (
       <View style={styles.container}>
@@ -438,6 +445,55 @@ export default function App() {
 ```
 
 ### ImageSharering
+画像の共有(LINEで共有とかtwitterで共有とかのできるアレ)機能を提供するexpoライブラリ
+
+```
+import React from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import * as Sharing from 'expo-sharing'; 
+export default function App() {
+  const [selectedImage, setSelectedImage] = React.useState(null);
+
+  let openImagePickerAsync = async () => {
+    /* imagepickerのやつとまったく同じコードなので省略 */
+
+    setSelectedImage({ localUri: pickerResult.uri });
+  };
+
+  // 画像共有のダイアログを表示
+  let openShareDialogAsync = async () => {
+
+    // 使っているデバイスで画像共有ができない場合アラートをだして終了
+    if (!(await Sharing.isAvailableAsync())) {
+      alert(`Uh oh, sharing isn't available on your platform`);
+      return;
+    }
+
+    // 選択している画像(uriを指定)で共有ダイアログを開く
+    await Sharing.shareAsync(selectedImage.localUri);
+  }; 
+
+  if (selectedImage !== null) {
+    return (
+      <View style={styles.container}>
+        <Image source={{ uri: selectedImage.localUri }} style={styles.thumbnail} />
+        
+        {/* 画像共有ダイアログを開くボタン */}
+        <TouchableOpacity onPress={openShareDialogAsync} style={styles.button}>
+          <Text style={styles.buttonText}>Share this photo</Text>
+        </TouchableOpacity>
+        </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      {/* Our logo, instructions, and picker button are hidden here to keep the example brief */}
+    </View>
+  );
+}
+```
 
 ### [App.Loadingを使ってUIの準備できてから表示する](https://docs.expo.dev/versions/latest/sdk/app-loading/)
 
