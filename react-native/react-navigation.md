@@ -1,8 +1,14 @@
 # React Navigation
-hint: webで言うところのルーティングを提供してくれるやつだよ！
+webで言うところのルーティングを提供してくれるやつだよ！
 ちょっとめんどくさい実装したところについてだけまとめているよ！
 
 attention: いろいろと書きたいところあるはず。とくにネストしたり子要素与えたり
+
+## インストール
+`$ npm install @react-navigation/native`でインストールし、
+expoを使っている場合は
+`$ expo install react-native-screens react-native-safe-area-context`
+で準備は完了だが、使用するナビゲーターに応じて随時パッケージをインストールする必要がある
 
 ## 各ナビゲーターの使い方
 

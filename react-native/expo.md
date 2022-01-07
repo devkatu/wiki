@@ -20,6 +20,8 @@ expoを使用しないreactnativeの開発もベアプロジェクトとかい�
 ## expoの開発流れ
 
 ### プロジェクト初期化、開発スタート
+まずは`$ npm install -g expo-cli`でexpoのcliをインストール
+
 `$ expo init my-app`
 `$ cd my-app`
 `$ expo start`または`$ npm start`
