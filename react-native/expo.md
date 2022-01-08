@@ -1,8 +1,6 @@
 # Expo
 
-[https://docs.expo.dev/introduction/walkthrough/](https://docs.expo.dev/introduction/walkthrough/)基本的なexpo開発の流れはここ
-
-attention: 書きかけの項目
+基本的なexpo開発の流れはここ→[https://docs.expo.dev/introduction/walkthrough/](https://docs.expo.dev/introduction/walkthrough/)
 
 ## ワークフローについて
 プロジェクト初期化時に以下のワークフローを選択できるはず。
