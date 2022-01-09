@@ -32,12 +32,11 @@ expoを使っている場合は
 
     // ---------- コンテキスト中に囲まれた子スクリーン ----------
     const EditScreen = ({ route, navigation }) => {
-
-    // 共有されたコンテキストを取り出す
-    const { trainingPlanLists,
-      setTrainingPlanLists,
-      trainingContentsLists,
-      setPlanAccordionsOpen } = useContext(TrainingPlanContext);
+      // 共有されたコンテキストを取り出す
+      const { trainingPlanLists,
+        setTrainingPlanLists,
+        trainingContentsLists,
+        setPlanAccordionsOpen } = useContext(TrainingPlanContext);
     ...
 
     // ---------- 親のナビゲーター ----------
