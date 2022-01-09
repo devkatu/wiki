@@ -23,11 +23,8 @@ expoを使っている場合は
   </Stack.Navigator>
   ```
 - 画面に追加のpropsを渡したいときは
-  1. Contextを使う。これを使えばpropsのバケツリレーもしなくて済む。
+  1. Contextを使う。これを使えばpropsのバケツリレーもしなくて済む。  
     ```
-
-
-    
     // ---------- js中のルート ----------
     // 共有するコンテキスト変数を作成する
     const TrainingPlanContext = createContext();
@@ -80,11 +77,27 @@ expoを使っている場合は
       {props => <HomeScreen {...props} extraData={someData} />}
     </Stack.Screen>
     ```
+
 - Screen間の移動は各Screenにpropsとして渡される`navigation`オブジェクトがあるのでそのメソッドである`navigation.navigate()`を用いて行う。このメソッドに渡す引数は移動したいScreenのname属性に設定されている文字列を指定する。
 - `navigation.goBack()`で一つ前の画面に戻ることができる。
+- 各screenを呼出す時に追加でpropsを渡したいときには`navigation.navigate()`の第一引数にScreenを、第二引数にオブジェクトを渡し、呼出されるScreen側に`route`引数が渡されるので、その中の`route.params`から渡されたオブジェクトを読取ることができる。
+  ```
+    // ----- 画面の呼出し側 -----
+    navigation.navigate('EditScreen', {id: 10, text: "editing"})
 
-attention:
-- 各screenを呼出す時に追加でpropsを渡したいときには`navigation.navigate()`の第二引数に
+    // ----- 呼出される画面 -----
+    const EditScreen = ({route, navigation}) => {
+      // route.paramsから分割代入で画面呼出し時の追加propsを取り出す
+      const {id, text} = route.params;
+
+      ...
+    }
+  ```
+
+attention: ここまで
+- パラメータを更新する
+- 初期パラメータを渡す
+- ネストされたナビゲーターにパラメーターを渡す
 
 ### stack  
 - `npm install @react-navigation/////`インストール
