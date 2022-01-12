@@ -80,7 +80,7 @@ expoを使っている場合は
 - Screen間の移動は各Screenにpropsとして渡される`navigation`オブジェクトがあるのでそのメソッドである`navigation.navigate()`を用いて行う。このメソッドに渡す引数は移動したいScreenのname属性に設定されている文字列を指定する。
 - `navigation.goBack()`で一つ前の画面に戻ることができる。
 - 各screenを呼出す時に追加でpropsを渡したいときには`navigation.navigate()`の第一引数にScreenを、第二引数にオブジェクトを渡し、呼出されるScreen側に`route`引数が渡されるので、その中の`route.params`から渡されたオブジェクトを読取ることができる。
-  ```
+  ```javascript
     // ----- 画面の呼出し側 -----
     navigation.navigate('EditScreen', {id: 10, text: "editing"})
 
@@ -93,10 +93,46 @@ expoを使っている場合は
     }
   ```
 
-attention: ここまで
-- パラメータを更新する
-- 初期パラメータを渡す
+
+- 各スクリーンにてパラメータを更新したいときは`navigation.setParams()`
+  ```javascript
+  navigation.setParams({
+    query: 'someText',
+  });
+  ```
+- スクリーンの定義時に予め初期パラメータを設定しておきたい場合は下記で。呼び出し時に何もパラメータを指定しなければ初期パラメータで、指定した場合は初期パラーメータと浅くマージされたものがパラメータとなる
+  ```
+  <Stack.Navigator>
+    <Stack.Screen
+      name="Details"
+      component={DetailsScreen}
+      initialParams={{ itemId: 42 }}
+    />
+  ...
+  </Stack.Navigator>
+  ```
 - ネストされたナビゲーターにパラメーターを渡す
+  ```javascript
+  // Account > Setting
+  // にパラメータとして{user: 'jane'}を渡して画面遷移する
+  navigation.navigate('Account', {
+    screen: 'Settings',
+    params: { user: 'jane' },
+  });
+
+  // Settincgs > Sound > Media
+  // へ画面遷移する。さらにMediaに対してパラメータを指定することも可能
+  navigation.navigate('Root', {
+  screen: 'Settings',
+  params: {
+    screen: 'Sound',
+    params: {
+      screen: 'Media',
+    },
+  },
+});
+  ```
+attention: ここまで
 
 ### stack  
 - `npm install @react-navigation/////`インストール
