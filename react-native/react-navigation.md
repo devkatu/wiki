@@ -95,6 +95,7 @@ expoを使っている場合は
 
 
 - 各スクリーンにてパラメータを更新したいときは`navigation.setParams()`
+  ただし画面オプションを変更したいときは`navigation.setOptions()`を使用すること
   ```javascript
   navigation.setParams({
     query: 'someText',
@@ -123,16 +124,22 @@ expoを使っている場合は
   // Settincgs > Sound > Media
   // へ画面遷移する。さらにMediaに対してパラメータを指定することも可能
   navigation.navigate('Root', {
-  screen: 'Settings',
-  params: {
-    screen: 'Sound',
+    screen: 'Settings',
     params: {
-      screen: 'Media',
+      screen: 'Sound',
+      params: {
+        screen: 'Media',
+      },
     },
-  },
-});
+  });
   ```
-attention: ここまで
+- パラメータとして渡す値は画面の表示に必要な最小限のデータを渡す(色々な情報が含まれているuserオブジェクトを渡す代わりに、userのIDのみをパラメータとするとか)
+  1. ユーザーID、アイテムIDなどのID。例： `navigation.navigate('Profile', { userId: 'Jane' })`
+  2. アイテムのリストがある場合のデータの並べ替え、フィルタリングなどのパラメータ。 `navigation.navigate('Feeds', { sortBy: 'latest' })`
+  3. タイムスタンプ、ページ番号、またはページネーション用のカーソル、例： `navigation.navigate('Chat', { beforeTime: 1603897152675 })`
+  4. 何かを構成するために画面上の入力を埋めるためのデータ。 `navigation.navigate('ComposeTweet', { title: 'Hello world!' })`
+
+  attention: ここまで
 
 ### stack  
 - `npm install @react-navigation/////`インストール
