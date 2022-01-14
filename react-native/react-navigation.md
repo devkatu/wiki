@@ -95,7 +95,7 @@ expoを使っている場合は
 
 
 - 各スクリーンにてパラメータを更新したいときは`navigation.setParams()`
-  ただし画面オプションを変更したいときは`navigation.setOptions()`を使用すること
+  ただし個々の画面オプション(`<Stack.Screen>`とかのpropsの`options`にあたる)を変更したいときは`navigation.setOptions()`を使用すること
   ```javascript
   navigation.setParams({
     query: 'someText',
@@ -138,7 +138,26 @@ expoを使っている場合は
   2. アイテムのリストがある場合のデータの並べ替え、フィルタリングなどのパラメータ。 `navigation.navigate('Feeds', { sortBy: 'latest' })`
   3. タイムスタンプ、ページ番号、またはページネーション用のカーソル、例： `navigation.navigate('Chat', { beforeTime: 1603897152675 })`
   4. 何かを構成するために画面上の入力を埋めるためのデータ。 `navigation.navigate('ComposeTweet', { title: 'Hello world!' })`
-
+- `Navigator`の`screenOptions`propsや、`Screen`の`options`propsで各種の画面オプションを設定できる。`screenOptions`はナビゲーター配下の画面全部に共通の設定、`options`は各画面個別の設定となる。`options`については`navigator.setOptions()`で随時変更可能。ちなみにナビゲーターをネストした状態でこれらのpropsを変更しても全てのoptionsが変更される事はなく個別にoptionsが適用される
+  ```
+  <Stack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: '#f4511e',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+      }}
+    >
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ title: 'My home' }}
+      />
+    </Stack.Navigator>
+  ```
   attention: ここまで
 
 ### stack  
