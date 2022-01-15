@@ -22,8 +22,9 @@ expoを使っている場合は
     <Stack.Screen name="画面３" component={Screen3}>
   </Stack.Navigator>
   ```
-- 画面に追加のpropsを渡したいときは
-  1. Contextを使う。これを使えばpropsのバケツリレーもしなくて済む。  
+- 画面コンポーネントに追加のpropsを渡したいときは以下のようにする。
+  **(画面の呼び出し時のパラメータ付与は`navigation.navigate()`で行うが、親コンポーネントから子コンポーネント呼び出し時にpropsを渡したいときとか)**
+  1. Contextを使う。これを使えばpropsのバケツリレーもしなくて済む。 こちらが推奨されている 。
     ```
     // ---------- js中のルート ----------
     // 共有するコンテキスト変数を作成する
@@ -70,8 +71,9 @@ expoを使っている場合は
     </TrainingPlanContext.Provider>
     ...
     ```
-  2. `Screen`のpropsである`component`を指定する代わりに、レンダリングコールバックを使用する。**これを使えば`screen`の配下にさらに別の`navigator>screen`を配置することもできる**
+  2. `Screen`のpropsである`component`を指定する代わりに、レンダリングコールバックを使用する。**これを使えば`screen`の配下にさらに別の`navigator>screen`を直書きで配置することもできる**
     ```
+    // component を指定せずにStack.Screenタグを入れ子にしてコールバックを指定
     <Stack.Screen name="Home">
       {props => <HomeScreen {...props} extraData={someData} />}
     </Stack.Screen>
@@ -112,7 +114,35 @@ expoを使っている場合は
   ...
   </Stack.Navigator>
   ```
-- ネストされたナビゲーターにパラメーターを渡す
+- ネストされたナビゲーターにパラメーターを渡して移動する。
+  例えば以下のようにナビゲータをネストすることできる。
+  Account > (Profile + Settings)
+  EditPost
+  ```
+  function Account() {
+    return (
+      <Tab.Navigator>
+        <Tab.Screen name="Profile" component={Profile} />
+        <Tab.Screen name="Settings" component={Settings} />
+      </Tab.Navigator>
+    );
+  }
+
+  function App() {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Account"
+            component={Account}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="EditPost" component={EditPost} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
+  ```
   ```javascript
   // Account > Setting
   // にパラメータとして{user: 'jane'}を渡して画面遷移する
@@ -133,12 +163,13 @@ expoを使っている場合は
     },
   });
   ```
-- パラメータとして渡す値は画面の表示に必要な最小限のデータを渡す(色々な情報が含まれているuserオブジェクトを渡す代わりに、userのIDのみをパラメータとするとか)
+- パラメータとして渡す値は画面の表示に必要な最小限のデータを渡す(色々な情報が含まれているuserオブジェクトを渡す代わりに、userのIDのみをパラメータとするとか)。URLに例えて考えることができ、パラメータにはURLに含めるべきでないデータは、除外する方が良い。クエリパラメータみたいな感じかな
   1. ユーザーID、アイテムIDなどのID。例： `navigation.navigate('Profile', { userId: 'Jane' })`
   2. アイテムのリストがある場合のデータの並べ替え、フィルタリングなどのパラメータ。 `navigation.navigate('Feeds', { sortBy: 'latest' })`
   3. タイムスタンプ、ページ番号、またはページネーション用のカーソル、例： `navigation.navigate('Chat', { beforeTime: 1603897152675 })`
   4. 何かを構成するために画面上の入力を埋めるためのデータ。 `navigation.navigate('ComposeTweet', { title: 'Hello world!' })`
-- `Navigator`の`screenOptions`propsや、`Screen`の`options`propsで各種の画面オプションを設定できる。`screenOptions`はナビゲーター配下の画面全部に共通の設定、`options`は各画面個別の設定となる。`options`については`navigator.setOptions()`で随時変更可能。ちなみにナビゲーターをネストした状態でこれらのpropsを変更しても全てのoptionsが変更される事はなく個別にoptionsが適用される
+- `Navigator`の`screenOptions`propsや、`Screen`の`options`propsで各種の画面オプションを設定できる。`screenOptions`はナビゲーター配下の画面全部に共通の設定、`options`は各画面個別の設定となる。`options`については`navigator.setOptions()`で随時変更可能。ちなみにナビゲーターをネストした状態でこれらのpropsを変更しても全てのoptionsが変更される事はなく個別にoptionsが適用される。
+よく使うのは`{headerShown: false}`でヘッダーを消したり、`{title: 'screen title'}`でスクリーンのタイトルを指定したりするやつ。4
   ```
   <Stack.Navigator
       screenOptions={{
@@ -158,7 +189,8 @@ expoを使っている場合は
       />
     </Stack.Navigator>
   ```
-  attention: ここまで
+
+hint: ここまで
 
 ### stack  
 - `npm install @react-navigation/////`インストール
