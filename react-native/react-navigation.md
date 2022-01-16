@@ -189,6 +189,56 @@ expoを使っている場合は
       />
     </Stack.Navigator>
   ```
+- ナビゲーションのライフサイクル
+  該当の画面にfocusされたとき、blurしたときで各イベントが発行される。reactのuseEffect副作用のような感じで、フックを使うことができる。以下のような感じで使う。これもuseCallbackでラップしてあげてメモ化しておくとよい。
+  ```javascript
+  useFocusEffect(
+    useCallback(() => {
+      // focus時の処理
+
+      return () => {
+        // blur時の処理
+      }
+    },[
+      // 依存関係の変数を配列で指定
+    ])
+  )
+  ```
+
+  以下のように実装したこともある。
+  ```javascript
+  useFocusEffect(
+    // focus時のみを記述
+    useCallback(() => {
+      storage.load({ key: 'personalData' })
+        .then(data => {
+          setBodyHeight(data.bodyHeight);
+          setSex(data.sex);
+          setTargetBodyWeight(data.targetBodyWeight);
+          setTargetFat(data.targetFat);
+        })
+    }, [])
+  )
+  useFocusEffect(
+    useCallback(() => {
+      return (() => {
+        // blur時のみを記述
+        storage.save({
+          key: 'personalData',
+          data: {
+            bodyHeight: bodyHeight,
+            sex: sex,
+            targetBodyWeight: targetBodyWeight,
+            targetFat: targetFat
+          }
+        })
+      })
+      // stateが変更されたらコールバックを再計算する
+      // componentDidMount時と分けているのは
+      // 下の依存配列を設定してしまうとsetStateしまくって無限レンダリングするから
+    }, [bodyHeight, sex, targetBodyWeight, targetFat])
+  )
+  ```
 
 hint: ここまで
 
