@@ -205,7 +205,7 @@ expoを使っている場合は
   )
   ```
 
-  以下のように実装したこともある。
+  focus時とblur時の依存配列を別にしたく以下のように実装したこともある。
   ```javascript
   useFocusEffect(
     // focus時のみを記述
@@ -243,21 +243,57 @@ expoを使っている場合は
 hint: ここまで
 
 ### stack  
-- `npm install @react-navigation/////`インストール
-子スクリーンへ遷移したあと、端末の戻るボタン等を押し下げると前のスクリーンに戻る。webブラウザのようなイメージのもの。
-
+- インストールは
+  `npm install @react-navigation/stack`
+  とexpoなら
+  `expo install react-native-gesture-handler`
+  expoでなければ
+  `npm install react-native-gesture-handler`
+- 上部に表示される文字は`<Stack.Screen/>`に渡す`name`propsで決まる。
 - `navigation.push()`を使うとstackに新しいルートを追加する。
 - `navigation.pop()`を使うと一つ前の画面に戻る。
+- `navigation.popToTop()`を使うと全ての画面をポップして初期の画面に戻る。
 
 ### drawer
-ドロワーメニューを使えるようになる。ドロワーメニューに表示される文字は　で決まる。
-
+- インストールは
+  `npm install @react-navigation/drawer`
+  とexpoなら
+  `expo install react-native-gesture-handler react-native-reanimated`
+  expoでなければ
+  `npm install react-native-gesture-handler react-native-reanimated`
+- ドロワーメニューに表示される文字は`<Drawer.Screen/>`に渡す`name`propsで決まる。
 - `navigation.openDrawer()`でドロワーメニューを開く。
 - `navigation.closeDrawer()`でドロワーメニューを閉じる。
 - `navigation.toggleDrawer()`でドロワーメニューを開閉する。
+- `useDrawerStatus()`でドロワーの開閉状態を取得できる
 
 ### tab
-タブ切替が使えるようになる。タブメニューに表示される文字は　で決まる。
+- インストールは
+  `npm install @react-navigation/bottom-tabs` とか
+  `npm install @react-navigation/material-top-tabs react-native-tab-view`
+- タブメニューに表示される文字は`<Tab.Screen/>`に渡す`name`propsで決まる。
+- `navigation.navigate()`でスクリーン指定して遷移可能
+- 以下のscreenOptionsを指定してタブのアイコンを切り替えるようにするとかっこいいかも
+  ```javascript
+  screenOptions={({ route }) => ({
+    tabBarIcon: ({ focused, color, size }) => {
+      let iconName;
+
+      if (route.name === 'Home') {
+        iconName = focused
+          ? 'ios-information-circle'
+          : 'ios-information-circle-outline';
+      } else if (route.name === 'Settings') {
+        iconName = focused ? 'ios-list-box' : 'ios-list';
+      }
+
+      // You can return any component that you like here!
+      return <Ionicons name={iconName} size={size} color={color} />;
+    },
+    tabBarActiveTintColor: 'tomato',
+    tabBarInactiveTintColor: 'gray',
+  })}
+  ```
 
 ### ナビゲーターによるコンポーネントへの初期パラメーターの設定
 #### initialParams属性で指定
