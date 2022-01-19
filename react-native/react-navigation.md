@@ -8,77 +8,30 @@ expoを使っている場合は
 `$ expo install react-native-screens react-native-safe-area-context`
 で準備は完了だが、使用するナビゲーターに応じて随時パッケージをインストールする必要がある
 ### 使用方法
-- 基本は`const Xxxxxx = createXxxxxxNavigator();`としてやると`Navigator`と`Screen`のプロパティを持つオブジェクト`Xxxxxx`が得られるので`Xxxxxx.Navigator`で複数の`Xxxxxx.Screen`を囲ってやると各ナビゲーションを使えるようになる
+- 基本は`const Xxxxxx = createXxxxxxNavigator();`としてやると`Navigator`と`Screen`のプロパティを持つオブジェクト`Xxxxxx`が得られるので`Xxxxxx.Navigator`で複数の`Xxxxxx.Screen`を囲ってやると各ナビゲーションを使えるようになる。また全てのナビゲーター構造を`<NavigationContainer>`でラップしてあげること。
   ```
-  const Stack = createStackNavigator();
-  ... 
-  <Stack.Navigator initialRouteName="画面１">
-    <Stack.Screen name="画面１" component={Screen1}>
-    <Stack.Screen name="画面２" component={Screen2}>
-    <Stack.Screen name="画面３" component={Screen3}>
-  </Stack.Navigator>
-  ```
-- 画面コンポーネントに追加のpropsを渡したいときは以下の二つの方法がある。
+  import { NavigationContainer } from '@react-navigation/native';
+  import { createStackNavigator } from '@react-navigation/stack';
   
-  hint: 基本画面の呼び出し時のパラメータ付与は`navigation.navigate()`の第二引数で、初期パラメータの指定は`Xxxxx.Screen`の`initialParams`で行うが、親コンポーネントから子コンポーネント呼び出し時にpropsを渡したいときとかに使う
+  ...
+  
+  const Stack = createStackNavigator();
+  
+  ... 
+  
+  <NavigationContainer>
+    <Stack.Navigator initialRouteName="画面１">
+      <Stack.Screen name="画面１" component={Screen1}>
+      <Stack.Screen name="画面２" component={Screen2}>
+      <Stack.Screen name="画面３" component={Screen3}>
+    </Stack.Navigator>
+  </NavigationContainer>
+  ```
 
-  1. Contextを使う。これを使えばpropsのバケツリレーもしなくて済む。 こちらが推奨されている 。
-          ```
-          // ---------- js中のルート ----------
-          // 共有するコンテキスト変数を作成する
-          const TrainingPlanContext = createContext();
-
-          // ---------- コンテキスト中に囲まれた子スクリーン ----------
-          const EditScreen = ({ route, navigation }) => {
-            // 共有されたコンテキストを取り出す
-            const { trainingPlanLists,
-              setTrainingPlanLists,
-              trainingContentsLists,
-              setPlanAccordionsOpen } = useContext(TrainingPlanContext);
-          ...
-
-          // ---------- 親のナビゲーター ----------
-          {/* コンテキストプロバイダーコンポーネントで囲い、コンテキストの共有を行う。プロバイダーで囲われた中で、コンテキストの読出しを行うことができる */}
-          ...
-          <TrainingPlanContext.Provider
-            value={{
-              trainingPlanLists,
-              setTrainingPlanLists,
-              trainingContentsLists,
-              setPlanAccordionsOpen
-            }}
-          >
-            <Tab.Navigator>
-              <Tab.Screen name="トレーニング予定" component="TrainingPlan">
-              <Tab.Screen name="プランの編集">
-                {() => {
-                  return (
-                    <Stack.Navigator
-                      // ヘッダー非表示とする
-                      screenOptions={{ headerShown: false }}
-                      initialRouteName="プラン一覧"
-                    >
-                      <Stack.Screen name="プラン一覧" component={ListScreen} />
-                      <Stack.Screen name="プラン編集" component={EditScreen} />
-                    </Stack.Navigator>
-                  )
-                }}
-              </Tab.Screen>
-            </Tab.Navigator>
-          </TrainingPlanContext.Provider>
-          ...
-          ```
-  2. `Screen`のpropsである`component`を指定する代わりに、レンダリングコールバックを使用する。**これを使えば`screen`の配下にさらに別の`navigator>screen`を直書きで配置することもできる。**あまり複雑なコンポーネントを作るわけでなければファイル分けるより直書きの方が見やすいと思う。
-    ```
-    // Stack.Screenタグに component を指定せずに、入れ子にしてコールバックを指定
-    <Stack.Screen name="Home">
-      {props => <HomeScreen {...props} extraData={someData} />}
-    </Stack.Screen>
-    ```
 
 - Screen間の移動は各Screenにpropsとして渡される`navigation`オブジェクトがあるのでそのメソッドである`navigation.navigate()`を用いて行う。このメソッドに渡す引数は移動したいScreenのname属性に設定されている文字列を指定する。
 - `navigation.goBack()`で一つ前の画面に戻ることができる。
-- 各screenを呼出す時に追加でpropsを渡したいときには`navigation.navigate()`の第一引数にScreenを、第二引数にオブジェクトを渡し、呼出されるScreen側に`route`引数が渡されるので、その中の`route.params`から渡されたオブジェクトを読取ることができる。
+- 各screenを呼出す時にパラメータを指定したいときには`navigation.navigate()`の第一引数にScreenを、第二引数にオブジェクトを渡し、呼出されるScreen側に`route`引数が渡されるので、その中の`route.params`から渡されたオブジェクトを読取ることができる。
   ```javascript
     // ----- 画面の呼出し側 -----
     navigation.navigate('EditScreen', {id: 10, text: "editing"})
@@ -91,7 +44,6 @@ expoを使っている場合は
       ...
     }
   ```
-
 - 各スクリーンにてパラメータを更新したいときは`navigation.setParams()`
   ただし個々の画面オプション(`<Stack.Screen>`とかのpropsの`options`にあたる)を変更したいときは`navigation.setOptions()`を使用すること
   ```javascript
@@ -164,6 +116,63 @@ expoを使っている場合は
   2. アイテムのリストがある場合のデータの並べ替え、フィルタリングなどのパラメータ。 `navigation.navigate('Feeds', { sortBy: 'latest' })`
   3. タイムスタンプ、ページ番号、またはページネーション用のカーソル、例： `navigation.navigate('Chat', { beforeTime: 1603897152675 })`
   4. 何かを構成するために画面上の入力を埋めるためのデータ。 `navigation.navigate('ComposeTweet', { title: 'Hello world!' })`
+- 画面コンポーネントに追加のpropsを渡したいときは以下の二つの方法がある。
+  
+  hint: 基本画面の呼び出し時のパラメータ付与は`navigation.navigate()`の第二引数で、初期パラメータの指定は`Xxxxx.Screen`の`initialParams`で行うが、親コンポーネントから子コンポーネント呼び出し時にpropsを渡したいときとかに使う
+
+  1. Contextを使う。これを使えばpropsのバケツリレーもしなくて済む。 こちらが推奨されている 。
+          ```
+          // ---------- js中のルート ----------
+          // 共有するコンテキスト変数を作成する
+          const TrainingPlanContext = createContext();
+
+          // ---------- コンテキスト中に囲まれた子スクリーン ----------
+          const EditScreen = ({ route, navigation }) => {
+            // 共有されたコンテキストを取り出す
+            const { trainingPlanLists,
+              setTrainingPlanLists,
+              trainingContentsLists,
+              setPlanAccordionsOpen } = useContext(TrainingPlanContext);
+          ...
+
+          // ---------- 親のナビゲーター ----------
+          {/* コンテキストプロバイダーコンポーネントで囲い、コンテキストの共有を行う。プロバイダーで囲われた中で、コンテキストの読出しを行うことができる */}
+          ...
+          <TrainingPlanContext.Provider
+            value={{
+              trainingPlanLists,
+              setTrainingPlanLists,
+              trainingContentsLists,
+              setPlanAccordionsOpen
+            }}
+          >
+            <Tab.Navigator>
+              <Tab.Screen name="トレーニング予定" component="TrainingPlan">
+              <Tab.Screen name="プランの編集">
+                {() => {
+                  return (
+                    <Stack.Navigator
+                      // ヘッダー非表示とする
+                      screenOptions={{ headerShown: false }}
+                      initialRouteName="プラン一覧"
+                    >
+                      <Stack.Screen name="プラン一覧" component={ListScreen} />
+                      <Stack.Screen name="プラン編集" component={EditScreen} />
+                    </Stack.Navigator>
+                  )
+                }}
+              </Tab.Screen>
+            </Tab.Navigator>
+          </TrainingPlanContext.Provider>
+          ...
+          ```
+  2. `Screen`のpropsである`component`を指定する代わりに、レンダリングコールバックを使用する。**これを使えば`screen`の配下にさらに別の`navigator>screen`を直書きで配置することもできる。**あまり複雑なコンポーネントを作るわけでなければファイル分けるより直書きの方が見やすいと思う。
+    ```
+    // Stack.Screenタグに component を指定せずに、入れ子にしてコールバックを指定
+    <Stack.Screen name="Home">
+      {props => <HomeScreen {...props} extraData={someData} />}
+    </Stack.Screen>
+    ```
 - `Navigator`の`screenOptions`propsや、`Screen`の`options`propsで各種の画面オプションを設定できる。`screenOptions`はナビゲーター配下の画面全部に共通の設定、`options`は各画面個別の設定となる。`options`については`navigator.setOptions()`で随時変更可能。ちなみにナビゲーターをネストした状態でこれらのpropsを変更しても全てのoptionsが変更される事はなく個別にoptionsが適用される。
 よく使うのは`{headerShown: false}`でヘッダーを消したり、`{title: 'screen title'}`でスクリーンのタイトルを指定したりするやつ。4
   ```
@@ -294,7 +303,7 @@ expoを使っている場合は
 
 ---
 
-## 使ったやつとかtips
+## 使ったものやtips
 ### initialParams属性で初期パラメータ指定
 ``` 
 <Drawer.Navigator initialRouteName="Home">
