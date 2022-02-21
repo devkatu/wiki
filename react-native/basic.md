@@ -372,4 +372,61 @@ const {height, width} = Dimensions.get('window');
 
 コールバック関数に渡される引数には`PresseEvent`オブジェクトであり、これを参照するとタッチした箇所の座標が取得できたりする。自分で`TouchableXXXX`コンポーネントをカスタマイズしてタップ時の座標を取得してなんかしたいときに使えるかも
 
+## google playへの公開
+google playへの公開は難しくはないけど**めんどくさいこと多い！！**
+審査も結構かかる！筋トレNOTEで４，５日かかった。掲載情報の変更は結構早くに終わった。
+
+- 開発者アカウントの作成(完了済み)。初回のみ登録にお金かかる
+- googleplay console上でアプリを新規作成
+- アプリのアクセス権、広告有無、対象ユーザー等を決定する。質問形式で決まっていくので楽ちん
+- プライバシーポリシーの作成
+  - 超めんどくさいので自動生成サービス使う[ここ](https://app-privacy-policy-generator.firebaseapp.com/)
+  - 生成したページをどこかにホストする。筋トレNOTEは[gigthubpages](https://devkatu.github.io/trainingmemoapp-privacy/)にホストしてみた
+- ストア掲載情報の入力(ここが一番重要)
+  - アイコン画像は512*512。expoで設定する画像サイズと同じなので流用
+  - フィーチャー画像は1024*500。シンプルにpixlrで作成した
+  - スクショ(モックアップ)はAppMockUpで作成。2～8 枚アップロード。PNG または JPEG で、8 MB 以下、縦横がそれぞれ 320～3,840 ピクセル。できればアスペクト比 16:9 または 9:16 。
+  - スクショ実機で取る時は、Developer Optionを有効にした状態で、Settingsの"System -> Developer options -> System UI demo mode"でDemo Modeのにしてからとるとステータスバーの情報が隠れていい感じになる
+  - **アプリ検索上位を狙う為に、タイトル・詳細説明に検索キーワードをモリモリ盛り込み、レビュー(回答もちゃんやるのがいい)・ダウンロードを増やすように心がける。タイトルは開発したアプリの名称とはことなってもいいみたい**
+  - **上位表示されたうえでスクリーンショットをみてもらい、使用イメージを一目でわかってもらうのが重要。一言でどんなアプリなのかを盛り込むとか使用イメージが直感的に分かるのがいいかも。詳細に色々文字で書きすぎても読むほうがめんどくさくなっちゃうのできをつけよう**
+
+## admobの使用(expo-ads-admob)
+
+- admob上でアプリを新規作成
+- admobのアプリの設定で表示される**アプリID**をapp.jsonの`expo.android.config.googleMobileAdsAppId`へ設定
+- 広告ユニットをコンポーネントとして切り出して作成し、admobのアプリの設定で表示される**広告ID**を確認してコンポーネントに設定する。platformごと、開発モード・プロダクトモード毎にtestIDと切り替えられるようにしておかないとだめ。デバッグ中に広告クリックしたりしたら広告停止されちゃうこともあるみたい。
+
+    ```
+    const Admob_banner = () => {
+    // テスト用のID
+    // 実機テスト時に誤ってタップしたりすると、広告の配信停止をされたりするため、テスト時はこちらを設定する
+    const testUnitID = Platform.select({
+        // https://developers.google.com/admob/ios/test-ads
+        ios: 'ca-app-pub-3940256099942544/2934735716',
+        // https://developers.google.com/admob/android/test-ads
+        android: 'ca-app-pub-3940256099942544/6300978111',
+    });
+
+    // 実際に広告配信する際のID
+    // 広告ユニット（バナー）を作成した際に表示されたものを設定する
+    const adUnitID = Platform.select({
+        ios: 'ca-app-pub-xxxxxxxxxxxxxxxx/yyyyyyyyyy',
+        android: 'ca-app-pub-3835035638508936/4560022535',
+    });
+
+    return (
+        <View>
+        <AdMobBanner
+            bannerSize="fullBanner"
+            // adUnitID={adUnitID}
+            adUnitID={__DEV__ ? testUnitID : adUnitID}
+            servePersonalizedAds // パーソナライズされた広告の可否。App Tracking Transparencyの対応時に使用。
+        />
+        </View>
+    )
+    }
+    ```
+
+- アプリ本体をストアに公開したら、admobのアプリの設定から公開したアプリを検索してリンクすれば完了
+
 ---
