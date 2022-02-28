@@ -2,21 +2,25 @@
 
 ## firebase導入方法ざっくり
 
-### ダッシュボード(firebaseコンソール)での作業
+### firebaseコンソールでの作業
 - ブラウザ上でfirebaseコンソールを開いて、プロジェクトを作成する。
 - 作成したfirebaseプロジェクトについて追加するWEBアプリ等を設定する。firebaseコンソールのtopから"プロジェクトを追加"で表示される手順通りでOK。この時点で、アプリを作成させておく必要はなく、あとでアプリ側からこのfirebaseプロジェクトへアクセスするようなイメージとなる。
 - "プロジェクトの設定"からリソースロケーションを設定する
   - **asia-northeast1**のリージョンにしておけばよい。**一回設定すると変更不可のはずなので注意**
 - プロジェクトに、FirestoreDatabaseを作成しする。FirestoreDatabaseをクリックして表示される手順通りでOK。本番環境でOK。
 
-### コンソールからの作業
+### PC上コンソールからの作業
 - `$ npm install -g firebase-tools`  
 これをインストールするとfirebaseのCLIが使えるようになる
 - `$ npm install -s firebase`  
 アプリでfirebaseを使う為にこのパッケージをインストールしておく。firebaseをimportして`storage`やら`database`やらが使えるよになる
 - アプリのディレクトリから `$ firebase login` を行い作成したプロジェクトにログインする。アカウントにログイン後、先にfirebaseコンソールで作成したプロジェクトが選択できるはず。
 - `$ firebase init` で初期化を行う
-使用サービスをスペースキーで選択する。firestoreとかfunctionsとかhostingとかstorageとか選べる。使用するプロジェクトを選択する。既存のプロジェクトや新規プロジェクトとか選べる。hostingの選択ではホストするディレクトリを選択するので、`build`ディレクトリを選択しておく。あとはほとんどデフォルト。ここでいろんなディレクトリとか設定ファイルが作成される。
+    - 使用サービスをスペースキーで選択する。firestoreとかfunctionsとかhostingとかstorageとか選べる。
+    - 使用するプロジェクトを選択する。既存のプロジェクトや新規プロジェクトとか選べる。hostingの選択ではホストするディレクトリを選択するので、`build`ディレクトリを選択しておく。あとはほとんどデフォルト。ここでいろんなディレクトリとか設定ファイルが作成される。
+    - initが終わると新しいフォルダやファイルができている。
+      - functionsフォルダはサーバー側での処理を記述するやつ
+      - firestore.rules,storage.rulesはfirestoreやstorageとかのパーミッションを指定するもの。**変更したら**`$ firestore deploy`**する必要あり**
 - `$ npm run build` してから `$ firebase deploy`をするとhostやらrulesなんやらがfirebaseへデプロイされる。**この後はアプリ作ればbuildしてdeploy、rules変えたりしてもdeployする必要あり。**
 - `$ firebase deploy`について
 以下ルールのみ、とか項目選択してデプロイするオプションあり  
@@ -28,34 +32,53 @@
   - `--only firestore:indexes`
   - `--only functions`
 
-・firebaseをinitすると
-　・functionsフォルダ
-　　サーバー側での処理を記述するファイル。
-　・firestore.rulesとかsotorage.rulesとかについて
-　　firestoreやstorageとかのパーミッションを設定するファイル。
-　　変更したらfirebase deployする必要がある。
+## firebaseを使いやすいようにするために自分で作るもの
+- src>firebase>config.js
+  firebaseの設定を行うファイル。APIkeyとか入ってるやつ。
+  firebaseコンソールの設定→Firebase SDK Snippet(SDKの設定と構成)→構成から`const firebaseConfig = { apiKey: xxxxxx, ... } `を丸コピーしてこのファイルに張り付けている。
+- src>firebase>index.js
+  上のconfig.jsの構成を読み込んで初期化したり、使用するFirebaseサービスを読込んで使いやすくエクスポートしてあげたりする
+  ```javascript
+  // firebaseの各サービスを使うためのインポート
+  // import firebase from 'firebase/app';
+  import firebase from 'firebase/app';
+  import 'firebase/auth';
+  import 'firebase/firestore';
+  import 'firebase/storage';
+  import 'firebase/functions';
+  import {firebaseConfig} from './config';
 
-・firebaseを使いやすいようにするために自分で作るもの
-　・src>firebase>config.js
-　　firebaseの設定を行うファイル。APIkeyとか入ってる。
-　　firebaseコンソールの設定→Firebase SDK Snippet→構成から丸コピーしてこのファイルに張り付けている。
-　・src>firebase>index.js
-　　上のconfig.jsを読込んでinitislizeApp(firebaseConfig)したり
-　　使用するFirebaseサービスを読込んで使いやすくエクスポートしてあげたりする
+  // firebaseの設定ファイルをもとにこのfirebaseの初期化を行って、
+  // このアプリでfirebaseを使えるようにする
+  firebase.initializeApp(firebaseConfig);
 
-・auth(firebase.auth)について
-　・まずはコンソールから、signin方法を選択して有効にする。
-　　動画ではこの後にconfig.jsへ設定コピーしていたがいつでもいいと思う
-　auth.createUserWithEmailAndPassword(email, password).then(result => {})
-　　→メールアドレスとパスワードでユーザーアカウントを作成する。resultにはuser情報とかが入っているオブジェクトが入る
-　　作成に成功したら、dbにもresult.user.uidをidとするドキュメントを登録するとよい。
-　auth.signInWithEmailAndPassword(email, password).then(result => {})
-　　→メールアドレスとパスワードでログインする。resultにはuser情報とかが入っているオブジェクトが入る
-　auth.signOut().then(() => {})
-　　→ログアウトを行う。
-　auth.onAuthStateChanged(user => {})
-　　→現在のログイン状態を確認できる。userにはユーザー情報が入りuser.uidがユーザーIDとなる。
-　　このrulesでのresource.auth.uidとかと一緒
+  // エントリポイントとしてexportするもの
+  // ここで一括しておけば他で使うとき楽
+  // auth     : 認証関係で使う
+  // db       : データベース格納
+  // storage  : ファイル関係格納
+  // functions: サーバー側の処理記述する？
+  // FirebaseTimestamp: サーバーからタイムスタンプを取得する。このタイムスタンプを
+  // データベースのフィールドにセットしておいて、データのソートをしたりする。
+  export const auth = firebase.auth();
+  export const db = firebase.firestore();
+  export const storage = firebase.storage();
+  export const functions = firebase.functions();
+  export const FirebaseTimestamp = firebase.firestore.Timestamp;
+  ```
+
+
+## auth(firebase.auth)のユーザー認証等の各メソッドについて
+- まずはfirebaseコンソールから、signin方法を選択して有効にする。
+  動画ではこの後にconfig.jsへ設定コピーしていたがいつでもいいと思う
+- `auth.createUserWithEmailAndPassword(email, password).then(result => {})`  
+  →メールアドレスとパスワードでユーザーアカウントを作成する。resultにはuser情報とかが入っているオブジェクトが入る。作成に成功したら、dbにもresult.user.uidをidとするドキュメントを登録するとよい。作成したユーザーを記録しておき、必要に応じて使えるよ
+- `auth.signInWithEmailAndPassword(email, password).then(result => {})`  
+  →メールアドレスとパスワードでログインする。resultにはuser情報とかが入っているオブジェクトが入る。
+- `auth.signOut().then(() => {})`
+  →ログアウトを行う。
+- `auth.onAuthStateChanged(user => {})`  
+  →現在のログイン状態を確認できる。userにはユーザー情報が入りuser.uidがユーザーIDとなる。rulesでのresource.auth.uidとかと一緒のはず？
   
 
 ・db(firebase.firestore)のメソッド色々
