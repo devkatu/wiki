@@ -81,45 +81,37 @@
   →現在のログイン状態を確認できる。userにはユーザー情報が入りuser.uidがユーザーIDとなる。rulesでのresource.auth.uidとかと一緒のはず？
   
 
-・db(firebase.firestore)のメソッド色々
-　db.collection('todos').orderBy('timestamp', 'asc').get()
-　　→firestore上のtodosコレクションからtimestampのフィールドについて、
-　　ascなら昇順、descなら降順でドキュメントを取得する
-　db.collection('todos').orderBy('timestamp', 'asc).where('color', '==', color)
-　　orderByしたものから更に'color'フィールドにcolorという変数値が入っているもののみ取り出す
-　　第一引数はドキュメントのフィールドを文字列指定し、第二引数は比較演算子を文字列指定？し、
-　　第三引数は比較する値を入れる。
-　　尚、これは複合クエリといい、firestore.indexes.jsonを修正/デプロイしないとこの複合クエリは使用できない。
-　　めんどくさければクエリを投げた時にでるエラーメッセージをクリックすると勝手にコンソールに
-　　飛び、複合インデックスを作成してくれる。
-　　ちなみにfirestore.rules側で allow read: if resource.data.xxx == 'hoge' のような感じならば
-　　クエリもwhere('xxx', '==', hoge)のようにならなければパーミッションエラーとなる。ルールに合わせること
-　const id = db.collection('todos').doc()
-　　→対象コレクションの新しいドキュメントにセットするIDを取得できる
-　　これをやらずに次のset()をやってもID自動採番されるけど、アプリ側で他にもID使いたい処理が多いのでこれだと楽にできる
-　await db.collection('todos').doc(id).set(initTodo).catch(e => { throw new Error(e) });
-　　→firestore上のtodosコレクションのid指定したドキュメントにinitTodoを登録する
-　　set()の第二引数に {marge: true}というオブジェクトをつけることができる。
-　　これは元のドキュメントとのmargeをするということになる
-　db.collection('todos').doc(id).update(sendTodo)
-　　→firestore上のtodosコレクションのid指定したドキュメントにsendTodoを更新する
-　db.collection('todos').doc(id).delete()
-　　→firestore上のtodosコレクションのid指定したドキュメントを削除する
-　const unsubscribe = db.collection('todos').onSnapshot(snapshots => {
-    snapshots.docChagnges().forEach(change=>{
-        const data = change.doc.data();
-        const changeType = change.type;
-        // added, modified, removedの値をとる
+## db(firebase.firestore)のメソッド色々
+- `db.collection('todos').orderBy('timestamp', 'asc').get()`  
+→firestore上のtodosコレクションからtimestampのフィールドについて、ascなら昇順、descなら降順でドキュメントを取得する
+- `db.collection('todos').orderBy('timestamp', 'asc).where('color', '==', color)`  
+orderByしたものから更に'color'フィールドにcolorという変数値が入っているもののみ取り出す。`where`の第一引数はドキュメントのフィールドを文字列指定し、第二引数は比較演算子を文字列指定？し、第三引数は比較する値を入れる。    
+尚、これは**複合クエリ**といい、firestore.indexes.jsonを修正/デプロイしないとこの複合クエリは使用できない。めんどくさければ**クエリを投げた時にでるエラーメッセージをクリックすると勝手にコンソールに飛び、複合インデックスを作成してくれる。**ちなみにfirestore.rules側で `allow read: if resource.data.xxx == 'hoge' `のような感じならばクエリも`where('xxx', '==', hoge)`のようにならなければパーミッションエラーとなる。ルールに合わせること
+- `const id = db.collection('todos').doc()`  
+→対象コレクションの新しいドキュメントにセットするIDを取得できる  
+これをやらずに次の`set()`をやってもID自動採番されるけど、アプリ側で他にもID使いたい処理が多いのでこれだと楽にできる
+- `await db.collection('todos').doc(id).set(initTodo).catch(e => { throw new Error(e) });`  
+→firestore上のtodosコレクションのid指定したドキュメントにinitTodoを登録する  
+`set()`の第二引数に`{marge: true}`というオブジェクトをつけることができる。
+これは元のドキュメントとのmargeをするということになる
+- `db.collection('todos').doc(id).update(sendTodo)`  
+→firestore上のtodosコレクションのid指定したドキュメントにsendTodoを更新する  
+- `db.collection('todos').doc(id).delete()`  
+→firestore上のtodosコレクションのid指定したドキュメントを削除する  
+- 
+    ```
+    const unsubscribe = db.collection('todos').onSnapshot(snapshots => {
+        snapshots.docChagnges().forEach(change=>{
+            const data = change.doc.data();
+            const changeType = change.type;
+            // added, modified, removedの値をとる
+        })
     })
-　})
-　　→firestore上のtodosコレクションの変化をリッスンする事ができるようになる
-　　changeTypeの値を用いて処理を分岐する。db上の値が確実に変更された事が分かるので
-　　db上の値を変更する処理の後、storeを更新したりするときはコレが良いかも
-　　dbにset()とかを投げて.then()とかでも同じかもだけど
-　　このonsnapshotの戻り値(unsubscribe)にはリスナー登録の解除関数が入っているみたいなので
-　　コンポーネントのマウント解除時(useEffectの第一引数コールバックの戻り値)にreturn () => unsubscribe()で
-　　呼出すようにすること。コンポーネント呼出すたびにコールバック登録されちゃうので
-　慣例的に
+    ```
+    →firestore上のtodosコレクションの変化をリッスンする事ができるようになる  
+    changeTypeの値を用いて処理を分岐する。db上の値が確実に変更された事が分かるのでdb上の値を変更する処理の後、storeを更新したりするときはコレが良いかも  
+    dbに`set()`とかを投げて`.then()`とかでも同じかもだけどこの`onsnapshot()`の戻り値`unsubscribe`にはリスナー登録の解除関数が入っているみたいなのでコンポーネントのマウント解除時(useEffectの第一引数コールバックの戻り値)に`return () => unsubscribe()`で呼出すようにすること。コンポーネント呼出すたびにコールバック登録されちゃうので  
+    慣例的に
 　　const todosRef = db.collection('todos')
 　　　コレクションを変数に入れるときは…Ref
 　　db.collection('todos').doc(id).get().then(snapshots => {...})
