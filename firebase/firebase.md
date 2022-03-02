@@ -99,118 +99,101 @@ orderByしたものから更に'color'フィールドにcolorという変数値�
 - `db.collection('todos').doc(id).delete()`  
 →firestore上のtodosコレクションのid指定したドキュメントを削除する  
 - 
-    ```
-    const unsubscribe = db.collection('todos').onSnapshot(snapshots => {
-        snapshots.docChagnges().forEach(change=>{
-            const data = change.doc.data();
-            const changeType = change.type;
-            // added, modified, removedの値をとる
-        })
-    })
-    ```
-    →firestore上のtodosコレクションの変化をリッスンする事ができるようになる  
-    changeTypeの値を用いて処理を分岐する。db上の値が確実に変更された事が分かるのでdb上の値を変更する処理の後、storeを更新したりするときはコレが良いかも  
-    dbに`set()`とかを投げて`.then()`とかでも同じかもだけどこの`onsnapshot()`の戻り値`unsubscribe`にはリスナー登録の解除関数が入っているみたいなのでコンポーネントのマウント解除時(useEffectの第一引数コールバックの戻り値)に`return () => unsubscribe()`で呼出すようにすること。コンポーネント呼出すたびにコールバック登録されちゃうので  
-    慣例的に
-　　const todosRef = db.collection('todos')
-　　　コレクションを変数に入れるときは…Ref
-　　db.collection('todos').doc(id).get().then(snapshots => {...})
-　　　なんかのdocを取得したときは引数はsnapshotsに　それをforEachで回す
-　　const query = db.collection('todos').orderBy('update', 'asc')
-　　　なんかのコレクションを条件付きで変数に入れるときはquery
-　const batch = db.batch();
-　batch.update(
+  ```javascript
+  const unsubscribe = db.collection('todos').onSnapshot(snapshots => {
+      snapshots.docChagnges().forEach(change=>{
+          const data = change.doc.data();
+          const changeType = change.type;
+          // added, modified, removedの値をとる
+      })
+  })
+  ```
+  →firestore上のtodosコレクションの変化をリッスンする事ができるようになる  
+  changeTypeの値を用いて処理を分岐する。db上の値が確実に変更された事が分かるのでdb上の値を変更する処理の後、storeを更新したりするときはコレが良いかも  
+  dbに`set()`とかを投げて`.then()`とかでも同じかもだけどこの`onsnapshot()`の戻り値`unsubscribe`にはリスナー登録の解除関数が入っているみたいなのでコンポーネントのマウント解除時(useEffectの第一引数コールバックの戻り値)に`return () => unsubscribe()`で呼出すようにすること。コンポーネント呼出すたびにコールバック登録されちゃうので  
+- 慣例的に  
+  - `const todosRef = db.collection('todos')`  
+    コレクションを変数に入れるときは…Ref
+  - `db.collection('todos').doc(id).get().then(snapshots => {...})`  
+    なんかのdocを取得したときは引数はsnapshotsに　それをforEachで回す
+  - `const query = db.collection('todos').orderBy('update', 'asc')`
+    なんかのコレクションを条件付きで変数に入れるときはquery
+- 
+  ```javascript
+  const batch = db.batch();
+  batch.update(
     todosRef.doc(id),{text: "test"}
-　);
-　batch.delete(
+  );
+  batch.delete(
     todosRef.doc(id);
-　);
-　batch.update(
+  );
+  batch.update(
     todosRef.doc(id),{text: "test"}, {marge: true}
-　);
-　batch.commit().then(() => {
-
-　}).catch(() => {
+  );
+  batch.commit().then(() => {
+    ...
+  }).catch(() => {
     throw new Error("batch error")
-　});
-　　一つ以上のfirestoreへのバッチ書き込み処理(読み取りは別)を行う。最初に作ったbatchへ
-　　.updateまたは.delete(書き込みしたいドキュメント, {書き込むデータ}, {marge: true})としてどんどん書いていく。
-　　.update()は複数回書いてもOK。batch.commit()時に実際に書き込み処理をまとめて行い、
-　　一つでも失敗した場合は全てのupdateに記述したdb書き込みの処理をロールバックし、成功した場合は
-　　.thenの処理を行う
-　　{marge:true}はセットの時と同じような使い方になる
+  });
+  ```
+  一つ以上のfirestoreへのバッチ書き込み処理(読み取りは別)を行う。最初に作った`batch`へ.`batch.update(書き込みしたいドキュメント, {書き込むデータ}, {marge: true})`または`batch.delete(削除したいドキュメント)`としてどんどん書いていく。`batch.update()`は複数回書いてもOK。`batch.commit()`時に実際に書き込み処理をまとめて行い、一つでも失敗した場合は全ての`batch.update`に記述したdb書き込みの処理をロールバックし、成功した場合は`batch.then(()=>{ })`の処理を行う。`{marge:true}`はセットの時と同じような使い方になる
 　　
-・dbのルール
-　firestore.rulesにdbへのオペレーションを制御するルールを記述できる
-　基本的にはデフォルト状態では全てのドキュメントへのオペレーションはfalseで
-　許可するオペレーションを一つ一つ条件付きで許可する形で書く。
-　書き方はfirestore.rulesにコメント書いてあるので参照。
-　更新したら firebase deploy --only firestore:rules でデプロイすること
-　新しいコレクションを追加したときには忘れずに。。
+## dbのルール設定
+firestore.rulesにdbへのオペレーションを制御するルールを記述できる。  
+基本的にはデフォルト状態では全てのドキュメントへのオペレーションはfalseで  
+許可するオペレーションを一つ一つ条件付きで許可する形で書く。  
+書き方はfirestore.rulesにコメント書いてあるので参照。  
+更新したら `$ firebase deploy --only firestore:rules` でデプロイすること  
+新しいコレクションを追加したときには忘れずに。。
 
-・dbの設計しっかりとやるのが大事
-　→reduxのように！DBで保存したい項目(コレクション)をリストアップして予めしっかり設計しておくこと
-　例えば
-    category
-    product
-    user
-        cart
-        orders  みたいな。エクセルとかで書いておくといいかも
+## dbのデータ構造設計をしっかりと
+→reduxのように！DBで保存したい項目(コレクション)をリストアップして予めしっかり設計しておくこと  
+例えば
+```
+  category
+  product
+  user
+    └cart
+    └orders
+```
+みたいな。エクセルとかで書いておくといいかも
 
-・storageのメソッド色々
-　const uploadTask = storage.ref('images').child(fileName).put(blob);
-　uploadTask.then( () => {
-    uploadTasksnapshot.ref.getDownloadURL().then((downloadURL) => {
-
-    })
+## storageのメソッド色々
+```javascript
+const uploadTask = storage.ref('images').child(fileName).put(blob);
+uploadTask.then( () => {
+  uploadTasksnapshot.ref.getDownloadURL().then((downloadURL) => {
+    ...
+  })
 })
-　→以下のメソッドでstorage上の/imagesディレクトリに、blob化したファイルを、fileNameという名前でアップロードして
-　そのアップロードしたファイルのダウンロード用URLを取得できる
+```
+storage上の/imagesディレクトリに、blob化したファイルを、`fileName`という名前でアップロードしてそのアップロードしたファイルのダウンロード用URLを取得できる
 
 
-・トラハックyoutube実践編で作成していた主な機能まとめ　
-　商品管理
-　  追加/編集
-        ProductEditコンポーネントが呼ばれるとき、
-        window.location.pathname.split('/product/edit')[1]に値が入るときには
-        それを商品IDと判断してコンポーネントの変数として保存し、
-        useEffectにてidが存在すれば既存データの編集として、該当のproductsコレクションからデータを読み込み、
-        コンポーネント単体のステートとして保存しておく。データ読み込みはstoreを更新するわけではないので
-        オペレーションではなく、コンポーネント側にてuseEffect内に処理を記述している。
-        idが存在しない場合はこれらをせずに新規データ登録画面として働く。
-        また、この編集データを保存する時には、新規作成でも既存データ編集でも同じオペレーション関数を使うが、
-        idが存在しなければ、オペレーション側で新しいidを採番し、dbに保存する作りになっている。
-    一覧
-        ProductListコンポーネントが呼ばれるとき
-        window.location.search変数をチェックして?gender=や?category=等のクエリが入っていれば
-        productコレクションにそれらのフィルターを適用したクエリを投げ、なければすべての
-        productコレクションを要求する。 
-    削除
-        productList => productCard => MenuIcon と呼ばれるなかで商品IDがpropsとして渡されてくるので
-        そのprops.idをdeleteするオペレーション関数に渡すだけ。
+## トラハックyoutube実践編で作成していた主な機能まとめ　
+- 商品管理
+  - 追加  
+  ProductEditコンポーネントが呼ばれるとき、  
+  `window.location.pathname.split('/product/edit')[1]`に値が入るときにはそれを商品IDと判断してコンポーネントの変数として保存し、`useEffect`にてidが存在すれば既存データの編集として、該当のproductsコレクションからデータを読み込み、コンポーネント単体のステートとして保存しておく。データ読み込みはstoreを更新するわけではないのでオペレーションではなく、コンポーネント側にて`useEffect`内に処理を記述している。idが存在しない場合はこれらをせずに新規データ登録画面として働く。また、この編集データを保存する時には、新規作成でも既存データ編集でも同じオペレーション関数を使うが、idが存在しなければ、オペレーション側で新しいidを採番し、dbに保存する作りになっている。
+  - 一覧  
+  ProductListコンポーネントが呼ばれるとき
+  `window.location.search`変数をチェックして`?gender=`や`?category=`等のクエリが入っていれば  productコレクションにそれらのフィルターを適用したクエリを投げ、なければすべての
+  productコレクションを要求する。
+  - 削除  
+  productList => productCard => MenuIcon と呼ばれるなかで商品IDがpropsとして渡されてくるのでその`props.id`を`delete`するオペレーション関数に渡すだけ。
+  - ★編集の項目あたりでurlから商品IDを取得してうんぬんやってた  
+  routeの方も正規表現あったりもするのでそれも   
+    - `window.location.pathname.split('/detail')[1]` 動画のuseEffectで編集するのやつ  
+    →クエリパラーメタで商品を表示するイメージではなく、普通に商品詳細URLを入力する感じで表示したいならこっち。windowオブジェクトはreactでなくても使えるグローバルオブジェクトなので自分で今のpathnameを取得してばらしてやるイメージ  
+    - `props.match.params.id.split('/detail')[1]`  
+    →react-router使ってるならこれでもいいかも。Routeコンポーネントで設定したpath属性に`detail/:id`としておくと`props.match.params.id`で取得できる上記二つはRouterコンポーネントは`path="/detail/:id"`でexact付きでもOK  
+    - `selector.router.location.search.split('?id=')[1]`  
+    動画の複合クエリのやつ→クエリパラメータがあるときはこっち。reduxのstoreに入ってるのでselectorで指定して取得してやる。(connected-react-routerを使っていればstoreに入っているはず)`location.pathname`でもとれるけどこっちには直接クエリパラメータが入っているので多少楽かも。Routeコンポーネントは`path="/detail"`でexact付きでもOK。exact付けてもクエリまではみていないみたい
+    - `window.location.search`でも取得できると思う  
+    →クエリパラメータが複数あるときは上の方法では無理かも？？こっちなら？？
 
-    　★編集の項目あたりでurlから商品IDを取得してうんぬんやってた
-    　　routeの方も正規表現あったりもするのでそれも
-        window.location.pathname.split('/detail')[1]  動画のuseEffectで編集するのやつ
-        →クエリパラーメタで商品を表示するイメージではなく、普通に商品詳細URLを入力する感じで
-        　表示したいならこっち。windowオブジェクトはreactでなくても使えるグローバルオブジェクトなので
-        　自分で今のpathnameを取得してばらしてやるイメージ
-        props.match.params.id.split('/detail')[1]
-        →react-router使ってるならこれでもいいかも。Routeコンポーネントで設定したpath属性に
-        　detail/:idとしておくとprops.match.params.idで取得できる
-        　上記二つはRouterコンポーネントはpath="/detail/:id"でexact付きでもOK
-
-        selector.router.location.search.split('?id=')[1]    動画の複合クエリのやつ
-        →クエリパラメータがあるときはこっち。reduxのstoreに入ってるのでselectorで指定して取得してやる。
-        　(connected-react-routerを使っていればstoreに入っているはず)
-        　location.pathnameでもとれるけどこっちには直接クエリパラメータが入っているので多少楽かも
-        　Routeコンポーネントはpath="/detail"でexact付きでもOK
-        　exact付けてもクエリまではみていないみたい
-        window.location.searchでも取得できると思う
-        →クエリパラメータが複数あるときは上の方法では無理かも？？こっちなら？？
-
-　カート機能
-　　追加
+- カート機能
+  - 追加
         productDetailページではルーティングにてURLが/product/[ID]にて呼び出される
         selector.router.location.pathnameからIDを取り出し
         コンポーネントマウント時(useEffect)に取り出したID(これは商品IDになる)をもとに
@@ -225,7 +208,7 @@ orderByしたものから更に'color'フィールドにcolorという変数値�
         わかりずらい！注意。ホントは一緒のところに書いたほうが分かりやすいのかもだけどheadermenu内に
         カートiconがあるので、これがマウントされるとこの処理を記述したいためこうなっている
         尚、headermenuアンマウント時にはこのリスナを削除するようになっている。何回もリスナ登録されちゃうので
-　　一覧
+  - 一覧
         CartListコンポーネントでカートに追加を行うと、store内のusers.cartの配列が更新されるが、
         その内容をセレクタで参照して、mapにてCartListItemコンポーネントに展開する流れとなる。
         storeのusers.cartは
@@ -233,7 +216,7 @@ orderByしたものから更に'color'フィールドにcolorという変数値�
         {productsInCart.length > 0 && (
           productsInCart.map(product => <CartListItem product={product} key={product.cartId}/>)
         )}
-　　削除
+  - 削除
         イテラブルに呼び出されるCartListItemにてpropsとしてusersコレクション内にあるcartサブコレクションが
         渡されてくるのでそのID情報を用いてcart内のコレクションを削除する
         db.collection('users').doc(uid).collection('cart').doc(id).delete();
@@ -241,8 +224,8 @@ orderByしたものから更に'color'フィールドにcolorという変数値�
         これはオペレーションにては行わずコンポーネント側にて行っている。
 
 
-　注文履歴
-　　追加
+- 注文履歴
+  - 追加
         注文の処理として、storeに入っている商品について一つずつ、該当するサイズの在庫があるかどうか
         db.collection('products').doc(productId)を確認、対象サイズの在庫があればバッチ処理として
         db.collection('products').doc(productId)の在庫減算処理 batch.update
@@ -253,13 +236,13 @@ orderByしたものから更に'color'フィールドにcolorという変数値�
         ストライプで決済処理を行った後にこのbatchを走らせ(batch.commit)、登録したdb処理を実行し、
         その処理の中で一回でも失敗があればcommitは失敗したものとして全てのbatch処理をロールバックする
 
-    一覧
+  - 一覧
         orderHistoryコンポーネントのマウント時に、認証を受けているuidの(getState.users.uid)の注文履歴を
         更新日付昇順で読みだして、storeに追加する。
         db.collection('users').doc(uid).colletion('orders').orderBy('updated_at', 'desc').get().then(() => {})
 
-　検索
-    性別・カテゴリ
+- 検索
+  - 性別・カテゴリ
         ドロワーメニューの中にメンズ、レディースのリストボタンがあり、そのボタンをクリックすると
         /?gender=xxx または/?category=xxx のようなクエリストリングつきのURLへdispatchされる。
         該当パスではproductListコンポーネントが呼ばれ、そのマウント時に、
