@@ -41,7 +41,7 @@
 [React]()
 
   - [基礎](react/basic.md)
-  - [Fire Base](react/firebase.md)
+  - [Fire Base](firebase/firebase.md)
   - []()
   - []()
   

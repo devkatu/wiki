@@ -32,6 +32,8 @@
   - `--only firestore:indexes`
   - `--only functions`
 
+---
+
 ## firebaseを使いやすいようにするために自分で作るもの
 - src>firebase>config.js
   firebaseの設定を行うファイル。APIkeyとか入ってるやつ。
@@ -80,6 +82,7 @@
 - `auth.onAuthStateChanged(user => {})`  
   →現在のログイン状態を確認できる。userにはユーザー情報が入りuser.uidがユーザーIDとなる。rulesでのresource.auth.uidとかと一緒のはず？
   
+---
 
 ## db(firebase.firestore)のメソッド色々
 - `db.collection('todos').orderBy('timestamp', 'asc').get()`  
@@ -111,7 +114,7 @@ orderByしたものから更に'color'フィールドにcolorという変数値�
   →firestore上のtodosコレクションの変化をリッスンする事ができるようになる  
   changeTypeの値を用いて処理を分岐する。db上の値が確実に変更された事が分かるのでdb上の値を変更する処理の後、storeを更新したりするときはコレが良いかも  
   dbに`set()`とかを投げて`.then()`とかでも同じかもだけどこの`onsnapshot()`の戻り値`unsubscribe`にはリスナー登録の解除関数が入っているみたいなのでコンポーネントのマウント解除時(useEffectの第一引数コールバックの戻り値)に`return () => unsubscribe()`で呼出すようにすること。コンポーネント呼出すたびにコールバック登録されちゃうので  
-- 慣例的に  
+- 慣例的に変数の名前は以下のようにすることが多い  
   - `const todosRef = db.collection('todos')`  
     コレクションを変数に入れるときは…Ref
   - `db.collection('todos').doc(id).get().then(snapshots => {...})`  
@@ -138,6 +141,8 @@ orderByしたものから更に'color'フィールドにcolorという変数値�
   ```
   一つ以上のfirestoreへのバッチ書き込み処理(読み取りは別)を行う。最初に作った`batch`へ.`batch.update(書き込みしたいドキュメント, {書き込むデータ}, {marge: true})`または`batch.delete(削除したいドキュメント)`としてどんどん書いていく。`batch.update()`は複数回書いてもOK。`batch.commit()`時に実際に書き込み処理をまとめて行い、一つでも失敗した場合は全ての`batch.update`に記述したdb書き込みの処理をロールバックし、成功した場合は`batch.then(()=>{ })`の処理を行う。`{marge:true}`はセットの時と同じような使い方になる
 　　
+---
+
 ## dbのルール設定
 firestore.rulesにdbへのオペレーションを制御するルールを記述できる。  
 基本的にはデフォルト状態では全てのドキュメントへのオペレーションはfalseで  
@@ -145,6 +150,8 @@ firestore.rulesにdbへのオペレーションを制御するルールを記述
 書き方はfirestore.rulesにコメント書いてあるので参照。  
 更新したら `$ firebase deploy --only firestore:rules` でデプロイすること  
 新しいコレクションを追加したときには忘れずに。。
+
+---
 
 ## dbのデータ構造設計をしっかりと
 →reduxのように！DBで保存したい項目(コレクション)をリストアップして予めしっかり設計しておくこと  
@@ -158,6 +165,8 @@ firestore.rulesにdbへのオペレーションを制御するルールを記述
 ```
 みたいな。エクセルとかで書いておくといいかも
 
+---
+
 ## storageのメソッド色々
 ```javascript
 const uploadTask = storage.ref('images').child(fileName).put(blob);
@@ -169,6 +178,7 @@ uploadTask.then( () => {
 ```
 storage上の/imagesディレクトリに、blob化したファイルを、`fileName`という名前でアップロードしてそのアップロードしたファイルのダウンロード用URLを取得できる
 
+---
 
 ## トラハックyoutube実践編で作成していた主な機能まとめ　
 - 商品管理
@@ -193,66 +203,48 @@ storage上の/imagesディレクトリに、blob化したファイルを、`file
     →クエリパラメータが複数あるときは上の方法では無理かも？？こっちなら？？
 
 - カート機能
-  - 追加
-        productDetailページではルーティングにてURLが/product/[ID]にて呼び出される
-        selector.router.location.pathnameからIDを取り出し
-        コンポーネントマウント時(useEffect)に取り出したID(これは商品IDになる)をもとに
-        productコレクションから対象IDのデータを取り出し自コンポーネントのstateにセットする
-        カートに追加するボタンを押すと、自分のstateにセットされている商品IDとかの情報と
-        このコンポーネント内で選ぶ"サイズ"をオブジェクトにまとめて
-        usersコレクションの、認証(auth)を受けているUIDのドキュメント内の、cartサブコレクションにセット(db.collection('users).doc(uid).collection('cart').doc().set(addproduct))
-        …基本的にはusersコレクション内にカート内の商品を保存するフィールドがあり、そこに追加していくイメージ
-        ★HeaderMenuコンポーネントがマウントされると(useEffectが働き)、dbのusersコレクションの認証(auth)しているUIDドキュメントの、
-        cartサブコレクションに変更があって初めてstoreを更新するようになっている。(onSnapshotで)
-        productDetailコンポーネントではdb更新しに行っているけど、storeは更新する処理記述していないので
-        わかりずらい！注意。ホントは一緒のところに書いたほうが分かりやすいのかもだけどheadermenu内に
-        カートiconがあるので、これがマウントされるとこの処理を記述したいためこうなっている
-        尚、headermenuアンマウント時にはこのリスナを削除するようになっている。何回もリスナ登録されちゃうので
+  - 追加  
+  productDetailページではルーティングにてURLが`/product/[ID]`にて呼び出される  
+  `selector.router.location.pathname`からIDを取り出しコンポーネントマウント時(useEffect)に取り出したID(これは商品IDになる)をもとにproductコレクションから対象IDのデータを取り出し自コンポーネントのstateにセットする。カートに追加するボタンを押すと、自分のstateにセットされている商品IDとかの情報とこのコンポーネント内で選ぶ"サイズ"をオブジェクトにまとめてusersコレクションの、認証(auth)を受けているUIDのドキュメント内の、cartサブコレクションにセット(`db.collection('users).doc(uid).collection('cart').doc().set(addproduct)`)  
+  …基本的にはusersコレクション内にカート内の商品を保存するフィールドがあり、そこに追加していくイメージ
+  ★HeaderMenuコンポーネントがマウントされると(useEffectが働き)、`db`のusersコレクションの認証(auth)しているUIDドキュメントの、cartサブコレクションに変更があって初めてstoreを更新するようになっている。(`onSnapshot`で)productDetailコンポーネントではdb更新しに行っているけど、storeは更新する処理記述していないのでわかりずらい！注意。ホントは一緒のところに書いたほうが分かりやすいのかもだけどheadermenu内にカートiconがあるので、これがマウントされるとこの処理を記述したいためこうなっている。  
+  尚、headermenuアンマウント時にはこのリスナを削除するようになっている。何回もリスナ登録されちゃうので
   - 一覧
-        CartListコンポーネントでカートに追加を行うと、store内のusers.cartの配列が更新されるが、
-        その内容をセレクタで参照して、mapにてCartListItemコンポーネントに展開する流れとなる。
-        storeのusers.cartは
-        const productsInCart = getProductsInCart(selector);
-        {productsInCart.length > 0 && (
-          productsInCart.map(product => <CartListItem product={product} key={product.cartId}/>)
-        )}
+  CartListコンポーネントでカートに追加を行うと、store内の`users.cart`の配列が更新されるが、その内容をセレクタで参照して、mapにてCartListItemコンポーネントに展開する流れとなる。  
+  storeの`users.cart`は  
+  ```
+  const productsInCart = getProductsInCart(selector);
+  {productsInCart.length > 0 && (
+    productsInCart.map(product => <CartListItem product={product} key={product.cartId}/>)
+  )}
+  ```
   - 削除
-        イテラブルに呼び出されるCartListItemにてpropsとしてusersコレクション内にあるcartサブコレクションが
-        渡されてくるのでそのID情報を用いてcart内のコレクションを削除する
-        db.collection('users').doc(uid).collection('cart').doc(id).delete();
-        (usersのuidはstoreの情報から取得する)
-        これはオペレーションにては行わずコンポーネント側にて行っている。
+  イテラブルに呼び出される`CartListItem`にて`props`としてusersコレクション内にあるcartサブコレクションが 渡されてくるのでそのID情報を用いてcart内のコレクションを削除する  
+  `db.collection('users').doc(uid).collection('cart').doc(id).delete();`  
+  (usersのuidはstoreの情報から取得する)これはオペレーションにては行わずコンポーネント側にて行っている。
 
 
 - 注文履歴
   - 追加
-        注文の処理として、storeに入っている商品について一つずつ、該当するサイズの在庫があるかどうか
-        db.collection('products').doc(productId)を確認、対象サイズの在庫があればバッチ処理として
-        db.collection('products').doc(productId)の在庫減算処理 batch.update
-        →　db.collection('users').doc(uid).collection('cart').doc(cartId)の削除 batch.delete
-        →　db.collection('users').doc(uid).collection('orders')の登録 batch.updateとなる
-        ここはbatchなので登録した全ての処理が正常に走れば良いが、
-        一個でも失敗すればロールバックして元の状態に戻ることとなる。
-        ストライプで決済処理を行った後にこのbatchを走らせ(batch.commit)、登録したdb処理を実行し、
-        その処理の中で一回でも失敗があればcommitは失敗したものとして全てのbatch処理をロールバックする
+  注文の処理として、storeに入っている商品について一つずつ、該当するサイズの在庫があるかどうか`db.collection('products').doc(productId)`を確認、対象サイズの在庫があればバッチ処理として  
+    1. `db.collection('products').doc(productId)`の在庫減算処理を`batch.update`に登録  
+    2. `db.collection('users').doc(uid).collection('cart').doc(cartId)`の削除を`batch.delete`に登録
+    3. `db.collection('users').doc(uid).collection('orders')`を`batch.update`に登録となる
+    ここはbatchなので登録した全ての処理が正常に走れば良いが、一個でも失敗すればロールバックして元の状態に戻ることとなる。ストライプで決済処理を行った後にこのbatchを走らせ(`batch.commit`)、登録したdb処理を実行し、その処理の中で一回でも失敗があればcommitは失敗したものとして全てのbatch処理をロールバックする
 
   - 一覧
-        orderHistoryコンポーネントのマウント時に、認証を受けているuidの(getState.users.uid)の注文履歴を
-        更新日付昇順で読みだして、storeに追加する。
-        db.collection('users').doc(uid).colletion('orders').orderBy('updated_at', 'desc').get().then(() => {})
+  orderHistoryコンポーネントのマウント時に、認証を受けているuidの(`getState.users.uid`)の注文履歴を更新日付昇順で読みだして、storeに追加する。
+  `db.collection('users').doc(uid).colletion('orders').orderBy('updated_at', 'desc').get().then(() => {})`
 
 - 検索
   - 性別・カテゴリ
-        ドロワーメニューの中にメンズ、レディースのリストボタンがあり、そのボタンをクリックすると
-        /?gender=xxx または/?category=xxx のようなクエリストリングつきのURLへdispatchされる。
-        該当パスではproductListコンポーネントが呼ばれ、そのマウント時に、
-        db.collection('product')からまずupdateについて並び替えしたデータに対し.whereへつなげて
-        入力されたクエリのgenderまたはcategoryに合うデータを取り出している
+  ドロワーメニューの中にメンズ、レディースのリストボタンがあり、そのボタンをクリックすると
+  `/?gender=xxx`または`/?category=xxx`のようなクエリストリングつきのURLへdispatchされる。該当パスではproductListコンポーネントが呼ばれ、そのマウント時に、`db.collection('product')`からまずupdateについて並び替えしたデータに対し`.where`へつなげて
+  入力されたクエリのgenderまたはcategoryに合うデータを取り出している
 
-　ちなみにチャットボットアプリの方はdbは大した使用していず。
-　質問＆回答のデータセットを読込むのにつかっているだけ
+ちなみにチャットボットアプリの方はdbは大した使用していず。
+質問＆回答のデータセットを読込むのにつかっているだけ
 
-
-★ミカン
+★未完
 updateとset({marge:true}つき)は何が違う？
 決済の方法
