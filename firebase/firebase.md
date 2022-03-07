@@ -19,12 +19,16 @@ hint: **ReactもReactNative(expo)もwebアプリの追加**でOKなはず。ど�
 - `$ npm install -s firebase` またはexpoなら`$ expo install firebase`  
 アプリでfirebaseを使う為にこのパッケージをインストールしておく。firebaseをimportして`storage`やら`database`やらが使えるよになる
 - アプリのディレクトリから `$ firebase login` を行い作成したプロジェクトにログインする。アカウントにログイン後、先にfirebaseコンソールで作成したプロジェクトが選択できるはず。
-- `$ firebase init` で初期化を行う
+- `$ firebase init` で初期化を行う  
+
+  hint: **この初期化は各種のルールとか(firestore.rules等)functions,hosting等のローカルからデプロイが必要な場合行う。expo使ったりとかデプロイいらない場合は初期化しなくてもOKぽい**
+
     - 使用サービスをスペースキーで選択する。firestoreとかfunctionsとかhostingとかstorageとか選べる。
     - 使用するプロジェクトを選択する。既存のプロジェクトや新規プロジェクトとか選べる。hostingの選択ではホストするディレクトリを選択するので、`build`ディレクトリを選択しておく。あとはほとんどデフォルト。ここでいろんなディレクトリとか設定ファイルが作成される。
     - initが終わると新しいフォルダやファイルができている。
       - functionsフォルダはサーバー側での処理を記述するやつ
-      - firestore.rules,storage.rulesはfirestoreやstorageとかのパーミッションを指定するもの。**変更したら**`$ firestore deploy`**する必要あり**
+      - firestore.rules,storage.rulesはfirestoreやstorageとかのパーミッションを指定するもの。**変更したら**`$ firestore deploy`**する必要あり**。rulesはブラウザ上firebaseコンソールで設定することも可能
+      - firebase.jsonでデプロイするファイルの設定とかが記述してある
 - `$ npm run build` してから `$ firebase deploy`をするとhostやらrulesなんやらがfirebaseへデプロイされる。**この後はアプリ作ればbuildしてdeploy、rules変えたりしてもdeployする必要あり。**
 - `$ firebase deploy`について
 以下ルールのみ、とか項目選択してデプロイするオプションあり  
