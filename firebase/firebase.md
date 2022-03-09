@@ -96,6 +96,20 @@ hint: **ReactもReactNative(expo)もwebアプリの追加**でOKなはず。ど�
   
 ---
 
+## db(firebase.firestore)の構造
+dbにアクセスするときは**collection**,**document**,**data**の三つの要素が出てくる。下の画像のようなイメージをとらえておくと良い。
+![画像](structure-data.png)
+- collection  
+  各種のdocumentのコンテナとなる。  
+  例)usersコレクションを作っておいてサービスに登録しているユーザーの情報を管理したり、messageコレクションを作って、サービス上にユーザーの投稿したメッセージデータを保存したりする。
+- document  
+  各種のデータを格納する。各documentはIDで識別される。
+- data  
+  実際のデータ。同じdocument内にはいっているdataは構造が同じものになる。  
+  例)実際にユーザーのIDとか、メールアドレスとかユーザーの情報を入れておく
+
+---
+
 ## db(firebase.firestore)のメソッド色々
 - `db.collection('todos').orderBy('timestamp', 'asc').get()`  
 →firestore上のtodosコレクションからtimestampのフィールドについて、ascなら昇順、descなら降順でドキュメントを取得する
