@@ -46,13 +46,23 @@ hint: **ReactもReactNative(expo)もwebアプリの追加**でOKなはず。ど�
 
 ---
 
-## firebaseを使いやすいようにするために自分で作るもの
-- src>firebase>config.js
-  firebaseの設定を行うファイル。APIkeyとか入ってるやつ。
-  firebaseコンソールの設定→Firebase SDK Snippet(SDKの設定と構成)→構成から`const firebaseConfig = { apiKey: xxxxxx, ... } `を丸コピーしてこのファイルに張り付けている。
-- src>firebase>index.js
-  上のconfig.jsの構成を読み込んで初期化したり、使用するFirebaseサービスを読込んで使いやすくエクスポートしてあげたりする
+## firebaseを使うための下準備
+- src>firebase>config.js  
+  firebaseの設定オブジェクトを入れておくファイル。APIkeyとか入ってるやつ。
+  該当のプロジェクトをfirebaseコンソールで開いて、プロジェクトの設定→Firebase SDK Snippet(SDKの設定と構成)→構成 から`const firebaseConfig = { apiKey: xxxxxx, ... } `を丸コピーしてこのファイルに張り付けている。
   ```javascript
+  export const firebaseConfig = {
+    apiKey: "",
+    authDomain: "",
+    projectId: "",
+    storageBucket: "",
+    messagingSenderId: "",
+    appId: ""
+  }
+  ```
+- src>firebase>index.js  
+  上のconfig.jsの構成を読み込んでfirebaseの初期化したり、使用するFirebaseサービスを読込んで使いやすくエクスポートしたりする。あとは他のコンポーネントにおいて、ここでエクスポートしたdbだとかstorageだとかをインポートして使用する。
+    ```javascript
   // firebaseの各サービスを使うためのインポート
   // import firebase from 'firebase/app';
   import firebase from 'firebase/app';
@@ -79,6 +89,16 @@ hint: **ReactもReactNative(expo)もwebアプリの追加**でOKなはず。ど�
   export const storage = firebase.storage();
   export const functions = firebase.functions();
   export const FirebaseTimestamp = firebase.firestore.Timestamp;
+  ```
+
+  ```javascript
+  import { initializeApp } from "firebase/app"
+  import { getFirestore } from "firebase/firestore"
+  import { firebaseConfig } from "./config"
+  const firebaseApp = initializeApp(firebaseConfig);
+
+  export const db = getFirestore();
+
   ```
 
 
