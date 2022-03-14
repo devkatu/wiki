@@ -62,6 +62,8 @@ hint: **ReactもReactNative(expo)もwebアプリの追加**でOKなはず。ど�
   ```
 - src>firebase>index.js  
   上のconfig.jsの構成を読み込んでfirebaseの初期化したり、使用するFirebaseサービスを読込んで使いやすくエクスポートしたりする。あとは他のコンポーネントにおいて、ここでエクスポートしたdbだとかstorageだとかをインポートして使用する。
+
+  **version8までの書き方**
     ```javascript
   // firebaseの各サービスを使うためのインポート
   // import firebase from 'firebase/app';
@@ -91,13 +93,19 @@ hint: **ReactもReactNative(expo)もwebアプリの追加**でOKなはず。ど�
   export const FirebaseTimestamp = firebase.firestore.Timestamp;
   ```
 
+  **version9の書き方**
   ```javascript
   import { initializeApp } from "firebase/app"
+  import { getAuth } from "firebase/auth"
   import { getFirestore } from "firebase/firestore"
+  import { getStorage } from "firebase/storage"
   import { firebaseConfig } from "./config"
+
   const firebaseApp = initializeApp(firebaseConfig);
 
+  export const auth = getAuth();
   export const db = getFirestore();
+  export const storage = getStorage();
 
   ```
 
@@ -121,9 +129,11 @@ dbにアクセスするときは**collection**,**document**,**data**の三つの
 ![画像](structure-data.png)
 - collection  
   各種のdocumentのコンテナとなる。  
-  例)usersコレクションを作っておいてサービスに登録しているユーザーの情報を管理したり、messageコレクションを作って、サービス上にユーザーの投稿したメッセージデータを保存したりする。
+  例)usersコレクションを作っておいてサービスに登録しているユーザーの情報を管理したり、messageコレクションを作って、サービス上にユーザーの投稿したメッセージデータを保存したりする。  
+  `collection(db, 'collection')`の戻り値でコレクションへの参照を取得できる
 - document  
-  各種のデータを格納する。各documentはIDで識別される。
+  各種のデータを格納する。各documentはIDで識別される。  
+  `doc(db, 'collection', 'document')`の戻り値でドキュメントへの参照を取得できる
 - data  
   実際のデータ。同じdocument内にはいっているdataは構造が同じものになる。  
   例)実際にユーザーのIDとか、メールアドレスとかユーザーの情報を入れておく
