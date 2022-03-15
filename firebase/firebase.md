@@ -138,14 +138,25 @@ dbにアクセスするときは**collection**,**document**,**data**の三つの
   実際のデータ。同じdocument内にはいっているdataは構造が同じものになる。  
   例)実際にユーザーのIDとか、メールアドレスとかユーザーの情報を入れておく
 
+
+---
+
+## まずはdbのデータ構造の設計をしっかりと
+→reduxのように！DBで保存したい項目(コレクション)をリストアップして予めしっかり設計しておくこと。これ考えておかないとあとから手戻り必須なので  
+例えば
+```
+  category
+  product
+  user
+    └cart
+    └orders
+```
+みたいな。エクセルとかで書いておくといいかも
+
 ---
 
 ## db(firebase.firestore)のメソッド色々
-- `db.collection('todos').orderBy('timestamp', 'asc').get()`  
-→firestore上のtodosコレクションからtimestampのフィールドについて、ascなら昇順、descなら降順でドキュメントを取得する
-- `db.collection('todos').orderBy('timestamp', 'asc).where('color', '==', color)`  
-orderByしたものから更に'color'フィールドにcolorという変数値が入っているもののみ取り出す。`where`の第一引数はドキュメントのフィールドを文字列指定し、第二引数は比較演算子を文字列指定？し、第三引数は比較する値を入れる。    
-尚、これは**複合クエリ**といい、firestore.indexes.jsonを修正/デプロイしないとこの複合クエリは使用できない。めんどくさければ**クエリを投げた時にでるエラーメッセージをクリックすると勝手にコンソールに飛び、複合インデックスを作成してくれる。**ちなみにfirestore.rules側で `allow read: if resource.data.xxx == 'hoge' `のような感じならばクエリも`where('xxx', '==', hoge)`のようにならなければパーミッションエラーとなる。ルールに合わせること
+### データの追加
 - `const id = db.collection('todos').doc()`  
 →対象コレクションの新しいドキュメントにセットするIDを取得できる  
 これをやらずに次の`set()`をやってもID自動採番されるけど、アプリ側で他にもID使いたい処理が多いのでこれだと楽にできる
@@ -153,31 +164,13 @@ orderByしたものから更に'color'フィールドにcolorという変数値�
 →firestore上のtodosコレクションのid指定したドキュメントにinitTodoを登録する  
 `set()`の第二引数に`{marge: true}`というオブジェクトをつけることができる。
 これは元のドキュメントとのmargeをするということになる
+### データの更新
 - `db.collection('todos').doc(id).update(sendTodo)`  
 →firestore上のtodosコレクションのid指定したドキュメントにsendTodoを更新する  
+### データの削除
 - `db.collection('todos').doc(id).delete()`  
 →firestore上のtodosコレクションのid指定したドキュメントを削除する  
-- 
-  ```javascript
-  const unsubscribe = db.collection('todos').onSnapshot(snapshots => {
-      snapshots.docChagnges().forEach(change=>{
-          const data = change.doc.data();
-          const changeType = change.type;
-          // added, modified, removedの値をとる
-      })
-  })
-  ```
-  →firestore上のtodosコレクションの変化をリッスンする事ができるようになる  
-  changeTypeの値を用いて処理を分岐する。db上の値が確実に変更された事が分かるのでdb上の値を変更する処理の後、storeを更新したりするときはコレが良いかも  
-  dbに`set()`とかを投げて`.then()`とかでも同じかもだけどこの`onsnapshot()`の戻り値`unsubscribe`にはリスナー登録の解除関数が入っているみたいなのでコンポーネントのマウント解除時(useEffectの第一引数コールバックの戻り値)に`return () => unsubscribe()`で呼出すようにすること。コンポーネント呼出すたびにコールバック登録されちゃうので  
-- 慣例的に変数の名前は以下のようにすることが多い  
-  - `const todosRef = db.collection('todos')`  
-    コレクションを変数に入れるときは…Ref
-  - `db.collection('todos').doc(id).get().then(snapshots => {...})`  
-    なんかのdocを取得したときは引数はsnapshotsに　それをforEachで回す
-  - `const query = db.collection('todos').orderBy('update', 'asc')`
-    なんかのコレクションを条件付きで変数に入れるときはquery
-- 
+### トランザクション処理
   ```javascript
   const batch = db.batch();
   batch.update(
@@ -196,6 +189,37 @@ orderByしたものから更に'color'フィールドにcolorという変数値�
   });
   ```
   一つ以上のfirestoreへのバッチ書き込み処理(読み取りは別)を行う。最初に作った`batch`へ.`batch.update(書き込みしたいドキュメント, {書き込むデータ}, {marge: true})`または`batch.delete(削除したいドキュメント)`としてどんどん書いていく。`batch.update()`は複数回書いてもOK。`batch.commit()`時に実際に書き込み処理をまとめて行い、一つでも失敗した場合は全ての`batch.update`に記述したdb書き込みの処理をロールバックし、成功した場合は`batch.then(()=>{ })`の処理を行う。`{marge:true}`はセットの時と同じような使い方になる
+### データの取得
+### データを選択して取得
+- `db.collection('todos').orderBy('timestamp', 'asc').get()`  
+→firestore上のtodosコレクションからtimestampのフィールドについて、ascなら昇順、descなら降順でドキュメントを取得する
+- `db.collection('todos').orderBy('timestamp', 'asc).where('color', '==', color)`  
+orderByしたものから更に'color'フィールドにcolorという変数値が入っているもののみ取り出す。`where`の第一引数はドキュメントのフィールドを文字列指定し、第二引数は比較演算子を文字列指定？し、第三引数は比較する値を入れる。    
+尚、これは**複合クエリ**といい、firestore.indexes.jsonを修正/デプロイしないとこの複合クエリは使用できない。めんどくさければ**クエリを投げた時にでるエラーメッセージをクリックすると勝手にコンソールに飛び、複合インデックスを作成してくれる。**ちなみにfirestore.rules側で `allow read: if resource.data.xxx == 'hoge' `のような感じならばクエリも`where('xxx', '==', hoge)`のようにならなければパーミッションエラーとなる。ルールに合わせること
+### データを並べ替えて取得
+### データを制限して取得
+### データの変更を検知する
+  ```javascript
+  const unsubscribe = db.collection('todos').onSnapshot(snapshots => {
+      snapshots.docChagnges().forEach(change=>{
+          const data = change.doc.data();
+          const changeType = change.type;
+          // added, modified, removedの値をとる
+      })
+  })
+  ```
+  →firestore上のtodosコレクションの変化をリッスンする事ができるようになる  
+  changeTypeの値を用いて処理を分岐する。db上の値が確実に変更された事が分かるのでdb上の値を変更する処理の後、storeを更新したりするときはコレが良いかも  
+  dbに`set()`とかを投げて`.then()`とかでも同じかもだけどこの`onsnapshot()`の戻り値`unsubscribe`にはリスナー登録の解除関数が入っているみたいなのでコンポーネントのマウント解除時(useEffectの第一引数コールバックの戻り値)に`return () => unsubscribe()`で呼出すようにすること。コンポーネント呼出すたびにコールバック登録されちゃうので 
+
+- 慣例的に変数の名前は以下のようにすることが多い  
+  - `const todosRef = db.collection('todos')`  
+    コレクションを変数に入れるときは…Ref
+  - `db.collection('todos').doc(id).get().then(snapshots => {...})`  
+    なんかのdocを取得したときは引数はsnapshotsに　それをforEachで回す
+  - `const query = db.collection('todos').orderBy('update', 'asc')`
+    なんかのコレクションを条件付きで変数に入れるときはquery
+
 　　
 ---
 
@@ -206,20 +230,6 @@ firestore.rulesにdbへのオペレーションを制御するルールを記述
 書き方はfirestore.rulesにコメント書いてあるので参照。  
 更新したら `$ firebase deploy --only firestore:rules` でデプロイすること  
 新しいコレクションを追加したときには忘れずに。。
-
----
-
-## dbのデータ構造設計をしっかりと
-→reduxのように！DBで保存したい項目(コレクション)をリストアップして予めしっかり設計しておくこと  
-例えば
-```
-  category
-  product
-  user
-    └cart
-    └orders
-```
-みたいな。エクセルとかで書いておくといいかも
 
 ---
 
