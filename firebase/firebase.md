@@ -125,8 +125,8 @@ hint: **ReactもReactNative(expo)もwebアプリの追加**でOKなはず。ど�
 ---
 
 ## db(firebase.firestore)の構造
-dbにアクセスするときは**collection**,**document**,**data**の三つの要素が出てくる。下の画像のようなイメージをとらえておくと良い。
-![画像](structure-data.png)
+dbにアクセスするときは**collection**,**document**,**data**の三つの要素が出てくる。画像のようなイメージをとらえておくと良い。
+
 - collection  
   各種のdocumentのコンテナとなる。  
   例)usersコレクションを作っておいてサービスに登録しているユーザーの情報を管理したり、messageコレクションを作って、サービス上にユーザーの投稿したメッセージデータを保存したりする。  
@@ -137,6 +137,9 @@ dbにアクセスするときは**collection**,**document**,**data**の三つの
 - data  
   実際のデータ。同じdocument内にはいっているdataは構造が同じものになる。  
   例)実際にユーザーのIDとか、メールアドレスとかユーザーの情報を入れておく
+
+![画像](structure-data.png)
+
 
 
 ---
@@ -156,20 +159,36 @@ dbにアクセスするときは**collection**,**document**,**data**の三つの
 ---
 
 ## db(firebase.firestore)のメソッド色々
+### コレクション、ドキュメントの参照の取得
+コレクション、ドキュメントに対して色々処理したいときに、各々の参照を使いまわしたいときがある。
+以下の方法で参照を取得して使いまわすことができる。
+```javascript
+import { collection, doc } from 'firebase/firestore';
+
+// documentへの参照
+// usersコレクションのdoc(doc2)ドキュメントへの参照を取得できる
+const docRef = doc(db, 'users', 'doc');
+const doc2Ref = doc(db, 'users/doc2');
+
+// collectionへの参照
+// usersコレクションの参照を取得できる
+const colRef = collection(db, 'users');
+```
+
 ### データの追加
 - `const id = db.collection('todos').doc()`  
-→対象コレクションの新しいドキュメントにセットするIDを取得できる  
-これをやらずに次の`set()`をやってもID自動採番されるけど、アプリ側で他にもID使いたい処理が多いのでこれだと楽にできる
+  →対象コレクションの新しいドキュメントにセットするIDを取得できる  
+  これをやらずに次の`set()`をやってもID自動採番されるけど、アプリ側で他にもID使いたい処理が多いのでこれだと楽にできる
 - `await db.collection('todos').doc(id).set(initTodo).catch(e => { throw new Error(e) });`  
-→firestore上のtodosコレクションのid指定したドキュメントにinitTodoを登録する  
-`set()`の第二引数に`{marge: true}`というオブジェクトをつけることができる。
-これは元のドキュメントとのmargeをするということになる
+  →firestore上のtodosコレクションのid指定したドキュメントにinitTodoを登録する  
+  `set()`の第二引数に`{marge: true}`というオブジェクトをつけることができる。
+  これは元のドキュメントとのmargeをするということになる  
 ### データの更新
 - `db.collection('todos').doc(id).update(sendTodo)`  
-→firestore上のtodosコレクションのid指定したドキュメントにsendTodoを更新する  
+  →firestore上のtodosコレクションのid指定したドキュメントにsendTodoを更新する  
 ### データの削除
 - `db.collection('todos').doc(id).delete()`  
-→firestore上のtodosコレクションのid指定したドキュメントを削除する  
+  →firestore上のtodosコレクションのid指定したドキュメントを削除する  
 ### トランザクション処理
   ```javascript
   const batch = db.batch();
@@ -220,7 +239,6 @@ orderByしたものから更に'color'フィールドにcolorという変数値�
   - `const query = db.collection('todos').orderBy('update', 'asc')`
     なんかのコレクションを条件付きで変数に入れるときはquery
 
-　　
 ---
 
 ## dbのルール設定
