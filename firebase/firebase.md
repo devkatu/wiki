@@ -164,6 +164,7 @@ dbにアクセスするときは**collection**,**document**,**data**の三つの
 以下の方法で参照を取得して使いまわすことができる。
 ```javascript
 import { collection, doc } from 'firebase/firestore';
+import { db } from './firebase';
 
 // documentへの参照
 // usersコレクションのdoc(doc2)ドキュメントへの参照を取得できる
@@ -176,6 +177,14 @@ const colRef = collection(db, 'users');
 ```
 
 ### データの追加
+- 単一のドキュメントの作成
+  ```javascript
+  import { doc, setDoc} from 'firebase/firestore';
+  import { db } from './firebase';
+
+  await setDoc(doc(db, 'cities', 'BJ'), {data: true},{marge: true});
+
+  ```
 - `const id = db.collection('todos').doc()`  
   →対象コレクションの新しいドキュメントにセットするIDを取得できる  
   これをやらずに次の`set()`をやってもID自動採番されるけど、アプリ側で他にもID使いたい処理が多いのでこれだと楽にできる
