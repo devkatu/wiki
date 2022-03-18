@@ -171,18 +171,60 @@ import { db } from './firebase';
 const docRef = doc(db, 'users', 'doc');
 const doc2Ref = doc(db, 'users/doc2');
 
+// doc()は、collectionへの参照を渡すと、
+// 新しくドキュメントのIDを採番したドキュメント参照を返す
+// setDocでよく使うと思う
+const docRef3 = doc(colRef);
+
 // collectionへの参照
 // usersコレクションの参照を取得できる
 const colRef = collection(db, 'users');
 ```
 
 ### データの追加
-- 単一のドキュメントの作成
+- `setDoc()`  
+  ドキュメントIDを指定したドキュメントの作成、上書き
   ```javascript
   import { doc, setDoc} from 'firebase/firestore';
   import { db } from './firebase';
 
-  await setDoc(doc(db, 'cities', 'BJ'), {data: true},{marge: true});
+  // citiesコレクション->BJドキュメントに
+  // {hoge: "fuga"}オブジェクトを追加
+  // 三つ目の引数はオプションで{marge: true}を渡すと
+  // 元のBJドキュメント内のデータと統合する
+  // 該当するdocumentがない場合は新しく作成される
+  await setDoc(
+    doc(db, 'cities', 'BJ'),
+    {hoge: "fuga"},
+    {marge: true} // この引数はオプション
+  );
+
+  // citiesコレクションに新しくIDを自動採番してもらって
+  // ドキュメントを追加する。
+  // この動作はaddDoc()と完全に同じ
+  const newCityRef = doc(collection(db, 'cities'));
+  await setDoc(newCityRef, {foo: "bar"});
+
+  ```
+- `addDoc()`  
+  ドキュメントIDを指定せず、ドキュメントの追加(IDは自動で採番)
+  ```javascript
+  import { addDoc, collection } from 'firebase/firestore';
+  import { db } from './firebase';
+
+  // citiesコレクションに新しいIDを指定せずに
+  // {hoge:"fuga"}のデータを書き込む
+  // 戻り値のidプロパティには新しく採番されたidが書き込まれる
+  const docRef = await addDodc(
+    collection(db, 'cities'),
+    {hoge: "fuga"}
+  )
+  console.log("document written with id:", docRef.id)
+
+  ```
+- `updateDoc()`  
+  ドキュメント全体を上書きせずに一部のフィールドを更新する
+  ```javascript
 
   ```
 - `const id = db.collection('todos').doc()`  
