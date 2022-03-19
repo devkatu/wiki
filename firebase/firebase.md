@@ -183,7 +183,7 @@ const colRef = collection(db, 'users');
 
 ### データの追加
 - `setDoc()`  
-  ドキュメントIDを指定したドキュメントの作成、上書き
+  ドキュメントIDを指定したドキュメントの**追加、上書き**
   ```javascript
   import { doc, setDoc} from 'firebase/firestore';
   import { db } from './firebase';
@@ -193,28 +193,32 @@ const colRef = collection(db, 'users');
   // 三つ目の引数はオプションで{marge: true}を渡すと
   // 元のBJドキュメント内のデータと統合する
   // 該当するdocumentがない場合は新しく作成される
+  // 戻り値はPromise<void>
   await setDoc(
     doc(db, 'cities', 'BJ'),
     {hoge: "fuga"},
-    {marge: true} // この引数はオプション
+    {marge: true} // オプション
   );
 
-  // citiesコレクションに新しくIDを自動採番してもらって
-  // ドキュメントを追加する。
+  // citiesコレクションに追加するドキュメントのIDを
+  // doc()にコレクションの参照を渡す事で
+  // 新しく自動採番してもらってからドキュメントを追加する。
   // この動作はaddDoc()と完全に同じ
   const newCityRef = doc(collection(db, 'cities'));
   await setDoc(newCityRef, {foo: "bar"});
 
   ```
 - `addDoc()`  
-  ドキュメントIDを指定せず、ドキュメントの追加(IDは自動で採番)
+  ドキュメントIDを指定せず、ドキュメントの**追加**(IDは自動で採番)
   ```javascript
   import { addDoc, collection } from 'firebase/firestore';
   import { db } from './firebase';
 
   // citiesコレクションに新しいIDを指定せずに
   // {hoge:"fuga"}のデータを書き込む
-  // 戻り値のidプロパティには新しく採番されたidが書き込まれる
+  // 戻り値には書き込んだドキュメントへの参照が含まれ
+  // そのidプロパティには新しく採番されたidが書き込まれる
+  // この動作はdoc(colRef)でID自動採番してからsetDoc()するのと全く同じ
   const docRef = await addDodc(
     collection(db, 'cities'),
     {hoge: "fuga"}
@@ -223,10 +227,70 @@ const colRef = collection(db, 'users');
 
   ```
 - `updateDoc()`  
-  ドキュメント全体を上書きせずに一部のフィールドを更新する
+  ドキュメント全体を上書きせずに一部のフィールドを**更新**する
   ```javascript
+  import { doc, updateDoc } from 'firebase/firestore';
+  import { db } from './firebase';
 
+  // 戻り値はPromise<void>
+  await updateDoc(
+    doc(db, 'cities', 'BJ'),
+    {hoge: "fuga"}
+  )
   ```
+
+  hint: `setDoc`との違いは次の例で  
+  
+  次のデータがあるとする
+  ```javascript
+  {
+    users: {
+      user1: "hoge",
+      user2: "fuga"
+    },
+    foo: "bar"
+  }
+  ```
+  ここに次の`setDoc()`を行う
+  ```javascript
+  setDoc(db, {
+    users:{
+      user3: "hoge"
+    },
+    {marge: true}
+  })
+  ```
+  すると
+  ```javascript
+  {
+    users: {
+      user1: "hoge",
+      user2: "fuga",
+      user3: "hoge"
+    },
+    foo: "bar"
+  }
+  ```
+  次の`updateDoc()`を同じイメージで行う
+  ```javascript
+  updateDoc(db,{
+    users: {
+      user3: "hoge"
+    }
+  })
+  ```
+  すると
+  ```javascript
+  {
+    users: {
+      user3: "hoge"
+    },
+    foo: "bar"
+  }
+  ```
+  と、fooのフィールドは関係ないのでそのままだが、usersの**フィールドが更新**される。  
+  フィールドがネストしているところの更新を掛けたいときはこの違いを理解しておくこと
+
 - `const id = db.collection('todos').doc()`  
   →対象コレクションの新しいドキュメントにセットするIDを取得できる  
   これをやらずに次の`set()`をやってもID自動採番されるけど、アプリ側で他にもID使いたい処理が多いのでこれだと楽にできる
