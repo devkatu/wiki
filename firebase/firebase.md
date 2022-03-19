@@ -184,6 +184,7 @@ const colRef = collection(db, 'users');
 ### データの追加
 - `setDoc()`  
   ドキュメントIDを指定したドキュメントの**追加、上書き**
+  指定したドキュメントが存在しない場合は新しく作成される
   ```javascript
   import { doc, setDoc} from 'firebase/firestore';
   import { db } from './firebase';
@@ -227,15 +228,34 @@ const colRef = collection(db, 'users');
 
   ```
 - `updateDoc()`  
-  ドキュメント全体を上書きせずに一部のフィールドを**更新**する
+  ドキュメント全体を上書きせずに一部のフィールドを**更新**する。  
+  対象のドキュメントが存在しない場合はエラーになる
   ```javascript
   import { doc, updateDoc } from 'firebase/firestore';
   import { db } from './firebase';
 
+  // citiesコレクション内BJドキュメントの
+  // hogeフィールドを更新する
   // 戻り値はPromise<void>
   await updateDoc(
     doc(db, 'cities', 'BJ'),
-    {hoge: "fuga"}
+    {
+      hoge: "fuga"
+    }
+  )
+
+  // citiesコレクション内BJドキュメントの
+  // fooオブジェクト内barフィールドを更新する
+  // fooオブジェクト内にネストされたオブジェクトの
+  // barフィールドを更新しようとして
+  // {foo: {bar: "baz"}}としてしまうと、
+  // {foo: {bar: "bar", hoge: "fuga"}}とあった場合
+  // hogeフィールドは消えてしまう
+  await updateDoc(
+    doc(db, 'cities','BJ'),
+    {
+      "foo.bar": "baz"
+    }
   )
   ```
 
@@ -288,7 +308,14 @@ const colRef = collection(db, 'users');
     foo: "bar"
   }
   ```
-  と、fooのフィールドは関係ないのでそのままだが、usersの**フィールドが更新**される。  
+  と、fooのフィールドは関係ないのでそのままだが、usersの**フィールドが更新**される。
+  usersのフィールドをそのまま残して更新を掛けたいときは、  **ドット記法を使って**
+  ```javascript
+  updateDoc(db,{
+    "users.user3": "hoge"
+  })
+  ```
+  とすると良い。`setDoc()`の`{marge: true`と同じ挙動となる
   フィールドがネストしているところの更新を掛けたいときはこの違いを理解しておくこと
 
 - `const id = db.collection('todos').doc()`  
