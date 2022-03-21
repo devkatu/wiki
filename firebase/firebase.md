@@ -106,6 +106,7 @@ hint: **ReactもReactNative(expo)もwebアプリの追加**でOKなはず。ど�
 
   // 各getXxxxxに渡すfirebaseAppは必要か？
   // ドキュメントによってなかったりする。APIリファレンスでは必要っぽい
+  // たしか渡さなくても動く気がする
   export const auth = getAuth(firebaseApp);
   export const db = getFirestore(firebaseApp);
   export const storage = getStorage(firebaseApp);
@@ -195,7 +196,7 @@ const colRef = collection(db, 'users');
 
   // citiesコレクション->BJドキュメントに
   // {hoge: "fuga"}オブジェクトを追加
-  // 三つ目の引数はオプションで{marge: true}を渡すと
+  // 三つ目の引数はオプションで{merge: true}を渡すと
   // 元のBJドキュメント内のデータと統合し、オプション無しなら
   // documentがない場合は新しく作成され、documentが既存なら
   // そのdocumentを完全に上書きする
@@ -203,7 +204,7 @@ const colRef = collection(db, 'users');
   await setDoc(
     doc(db, 'cities', 'BJ'),
     {hoge: "fuga"},
-    {marge: true} // オプション
+    {merge: true} // オプション
   );
 
   // citiesコレクションに追加するドキュメントのIDを
@@ -279,7 +280,7 @@ const colRef = collection(db, 'users');
     users:{
       user3: "hoge"
     },
-    {marge: true}
+    {merge: true}
   })
   ```
   すると
@@ -317,7 +318,7 @@ const colRef = collection(db, 'users');
     "users.user3": "hoge"
   })
   ```
-  とすると良い。`setDoc()`の`{marge: true`と同じ挙動となる。
+  とすると良い。`setDoc()`の`{merge: true`と同じ挙動となる。
   フィールドがネストしているところの更新を掛けたいときはこの違いを理解しておくこと  
   merge付きの`setDoc()`の方が使いやすそう・・・
 - `serverTimestamp`  
@@ -373,10 +374,10 @@ const colRef = collection(db, 'users');
   ```
 
 ### データの読取 <small>読出・選択・並替・制限・データ変更検知</small>
-- `getDoc`  
-  単一ドキュメント全体、またはコレクション内のすべてのドキュメントを取得する
+- `getDoc` と `getDocs`  
+  単一ドキュメントを丸ごと、または単一コレクション内のすべてのドキュメントを取得する
   ```javascript
-  import { collection, doc, getDoc } from "firebase/firestore";
+  import { collection, doc, getDoc, getDocs } from "firebase/firestore";
   import { db } from "./firebase";
 
   // citiesコレクションのSFドキュメントを取得
@@ -391,16 +392,21 @@ const colRef = collection(db, 'users');
     console.log("No such document!");
   }
 
-  // citiesコレクションの全てのドキュメントを取得する
+  // citiesコレクションの全てのドキュメントを取得する(配列で帰ってくる)
+  // getDocs(複数形)だよ！！
   const querySnapshot = await getDocs(collection(db, "cities"));
   querySnapshot.forEach((doc) => {
-    // doc.data() is never undefined for query doc snapshots
+    // こっちではdoc.data()が未定義になることはないみたい
     console.log(doc.id, " => ", doc.data());
   });
   ```
 - `where`  
   コレクションから、条件を指定した上で複数のドキュメントを取得する。  
-  `query`で問い合わせるクエリオブジェクトを作る際に引数として渡す。
+  一つ目の引数にフィルタするフィールド、  
+  二つ目の引数に比較演算子、(jsで使う演算子+α次項参照)  
+  三つ目の引数に値を渡す。  
+  このwhere句は`query`で問い合わせるクエリオブジェクトを作る際に引数として渡す。  
+  ⇒`query`に渡した引数の順に処理がされる様子。  
   実際にクエリが投げられるのは`getDocs()`するタイミングとなる。
   ```javascript
   import { collection, query, where, getDocs } from "firebase/firestore";
@@ -416,9 +422,7 @@ const colRef = collection(db, 'users');
     console.log(doc.id, " => ", doc.data());
   });
   ```
-  `query`に複数の`where`等を渡すこともできる(複合クエリ)。 複合クエリは、一度のクエリで複数のフィールドに対する不当演算(<、<=、>、>=、!=)はできないみたい  
-  また、複合インデックスが必要になる。(ただしインデックスはテストするとき実際にクエリを投げればエラーが出力するのでそのエラーメッセージから直接作成することもできるのであまり気にしなくてもOK)  
-  自分でやるなら、firestore.indexes.jsonを修正/デプロイするらしい。ちなみにfirestore.rules側で `allow read: if resource.data.xxx == 'hoge' `のような感じならばクエリも`where('xxx', '==', hoge)`のようにならなければパーミッションエラーとなる。ルールに合わせること
+  `query`に複数の`where`等を渡すこともできる(**複合クエリ**)。 複合クエリは、一度のクエリで複数のフィールドに対する不当演算(<、<=、>、>=、!=)はできないみたい  
   ```javascript
   // この二つはOK
   // stateだけなら不当演算複数OK
@@ -428,12 +432,33 @@ const colRef = collection(db, 'users');
   // これはNG
   // state populationに対して不当演算してる
   const q3 = query(citiesRef, where("state", ">=", "CA"), where("population", ">", 100000));
-
   ```
-- `orderBy` `limit`  
-  コレクションから、複数のドキュメントを取得する際に条件を指定して並べ替え、取得するデータの制限を行う。  orderで指定したフィールドがないドキュメントはスキップになる。
-  `query`で問い合わせるクエリオブジェクトを作る際に引数として渡す。
-  これも`getDocs()`に渡してあげる
+   **また、複合インデックスが必要になる。(ただしインデックスはテストするとき実際にクエリを投げればエラーが出力するのでそのエラーメッセージから直接作成することもできるのであまり気にしなくてもOK)**  
+  自分でやるなら、firestore.indexes.jsonを修正/デプロイするらしい。ちなみにfirestore.rules側で `allow read: if resource.data.xxx == 'hoge' `のような感じならばクエリも`where('xxx', '==', hoge)`のようにならなければパーミッションエラーとなる。ルールに合わせること  
+  次の特殊な比較演算子もある
+  ```javascript
+  import { query, where } from "firebase/firestore";
+
+  // regionsフィールドが、west_coast値を含む配列である、ドキュメントを取得
+  // {
+  //   regions: [... weat_coast, ...]
+  // }
+  const q = query(citiesRef, where("regions", "array-contains", "west_coast"));
+
+  // country フィールドが USA または Japan に設定されているすべての city ドキュメントを返す。最大10個まで
+  const q = query(citiesRef, where('country', 'in', ['USA', 'Japan']));
+
+  // country フィールドが存在し、そのフィールドが USA、Japan、null に設定されていないすべての city ドキュメントを返す。最大10個まで
+  const q = query(citiesRef, where('country', 'not-in', ['USA', 'Japan']));
+
+  // region フィールドが west_coast または east_coastを含む配列であるすべての city ドキュメントを返す。最大10個まで
+  const q = query(citiesRef, where('regions', 'array-contains-any', ['west_coast', 'east_coast']));
+  ```
+
+- `orderBy` と `limit`  
+  コレクションから、複数のドキュメントを取得する際に条件を指定して並べ替え、取得するデータの制限を行う。  `order`で指定したフィールドがないドキュメントはスキップになる。  
+  これらも`query`で問い合わせるクエリオブジェクトを作る際に引数として渡した後、`getDocs()`に渡してあげる。⇒`query`に渡した引数の順に処理がされる様子。  
+  `limit`を使ってページネーションみたいなこともできる。
   ```javascript
   import { getDocs, query, orderBy, limit } from "firebase/firestore";
 
@@ -458,6 +483,33 @@ const colRef = collection(db, 'users');
 
   // NG　whereとorderの指定するフィールドが異なる
   const q = query(citiesRef, where("population", ">", 100000), orderBy("country"));
+  ```
+  `limit`を使ってページ分割するには
+  ```javascript
+  import { collection, query, orderBy, startAfter, limit, getDocs } from "firebase/firestore";
+  import { db } from "./firebase";
+
+  // 最初のpopulation順のcitiesドキュメントを取得するクエリを投げる
+  const first = query(collection(db, "cities"), orderBy("population"), limit(25));
+  const documentSnapshots = await getDocs(first);
+
+  // 最後に見た位置を入れる。stateとかに保存しておけばいいかな
+  const lastVisible = documentSnapshots.docs[documentSnapshots.docs.length-1];
+  console.log("last", lastVisible);
+
+  // 次のページを読みだす処理
+  // population順に並べ替え、最後にみた位置より後の、25citiesを取り出すクエリ。
+  // 当然ながらstartAfter以外は最初のクエリと一緒にすること
+  // startAfterはカーソル句といい(他にもstartAtとかある)
+  // プリミティブな値を入れる分にはwhereとあまり変わりないが、
+  // documentを渡すと、並べ替え等して取得したドキュメントの内、
+  // 渡したdocument以降のドキュメントを取得するようなことが可能になる
+  const next = query(collection(db, "cities"),
+      orderBy("population"),
+      startAfter(lastVisible),
+      limit(25));
+  const nextDocSnap = await getDocs(next);
+  ...
   ```
 
 ### データの削除
@@ -485,8 +537,6 @@ const colRef = collection(db, 'users');
   });
   ```
 
-### データを並べ替えて取得
-### データを制限して取得
 ### データの変更を検知する
   ```javascript
   const unsubscribe = db.collection('todos').onSnapshot(snapshots => {
@@ -600,5 +650,5 @@ storage上の/imagesディレクトリに、blob化したファイルを、`file
 質問＆回答のデータセットを読込むのにつかっているだけ
 
 ★未完
-updateとset({marge:true}つき)は何が違う？
+updateとset({merge:true}つき)は何が違う？
 決済の方法
