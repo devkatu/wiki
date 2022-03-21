@@ -104,9 +104,11 @@ hint: **ReactもReactNative(expo)もwebアプリの追加**でOKなはず。ど�
 
   const firebaseApp = initializeApp(firebaseConfig);
 
-  export const auth = getAuth();
-  export const db = getFirestore();
-  export const storage = getStorage();
+  // 各getXxxxxに渡すfirebaseAppは必要か？
+  // ドキュメントによってなかったりする。APIリファレンスでは必要っぽい
+  export const auth = getAuth(firebaseApp);
+  export const db = getFirestore(firebaseApp);
+  export const storage = getStorage(firebaseApp);
 
   ```
 
@@ -182,7 +184,7 @@ const docRef3 = doc(colRef);
 const colRef = collection(db, 'users');
 ```
 
-### データの書込み　設定・追加・更新
+### データの書込み <small>設定・追加・更新</small>
 以下、asyncメソッドが殆どなので、`await`して、`try`と`catch`で例外処理をするのが良いと思う
 - `setDoc()`  
   ドキュメントIDを指定したドキュメントの**追加、上書き**
@@ -338,6 +340,7 @@ const colRef = collection(db, 'users');
   const washingtonRef = doc(db, "cities", "DC");
 
   // 引数で指定した値だけ、数値フィールドを増減する
+  // populationフィールドの値を50インクリメントする
   await updateDoc(washingtonRef, {
       population: increment(50)
   });
@@ -354,6 +357,7 @@ const colRef = collection(db, 'users');
   // このbatchのset、update、deleteに処理を登録していく
   const batch = writeBatch(db);
 
+  // ここからバッチへの登録
   const nycRef = doc(db, "cities", "NYC");
   batch.set(nycRef, {name: "New York City"});
 
@@ -368,8 +372,93 @@ const colRef = collection(db, 'users');
   await batch.commit();
   ```
 
-### データの読取
-- 
+### データの読取 <small>読出・選択・並替・制限・データ変更検知</small>
+- `getDoc`  
+  単一ドキュメント全体、またはコレクション内のすべてのドキュメントを取得する
+  ```javascript
+  import { collection, doc, getDoc } from "firebase/firestore";
+  import { db } from "./firebase";
+
+  // citiesコレクションのSFドキュメントを取得
+  const docRef = doc(db, "cities", "SF");
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    // ドキュメントが存在すれば、data()で読みだすことができる
+    console.log("Document data:", docSnap.data());
+  } else {
+    // ドキュメントがないとき、docSnap.data()は未定義になる
+    console.log("No such document!");
+  }
+
+  // citiesコレクションの全てのドキュメントを取得する
+  const querySnapshot = await getDocs(collection(db, "cities"));
+  querySnapshot.forEach((doc) => {
+    // doc.data() is never undefined for query doc snapshots
+    console.log(doc.id, " => ", doc.data());
+  });
+  ```
+- `where`  
+  コレクションから、条件を指定した上で複数のドキュメントを取得する。  
+  `query`で問い合わせるクエリオブジェクトを作る際に引数として渡す。
+  実際にクエリが投げられるのは`getDocs()`するタイミングとなる。
+  ```javascript
+  import { collection, query, where, getDocs } from "firebase/firestore";
+  import { db } from "./firebase";
+
+  // citiesコレクションからcapitalフィールドがtrueのドキュメントを取得するクエリを作成
+  const q = query(collection(db, "cities"), where("capital", "==", true));
+
+  // クエリをgetdocsに渡すとドキュメントの配列が帰ってくる
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    // doc.data() が未定義になることはないらしい
+    console.log(doc.id, " => ", doc.data());
+  });
+  ```
+  `query`に複数の`where`等を渡すこともできる(複合クエリ)。 複合クエリは、一度のクエリで複数のフィールドに対する不当演算(<、<=、>、>=、!=)はできないみたい  
+  また、複合インデックスが必要になる。(ただしインデックスはテストするとき実際にクエリを投げればエラーが出力するのでそのエラーメッセージから直接作成することもできるのであまり気にしなくてもOK)  
+  自分でやるなら、firestore.indexes.jsonを修正/デプロイするらしい。ちなみにfirestore.rules側で `allow read: if resource.data.xxx == 'hoge' `のような感じならばクエリも`where('xxx', '==', hoge)`のようにならなければパーミッションエラーとなる。ルールに合わせること
+  ```javascript
+  // この二つはOK
+  // stateだけなら不当演算複数OK
+  const q1 = query(citiesRef, where("state", ">=", "CA"), where("state", "<=", "IN"));
+  const q2 = query(citiesRef, where("state", "==", "CA"), where("population", ">", 1000000));
+
+  // これはNG
+  // state populationに対して不当演算してる
+  const q3 = query(citiesRef, where("state", ">=", "CA"), where("population", ">", 100000));
+
+  ```
+- `orderBy` `limit`  
+  コレクションから、複数のドキュメントを取得する際に条件を指定して並べ替え、取得するデータの制限を行う。  orderで指定したフィールドがないドキュメントはスキップになる。
+  `query`で問い合わせるクエリオブジェクトを作る際に引数として渡す。
+  これも`getDocs()`に渡してあげる
+  ```javascript
+  import { getDocs, query, orderBy, limit } from "firebase/firestore";
+
+  // nameフィールドについて昇順で並べ替えたものを3つ取得する
+  const q = query(citiesRef, orderBy("name"), limit(3));
+
+  // orderByに二つ目の引数"desc"を渡すと降順になる
+  const q1 = query(citiesRef, orderBy("name", "desc"), limit(3));
+
+  // これもqueryに複数渡せる
+  const q2 = query(citiesRef, orderBy("state"), orderBy("population", "desc"), limit(3));
+
+  const querySnap = await getDocs(q);
+  ...
+  ```
+  もちろん`where`と組み合わせるのも可能。ただし`where`したあとの最初の`order`は同じフィールドを指定すること
+  ```javascript
+  import { query, where, orderBy } from "firebase/firestore";
+  
+  // OK
+  const q = query(citiesRef, where("population", ">", 100000), orderBy("population"));
+
+  // NG　whereとorderの指定するフィールドが異なる
+  const q = query(citiesRef, where("population", ">", 100000), orderBy("country"));
+  ```
 
 ### データの削除
 - `deleteDoc`  
@@ -395,32 +484,7 @@ const colRef = collection(db, 'users');
     capital: deleteField()
   });
   ```
-### トランザクション処理
-  ```javascript
-  const batch = db.batch();
-  batch.update(
-    todosRef.doc(id),{text: "test"}
-  );
-  batch.delete(
-    todosRef.doc(id);
-  );
-  batch.update(
-    todosRef.doc(id),{text: "test"}, {marge: true}
-  );
-  batch.commit().then(() => {
-    ...
-  }).catch(() => {
-    throw new Error("batch error")
-  });
-  ```
-  一つ以上のfirestoreへのバッチ書き込み処理(読み取りは別)を行う。最初に作った`batch`へ.`batch.update(書き込みしたいドキュメント, {書き込むデータ}, {marge: true})`または`batch.delete(削除したいドキュメント)`としてどんどん書いていく。`batch.update()`は複数回書いてもOK。`batch.commit()`時に実際に書き込み処理をまとめて行い、一つでも失敗した場合は全ての`batch.update`に記述したdb書き込みの処理をロールバックし、成功した場合は`batch.then(()=>{ })`の処理を行う。`{marge:true}`はセットの時と同じような使い方になる
-### データの取得
-### データを選択して取得
-- `db.collection('todos').orderBy('timestamp', 'asc').get()`  
-→firestore上のtodosコレクションからtimestampのフィールドについて、ascなら昇順、descなら降順でドキュメントを取得する
-- `db.collection('todos').orderBy('timestamp', 'asc).where('color', '==', color)`  
-orderByしたものから更に'color'フィールドにcolorという変数値が入っているもののみ取り出す。`where`の第一引数はドキュメントのフィールドを文字列指定し、第二引数は比較演算子を文字列指定？し、第三引数は比較する値を入れる。    
-尚、これは**複合クエリ**といい、firestore.indexes.jsonを修正/デプロイしないとこの複合クエリは使用できない。めんどくさければ**クエリを投げた時にでるエラーメッセージをクリックすると勝手にコンソールに飛び、複合インデックスを作成してくれる。**ちなみにfirestore.rules側で `allow read: if resource.data.xxx == 'hoge' `のような感じならばクエリも`where('xxx', '==', hoge)`のようにならなければパーミッションエラーとなる。ルールに合わせること
+
 ### データを並べ替えて取得
 ### データを制限して取得
 ### データの変更を検知する
@@ -439,7 +503,7 @@ orderByしたものから更に'color'フィールドにcolorという変数値�
 
 - 慣例的に変数の名前は以下のようにすることが多い  
   - `const todosRef = db.collection('todos')`  
-    コレクションを変数に入れるときは…Ref
+    コレクションやドキュメントを変数に入れるときは…Ref
   - `db.collection('todos').doc(id).get().then(snapshots => {...})`  
     なんかのdocを取得したときは引数はsnapshotsに　それをforEachで回す
   - `const query = db.collection('todos').orderBy('update', 'asc')`
