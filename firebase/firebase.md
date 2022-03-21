@@ -93,7 +93,8 @@ hint: **ReactもReactNative(expo)もwebアプリの追加**でOKなはず。ど�
   export const FirebaseTimestamp = firebase.firestore.Timestamp;
   ```
 
-  **version9の書き方**
+  **version9の書き方**  
+  version9ではタイムスタンプは個別にインポートできるので必要な箇所で直接importする。そして公式では`firebase.firestore.Timestamp.now()`ではなく`firebase.firestore.FieldValue?.serverTimestamp()`の方が推奨みたい
   ```javascript
   import { initializeApp } from "firebase/app"
   import { getAuth } from "firebase/auth"
@@ -181,7 +182,8 @@ const docRef3 = doc(colRef);
 const colRef = collection(db, 'users');
 ```
 
-### データの追加
+### データの書込み　設定・追加・更新
+以下、asyncメソッドが殆どなので、`await`して、`try`と`catch`で例外処理をするのが良いと思う
 - `setDoc()`  
   ドキュメントIDを指定したドキュメントの**追加、上書き**
   指定したドキュメントが存在しない場合は新しく作成される
@@ -192,8 +194,9 @@ const colRef = collection(db, 'users');
   // citiesコレクション->BJドキュメントに
   // {hoge: "fuga"}オブジェクトを追加
   // 三つ目の引数はオプションで{marge: true}を渡すと
-  // 元のBJドキュメント内のデータと統合する
-  // 該当するdocumentがない場合は新しく作成される
+  // 元のBJドキュメント内のデータと統合し、オプション無しなら
+  // documentがない場合は新しく作成され、documentが既存なら
+  // そのdocumentを完全に上書きする
   // 戻り値はPromise<void>
   await setDoc(
     doc(db, 'cities', 'BJ'),
@@ -207,10 +210,9 @@ const colRef = collection(db, 'users');
   // この動作はaddDoc()と完全に同じ
   const newCityRef = doc(collection(db, 'cities'));
   await setDoc(newCityRef, {foo: "bar"});
-
   ```
 - `addDoc()`  
-  ドキュメントIDを指定せず、ドキュメントの**追加**(IDは自動で採番)
+  ドキュメントIDを指定せず、ドキュメントを**追加**(IDは自動で採番)
   ```javascript
   import { addDoc, collection } from 'firebase/firestore';
   import { db } from './firebase';
@@ -246,11 +248,9 @@ const colRef = collection(db, 'users');
 
   // citiesコレクション内BJドキュメントの
   // fooオブジェクト内barフィールドを更新する
-  // fooオブジェクト内にネストされたオブジェクトの
-  // barフィールドを更新しようとして
-  // {foo: {bar: "baz"}}としてしまうと、
-  // {foo: {bar: "bar", hoge: "fuga"}}とあった場合
-  // hogeフィールドは消えてしまう
+  // この時、{foo: {bar: "bar", hoge: "fuga"}}とあった場合
+  // 更新するデータに{foo: {bar: "baz"}}としてしまうと、
+  // hogeフィールドは消えてしまうので下記ドット記法を用いる。
   await updateDoc(
     doc(db, 'cities','BJ'),
     {
@@ -259,9 +259,9 @@ const colRef = collection(db, 'users');
   )
   ```
 
-  hint: `setDoc`との違いは次の例で  
+  hint: mergeオプション付きの`setDoc`との違いは次の例で  
   
-  次のデータがあるとする
+  次のデータがクラウドにあるとする
   ```javascript
   {
     users: {
@@ -271,7 +271,7 @@ const colRef = collection(db, 'users');
     foo: "bar"
   }
   ```
-  ここに次の`setDoc()`を行う
+  ここに次mergeオプションつきの`setDoc()`を行う
   ```javascript
   setDoc(db, {
     users:{
@@ -315,22 +315,86 @@ const colRef = collection(db, 'users');
     "users.user3": "hoge"
   })
   ```
-  とすると良い。`setDoc()`の`{marge: true`と同じ挙動となる
-  フィールドがネストしているところの更新を掛けたいときはこの違いを理解しておくこと
+  とすると良い。`setDoc()`の`{marge: true`と同じ挙動となる。
+  フィールドがネストしているところの更新を掛けたいときはこの違いを理解しておくこと  
+  merge付きの`setDoc()`の方が使いやすそう・・・
+- `serverTimestamp`  
+  サーバーのタイムスタンプを取得する。`set`や`update`するデータのフィールドの一つとして渡してあげると読みだすときの並べ替え等に使える。
+  ```javascript
+  import { updateDoc, serverTimestamp } from 'firebase/firestore';
 
-- `const id = db.collection('todos').doc()`  
-  →対象コレクションの新しいドキュメントにセットするIDを取得できる  
-  これをやらずに次の`set()`をやってもID自動採番されるけど、アプリ側で他にもID使いたい処理が多いのでこれだと楽にできる
-- `await db.collection('todos').doc(id).set(initTodo).catch(e => { throw new Error(e) });`  
-  →firestore上のtodosコレクションのid指定したドキュメントにinitTodoを登録する  
-  `set()`の第二引数に`{marge: true}`というオブジェクトをつけることができる。
-  これは元のドキュメントとのmargeをするということになる  
-### データの更新
-- `db.collection('todos').doc(id).update(sendTodo)`  
-  →firestore上のtodosコレクションのid指定したドキュメントにsendTodoを更新する  
+  // serverTimestampを実行して更新メソッドに渡してあげる
+  const updateTimestamp = await updateDoc(docRef, {
+    timestamp: serverTimestamp()
+  });
+
+  ```
+- `increment`
+  document内の数値フィールドを増減する。
+  ```javascript
+  import { doc, updateDoc, increment } from "firebase/firestore";
+  import { db } from "./firebase";
+
+  const washingtonRef = doc(db, "cities", "DC");
+
+  // 引数で指定した値だけ、数値フィールドを増減する
+  await updateDoc(washingtonRef, {
+      population: increment(50)
+  });
+
+  ```
+- `writeBatch`  
+  ドキュメントに対して一連の書き込みを行う。バッチ書込みに操作したい処理を登録していき、最後に書込みを行うが、途中で書込処理が失敗したりするとバッチに登録した書込みを処理を全てキャンセルしてロールバックする。  
+  読取処理も一連の動作に含めたいときはバッチではなくトランザクションというものが用意されている。が省略
+  ```javascript
+  import { writeBatch, doc } from "firebase/firestore";
+  import { db } from "./firebase";
+
+  // バッチ書込み処理を登録するオブジェクトを取得
+  // このbatchのset、update、deleteに処理を登録していく
+  const batch = writeBatch(db);
+
+  const nycRef = doc(db, "cities", "NYC");
+  batch.set(nycRef, {name: "New York City"});
+
+  const sfRef = doc(db, "cities", "SF");
+  batch.update(sfRef, {"population": 1000000});
+
+  const laRef = doc(db, "cities", "LA");
+  batch.delete(laRef);
+
+  // コミットにて一連の処理を実行する
+  // 一連の処理の途中で失敗したら全ての処理を無かったことにする
+  await batch.commit();
+  ```
+
+### データの読取
+- 
+
 ### データの削除
-- `db.collection('todos').doc(id).delete()`  
-  →firestore上のtodosコレクションのid指定したドキュメントを削除する  
+- `deleteDoc`  
+  firestore上のドキュメントを削除する。    
+  ただし**サブコレクションは削除されない**。コンソールから操作して削除しなければならない。同様にコレクション自体を削除するときもコンソールからの操作が必要となる。
+  ```javascript
+  import { doc, deleteDoc } from "firebase/firestore";
+  import { db } from "./firebase";
+
+  // citiesコレクションのDCドキュメントを削除する
+  await deleteDoc(doc(db, "cities", "DC"));
+  ```
+- `deleteField`  
+  firestore上のドキュメントの特定のフィールドを削除する。`updateDoc`の値として渡せばOK
+  ```javascript
+  import { doc, updateDoc, deleteField } from "firebase/firestore";
+  import { db } from "./firebase";
+
+  const cityRef = doc(db, 'cities', 'BJ');
+
+  // capitalフィールドを削除する
+  await updateDoc(cityRef, {
+    capital: deleteField()
+  });
+  ```
 ### トランザクション処理
   ```javascript
   const batch = db.batch();
