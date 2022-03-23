@@ -511,6 +511,66 @@ const colRef = collection(db, 'users');
   const nextDocSnap = await getDocs(next);
   ...
   ```
+- `onSnapshot`  
+  指定したドキュメントのデータの変更に対するイベントリスナを設定することができる。 
+  firestore上のデータが確実に更新されたことがわかるので、firestoreへの書込み処理後に、stateやstoreを更新するならこれを使用するのがいいかも   
+  一つ目の引数でリスナを設定するドキュメント、またはクエリオブジェクトを  
+  二つ目の引数でイベント発火時のコールバックを渡す 
+  三つ目の引数はオプションでセキュリティ権限がないため、または無効なクエリでリッスンしようとしたときなどの失敗時のコールバックを渡す  
+  戻り値はリスナーを解除する関数が入る
+  ```javascript
+  import { collection, doc, query, where, onSnapshot } from "firebase/firestore";
+  import { db } from "./firebase";
+
+  // 単一のドキュメントに対するリスナー設定
+  // citiesコレクションのSFドキュメントのデータが変更あればイベント発火
+  const unsub = onSnapshot(doc(db, "cities", "SF"), (doc) => {
+    // コールバックの引数には該当のドキュメントが入る
+    console.log("Current data: ", doc.data());
+
+    // ローカル書込み(まだサーバーに値が書き込まれていない状態)時にも
+    // イベント発火し、次のプロパティで判別できる
+    const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+  });
+
+
+  // 複数のドキュメントに対するリスナー設定
+  // citiesコレクションのstateがCAのドキュメントのデータが変更あればイベント発火
+  const q = query(collection(db, "cities"), where("state", "==", "CA"));
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    // コールバックの引数には該当する複数のドキュメントが入る
+    const cities = [];
+    querySnapshot.forEach((doc) => {
+      // 該当するドキュメントのイテレート
+      cities.push(doc.data().name);
+    });
+    console.log("Current cities in CA: ", cities.join(", "));
+  });
+
+  // snapshot間の変更の種類を検知する
+  // added modified removedの各値を取る
+  const q = query(collection(db, "cities"), where("state", "==", "CA"));
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    snapshot.docChanges().forEach((change) => {
+      if (change.type === "added") {
+          console.log("New city: ", change.doc.data());
+      }
+      if (change.type === "modified") {
+          console.log("Modified city: ", change.doc.data());
+      }
+      if (change.type === "removed") {
+          console.log("Removed city: ", change.doc.data());
+      }
+    });
+  });
+
+  // イベントリスナがいらなくなったとき(大体コンポーネントが削除されたとき)
+  // 必ず、リスナーの解除をしておくこと
+  // コンポーネントを呼び出す度にコールバックが登録されちゃう
+  unsub();
+
+  ```
+
 
 ### データの削除
 - `deleteDoc`  
@@ -547,9 +607,7 @@ const colRef = collection(db, 'users');
       })
   })
   ```
-  →firestore上のtodosコレクションの変化をリッスンする事ができるようになる  
-  changeTypeの値を用いて処理を分岐する。db上の値が確実に変更された事が分かるのでdb上の値を変更する処理の後、storeを更新したりするときはコレが良いかも  
-  dbに`set()`とかを投げて`.then()`とかでも同じかもだけどこの`onsnapshot()`の戻り値`unsubscribe`にはリスナー登録の解除関数が入っているみたいなのでコンポーネントのマウント解除時(useEffectの第一引数コールバックの戻り値)に`return () => unsubscribe()`で呼出すようにすること。コンポーネント呼出すたびにコールバック登録されちゃうので 
+
 
 - 慣例的に変数の名前は以下のようにすることが多い  
   - `const todosRef = db.collection('todos')`  
