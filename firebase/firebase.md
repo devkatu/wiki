@@ -375,7 +375,8 @@ const colRef = collection(db, 'users');
 
 ### データの読取 <small>読出・選択・並替・制限・データ変更検知</small>
 - `getDoc` と `getDocs`  
-  単一ドキュメントを丸ごと、または単一コレクション内のすべてのドキュメントを取得する
+  単一ドキュメントを丸ごと、または単一コレクション内のすべてのドキュメントを取得する  
+  それぞれドキュメント、コレクションを引数に渡す
   ```javascript
   import { collection, doc, getDoc, getDocs } from "firebase/firestore";
   import { db } from "./firebase";
@@ -547,10 +548,14 @@ const colRef = collection(db, 'users');
     console.log("Current cities in CA: ", cities.join(", "));
   });
 
-  // snapshot間の変更の種類を検知する
+  // snapshotでの変更の種類を検知する
   // added modified removedの各値を取る
+
+  // citiesコレクション中のstateがCAのドキュメントに対して
+  // イベントリスナーを設定する
   const q = query(collection(db, "cities"), where("state", "==", "CA"));
   const unsubscribe = onSnapshot(q, (snapshot) => {
+    // クエリで抽出したドキュメントに変更あったとき発火
     snapshot.docChanges().forEach((change) => {
       if (change.type === "added") {
           console.log("New city: ", change.doc.data());
@@ -610,12 +615,17 @@ const colRef = collection(db, 'users');
 
 
 - 慣例的に変数の名前は以下のようにすることが多い  
-  - `const todosRef = db.collection('todos')`  
+  - `const todosRef = collection(db, 'todos')`  
     コレクションやドキュメントを変数に入れるときは…Ref
-  - `db.collection('todos').doc(id).get().then(snapshots => {...})`  
-    なんかのdocを取得したときは引数はsnapshotsに　それをforEachで回す
-  - `const query = db.collection('todos').orderBy('update', 'asc')`
-    なんかのコレクションを条件付きで変数に入れるときはquery
+  - 
+    ```javascript
+    const snapshot = await getDoc(doc(db,'todos','id');
+    console.log(snapshot.data())
+
+    const snapshots = await getDocs(collection(db, 'todos'));
+    snapshots.forEach(doc => {console.log(doc.data())})
+    ```
+    なんかのdocを取得したときは引数はsnapshot、またはsnapshotsに　それをforEachで回す
 
 ---
 
