@@ -518,7 +518,7 @@ const colRef = collection(db, 'users');
   一つ目の引数でリスナを設定するドキュメント、またはクエリオブジェクトを  
   二つ目の引数でイベント発火時のコールバックを渡す 
   三つ目の引数はオプションでセキュリティ権限がないため、または無効なクエリでリッスンしようとしたときなどの失敗時のコールバックを渡す  
-  戻り値はリスナーを解除する関数が入る
+  戻り値はリスナーを解除する関数が入る  
   ```javascript
   import { collection, doc, query, where, onSnapshot } from "firebase/firestore";
   import { db } from "./firebase";
@@ -533,7 +533,6 @@ const colRef = collection(db, 'users');
     // イベント発火し、次のプロパティで判別できる
     const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
   });
-
 
   // 複数のドキュメントに対するリスナー設定
   // citiesコレクションのstateがCAのドキュメントのデータが変更あればイベント発火
@@ -550,7 +549,6 @@ const colRef = collection(db, 'users');
 
   // snapshotでの変更の種類を検知する
   // added modified removedの各値を取る
-
   // citiesコレクション中のstateがCAのドキュメントに対して
   // イベントリスナーを設定する
   const q = query(collection(db, "cities"), where("state", "==", "CA"));
@@ -573,7 +571,6 @@ const colRef = collection(db, 'users');
   // 必ず、リスナーの解除をしておくこと
   // コンポーネントを呼び出す度にコールバックが登録されちゃう
   unsub();
-
   ```
 
 
@@ -601,18 +598,6 @@ const colRef = collection(db, 'users');
     capital: deleteField()
   });
   ```
-
-### データの変更を検知する
-  ```javascript
-  const unsubscribe = db.collection('todos').onSnapshot(snapshots => {
-      snapshots.docChagnges().forEach(change=>{
-          const data = change.doc.data();
-          const changeType = change.type;
-          // added, modified, removedの値をとる
-      })
-  })
-  ```
-
 
 - 慣例的に変数の名前は以下のようにすることが多い  
   - `const todosRef = collection(db, 'todos')`  
