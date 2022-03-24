@@ -517,8 +517,9 @@ const colRef = collection(db, 'users');
   firestore上のデータが確実に更新されたことがわかるので、firestoreへの書込み処理後に、stateやstoreを更新するならこれを使用するのがいいかも   
   一つ目の引数でリスナを設定するドキュメント、またはクエリオブジェクトを  
   二つ目の引数でイベント発火時のコールバックを渡す 
-  三つ目の引数はオプションでセキュリティ権限がないため、または無効なクエリでリッスンしようとしたときなどの失敗時のコールバックを渡す  
+  三つ目の引数はオプションで、セキュリティ権限がない・または無効なクエリでリッスンしようとしたときなどの失敗時のコールバックを渡す  
   戻り値はリスナーを解除する関数が入る  
+  単一のドキュメントに対してのリスナー設定は
   ```javascript
   import { collection, doc, query, where, onSnapshot } from "firebase/firestore";
   import { db } from "./firebase";
@@ -533,12 +534,14 @@ const colRef = collection(db, 'users');
     // イベント発火し、次のプロパティで判別できる
     const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
   });
-
+  ```
+  複数のドキュメントに対するリスナーの設定は
+  ```javascript
   // 複数のドキュメントに対するリスナー設定
   // citiesコレクションのstateがCAのドキュメントのデータが変更あればイベント発火
   const q = query(collection(db, "cities"), where("state", "==", "CA"));
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
-    // コールバックの引数には該当する複数のドキュメントが入る
+    // コールバックの引数には該当する変更があった複数のドキュメントが入る
     const cities = [];
     querySnapshot.forEach((doc) => {
       // 該当するドキュメントのイテレート
@@ -546,7 +549,9 @@ const colRef = collection(db, 'users');
     });
     console.log("Current cities in CA: ", cities.join(", "));
   });
-
+  ```
+  ドキュメントの更新の種類によって処理を分岐させたいときは
+  ```javascript
   // snapshotでの変更の種類を検知する
   // added modified removedの各値を取る
   // citiesコレクション中のstateがCAのドキュメントに対して
@@ -566,7 +571,10 @@ const colRef = collection(db, 'users');
       }
     });
   });
+  ```
 
+  ```javascript
+  const unsub = onSnapshot(...)
   // イベントリスナがいらなくなったとき(大体コンポーネントが削除されたとき)
   // 必ず、リスナーの解除をしておくこと
   // コンポーネントを呼び出す度にコールバックが登録されちゃう
