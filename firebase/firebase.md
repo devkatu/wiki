@@ -163,7 +163,8 @@ dbにアクセスするときは**collection**,**document**,**data**の三つの
 
 ---
 
-## db(firebase.firestore)のメソッド色々
+## FireStoreのメソッド色々使用例
+`db`はfirebaseの中で`firebase.firestore.getFirestore`で取得している
 ### コレクション、ドキュメントの参照の取得
 コレクション、ドキュメントに対して色々処理したいときに、各々の参照を使いまわしたいときがある。
 以下の方法で参照を取得して使いまわすことができる。
@@ -632,20 +633,153 @@ firestore.rulesにdbへのオペレーションを制御するルールを記述
 
 ---
 
-## storageのメソッド色々
-画像・音声・動画やらなんやらのファイルを保存できるサービスだよ
-storageを使うためには、`firebaseConfig`オブジェクトに、バケットURLを含めておく必要がある。多分デフォルトで設定されてるはずだけど、 `storageBucket`プロパティがあるか確認！ 
+## Storageのメソッド色々使用例
+画像・音声・動画やらなんやらのファイルを保存できるサービスだよ  
+storageを使うためには、`firebaseConfig`オブジェクトに、バケットURLを含めておく必要がある。多分デフォルトで設定されてるはずだけど、 `storageBucket`プロパティがあるか確認！   
+`storage`はfirebaseの中で`firebase.storage.getStorage`で取得している
 ### 参照の作成
-### ファイルのアップロード
+`firestore`でいうところのコレクション、ドキュメントへの参照のような感じでパスをスラッシュ区切りで指定して、`storage`への参照を取得できる。取得した参照から相対的に階層を移動したり、各種のプロパティが使える。
 ```javascript
-const uploadTask = storage.ref('images').child(fileName).put(blob);
-uploadTask.then( () => {
-  uploadTasksnapshot.ref.getDownloadURL().then((downloadURL) => {
-    ...
-  })
-})
+import { getStorage, ref } from "firebase/storage";
+import { storage } from "./firebase";
+
+// 'images'への参照を作成
+const imagesRef = ref(storage, 'images');
+
+// 'images/space.jpg'への参照を作成
+const spaceRef = ref(storage, 'images/space.jpg');
+
+// parentで'images/space.jpg'から親の'iamges'への参照へ移動
+const imagesRef2 = spaceRef.parent;
+
+// rootで最上位の階層へ移動
+const rootRef = spaceRef.root;
+
+// fullPathで'images/space.jpg'となる。普通にPC上のファイルパスと思っていい
+spaceRef.fullPath;
+
+// nameで'space.jpg'となる。普通にPC上のファイル名と思っていい
+spaceRef.name;
+
+// bucketでファイルが実際に保存されるストレージバケットの名前が取得できる
+spaceRef.bucket;
 ```
-storage上の/imagesディレクトリに、blob化したファイルを、`fileName`という名前でアップロードしてそのアップロードしたファイルのダウンロード用URLを取得できる
+
+
+### ファイルのアップロード
+- `uploadBytes`  
+  途中で一時停止したり再開したりできないアップロード
+  ```javascript
+  import { ref, uploadBytes } from "firebase/storage";
+
+  // ファイル名を含む、任意の階層の参照を作成
+  const storageRef = ref(storage, 'images/mountains.jpg');
+
+  // ファイル名被らないようにランダムなファイル名生成する際はこちらを使う
+  const S = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const N = 16;
+  const fileName = Array.from(crypto.getRandomValues(new Uint32Array(N))).map((n) => S[n % S.length]).join('')
+  const storageRef2 = ref(storage, 'images/' + filename);
+
+  // アップロードする画像ファイルをblobオブジェクトにする。
+  // MIMEタイプを指定するが、後でアップロードする際にもオプションで指定できたりするみたい
+  let blob = new Blob(imageFile, { type: "image/jpeg" });
+
+  // 'blob'はBlob か File APIで取得してくる
+  // 'images/montains.jpg'がアップロードされる
+  // storageRef2で'images/'にランダムに名前生成したファイルがアップロードされる
+  uploadBytes(storageRef, blob).then((snapshot) => {
+    console.log('Uploaded a blob or file!');
+  });
+
+  // awaitするならこう
+  try{
+    const snapshot = await uploadBytes(storageRef, file);
+    console.log('upload 完了')
+  }catch(e){
+    console.log(e)
+  }
+  ```
+- `uploadBytesResumable`  
+  途中で一時停止したり再開したり進行状況の確認をできるアップロード
+  ```javascript
+  import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
+  import { storage } from "./firebase";
+
+  const storageRef = ref(storage, 'images/mountains.jpg');
+
+  // 任意のファイルをアップロード
+  const uploadTask = uploadBytesResumable(storageRef, file);
+
+  // アップロードの一時停止
+  uploadTask.pause();
+
+  // アップロードの再開
+  uploadTask.resume();
+
+  // アップロードのキャンセル
+  uploadTask.cancel();
+  ```
+  アップロードの進行状況によってイベントが発生するので、処理を追加できる
+  ```javascript
+  import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+
+  const storageRef = ref(storage, 'images/rivers.jpg');
+
+  // アップロードを開始
+  // 戻り値のuploadTaskにてアップロードの操作が可能
+  const uploadTask = uploadBytesResumable(storageRef, file);
+
+  // uploadTask.onにてオブザーバーを登録
+  // 1. 'state_changed' 状態変化毎に呼出し
+  // 2. 'Error' 失敗したときに呼出し
+  // 3. 'Completion' 正常完了時に呼出し
+  uploadTask.on('state_changed',
+    (snapshot) => {
+      // 進行状況、一時停止、再開などの状態変更イベントを監視する
+      // ここではアップロード済みバイト数/合計バイト数でプログレスを管理
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      console.log('Upload is ' + progress + '% done');
+      switch (snapshot.state) {
+        // アップロード状態によって処理分岐
+        case 'paused':
+          console.log('Upload is paused');
+          break;
+        case 'running':
+          console.log('Upload is running');
+          break;
+      }
+    },
+    (error) => {
+      // アップロード失敗時の処理
+      // エラーコードの完全なリストは
+      // https://firebase.google.com/docs/storage/web/handle-errors
+      switch (error.code) {
+        case 'storage/unauthorized':
+          // オブジェクトにアクセスする権限がない場合
+          break;
+        case 'storage/canceled':
+          // アップロードをキャンセルした場合
+          break;
+
+        // ...
+
+        case 'storage/unknown':
+          // 不明なエラー error.serverResponseで調査する
+          break;
+      }
+    },
+    () => {
+      // アップロード成功時の処理
+      // アップロードしたファイルのダウンロードURLの取得
+      // URL: https://firebasestorage.googleapis.com/...
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        console.log('File available at', downloadURL);
+      });
+    }
+  );
+  ```
+
 ### ファイルのダウンロード
 ### ファイルの削除
 
