@@ -639,6 +639,7 @@ storageを使うためには、`firebaseConfig`オブジェクトに、バケッ
 `storage`はfirebaseの中で`firebase.storage.getStorage`で取得している
 ### 参照の作成
 `firestore`でいうところのコレクション、ドキュメントへの参照のような感じでパスをスラッシュ区切りで指定して、`storage`への参照を取得できる。取得した参照から相対的に階層を移動したり、各種のプロパティが使える。
+アップロードするときは、まだアップロードしていないファイルの参照を作成することになるが、作成には問題ない。
 ```javascript
 import { getStorage, ref } from "firebase/storage";
 import { storage } from "./firebase";
@@ -663,6 +664,16 @@ spaceRef.name;
 
 // bucketでファイルが実際に保存されるストレージバケットの名前が取得できる
 spaceRef.bucket;
+
+// Google Cloud Storage URI を用いて参照を作成する
+// ダウンロードに使用できる
+const gsReference = ref(storage, 'gs://bucket/images/stars.jpg');
+
+// HTTPS URL を用いて参照を作成する
+// ダウンロードに使用できる
+// URLでは、文字はURLエスケープされていることに注意してください。
+const httpsReference = ref(storage, 'https://firebasestorage.googleapis.com/b/bucket/o/images%20stars.jpg');  
+
 ```
 
 
@@ -781,7 +792,130 @@ spaceRef.bucket;
   ```
 
 ### ファイルのダウンロード
+- `getDownloadURL`  
+  渡したファイル参照のダウンロードするためのURLを取得する。  
+  取得したURLに対してajaxすることでOK  
+  ver9.5以降ではURLをいちいち取得しなくてもよくなるメソッドが追加されるらしい
+  ```javascript
+  import { ref, getDownloadURL } from "firebase/storage";
+  import { storage } from "./firebase";
+
+  getDownloadURL(ref(storage, 'images/stars.jpg'))
+    .then((url) => {
+      // `url` が 'images/stars.jpg'をダウンロードするためのURLとなる
+
+      // 直接ダウンロードする
+      const xhr = new XMLHttpRequest();
+      xhr.responseType = 'blob';
+      xhr.onload = (event) => {
+        const blob = xhr.response;
+      };
+      xhr.open('GET', url);
+      xhr.send();
+
+      // <img>要素等に直接URL属性として設定してもOK。
+      const img = document.getElementById('myimg');
+      img.setAttribute('src', url);
+    })
+    .catch((error) => {
+      // エラー時の処理
+      // エラーコードの完全なリストは
+      // https://firebase.google.com/docs/storage/web/handle-errors
+      switch (error.code) {
+        case 'storage/object-not-found':
+          // ファイルが存在しない
+          break;
+        case 'storage/unauthorized':
+          // オブジェクトにアクセスする権限がない
+          break;
+        case 'storage/canceled':
+          // アップロードがキャンセルされている
+          break;
+
+        // ...
+
+        case 'storage/unknown':
+          // 不明なエラー。サーバーレスポンスを確認
+          break;
+      }
+    });
+  ```
+### リストの取得
+クラウドにあるデータのリストを取得する。**これを使用するルールはセキュリティルールのver2が必要らしい**
+- `listAll`  
+  全てのファイルの一覧を取得する。
+  ```javascript
+  import { ref, listAll } from "firebase/storage";
+  import { storage } from "./firebase";
+
+  // 'files/uid'の既存の参照を作成
+  const listRef = ref(storage, 'files/uid');
+
+  // 渡したlistRef以下の全てのアイテム、フォルダーを検索する
+  listAll(listRef)
+    .then((res) => {
+      res.prefixes.forEach((folderRef) => {
+        // listRef以下のフォルダーをイテレートできる
+        // ここで再帰的にlistAllを行うこともできる
+      });
+      res.items.forEach((itemRef) => {
+        // listRef以下のファイルをイテレートできる
+      });
+    }).catch((error) => {
+      // エラー時の処理
+    });
+  ```
+- `list`
+  リストの結果をページ分割できる。二つ目の引数に
+  { maxResults: 結果を取得する制限数 }のオブジェクトを渡すと取得数が制限でき、
+  さらに{ pageToken: firstPage.nextPageToken }を追加で渡すと最初に取得した
+  リストの続きを取得できる。
+  ```javascript
+  import { ref, list } from "firebase/storage";
+  import { storage } from "./firebase";
+
+  async function pageTokenExample(){
+    // 'files/uid'の既存の参照を作成
+    const listRef = ref(storage, 'files/uid');
+
+    // 最初の100個のリストをフェッチする
+    const firstPage = await list(listRef, { maxResults: 100 });
+
+    // 取得したリストの使い方は
+    // processItems(firstPage.items)
+    // processPrefixes(firstPage.prefixes)
+
+    // 次のリスト取得したいとき
+    // list()の二つ目の引数に{ pageToken: firstPage.nextPageToken }を追加
+    if (firstPage.nextPageToken) {
+      const secondPage = await list(listRef, {
+        maxResults: 100,
+        pageToken: firstPage.nextPageToken,
+      });
+      // processItems(secondPage.items)
+      // processPrefixes(secondPage.prefixes)
+    }
+  }
+
+  ```
 ### ファイルの削除
+ファイルを指定して削除する。
+- `deleteObject`  
+  ```javascript
+  import { ref, deleteObject } from "firebase/storage";
+  import { storage } from "./firebase";
+
+  // 'images/desert.jpg'への参照作成
+  const desertRef = ref(storage, 'images/desert.jpg');
+
+  // ファイルの削除
+  deleteObject(desertRef).then(() => {
+    // ファイルの削除成功
+  }).catch((error) => {
+    // ファイルの削除失敗
+  });
+
+  ```
 
 
 ### storageのルール設定
