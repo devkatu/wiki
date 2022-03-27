@@ -13,7 +13,7 @@ hint: web(react)開発時の使いかたをメインにメモしてるけど、e
 - "プロジェクトの設定"からリソースロケーションを設定する(firestore,storageともに共通の設定)
   - **asia-northeast1**のリージョンにしておけばよい。**一回設定すると変更不可のはずなので注意**
 - プロジェクトに、FirestoreDatabaseを作成しする。ナビゲーションに表示されているFirestoreDatabaseをクリックして表示される手順通りでOK。**本番環境**でOK。
-- Authentication、storageも同様に左側ナビゲーションから、表示される手順通りに追加していく。**本番環境**で
+- Authentication、storageも同様に左側ナビゲーションから、表示される手順通りに追加していく。**本番環境**でOK。Authenticationについては、使用したいsignin方法を設定しておく。
 - その他、使いたいものはナビゲーションに表示されるメニューからアプリに追加していき、コーディングする感じになるはず。
 
 hint: **ReactもReactNative(expo)もwebアプリの追加**でOKなはず。どちらもmodular javascript SDKを使用するみたいなので同じくWEB向けのドキュメントを見ればよさそう。ただし両環境により使えるサービスに違いがあるみたい
@@ -113,11 +113,184 @@ hint: **ReactもReactNative(expo)もwebアプリの追加**でOKなはず。ど�
   export const storage = getStorage(firebaseApp);
 
   ```
+---
+
+## FirebaseEmulator
+本番のFirebaseを気にせずにローカルでFirebaseのテストができる。
+1. `npx fibase init` で初期化しておく
+2. `npx firebase emulators:start` で起動
+3. アプリ側からエミュレータに接続する
+    ```javascript
+    import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
+
+    // initializeApp()済みであること
+    const db = getFirestore();
+    connectFirestoreEmulator(db, 'localhost', 8080);
+    ```  
+但し使えない機能もあるみたいなので注意。使ったらまたまとめ記入する
+
+---
+
+## Authentication
+`auth`はfirebaseの中で`firebase.auth.getAuth`で取得している。  
+**まずはfirebaseコンソールから、メールアドレスを使ったログインとかの、使用したいsignin方法を選択して有効にしておくこと。**  
+Firestore、Storageのルール設定において、認証状態によってアクセスの権限をかけることができる。
+
+### 認証の種類
+- FirebaseUIなる予め用意されたログイン方法もあり、それを使うと簡単にUIを実装できそう(但しreact-nativeでは無理っぽい)。ここには纏めていない。
+- Firebase SDK Authenticationでは、自分でUIを実装してログイン処理を実装付けていく。こちらがメインかも？但しUIは自分で実装するので**入力フォームのバリデーション等しっかり作りこまなければならない**
+
+### Authコンポーネント
+自分でカスタムしてつくるコンポーネント。認証がされていなければアクセスさせたくないコンポーネントはこのAuthコンポーネントで囲う。
+```
+import { Auth } from "./Auth";
+<Auth>
+{/* 認証状態でなれば見られないコンポーネント部分 */}
+</Auth>
+
+// onAuthStateChangeイベントでサインイン状態をへ判定して、随時state等に反映する。
+// Authではサインイン状態では渡された子要素をレンダリングして、サインアウト状態では、
+// サインイン画面等をレンダリングするように条件分岐しておく
+```
+
+### 認証状態イベント
+ユーザーのログイン状態に変更があったときに発火するイベント。Authコンポーネントで使うこととなる。
+```javascript 
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase";
+
+// authオブジェクトにログイン状態が変更あったときのイベントを設定する
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // ユーザーはログイン状態の時の処理。ここでstateに認証状態であることを保存したりする
+    // userのプロパティは
+    // https://firebase.google.com/docs/reference/js/firebase.User
+    const uid = user.uid;
+    // ...
+  } else {
+    // ユーザーがサインアウト状態の時の処理
+    // ここでstateに認証状態で無くなったことを保存したりする
+    // ...
+  }
+});
+```
+
+### メールパスワード認証
+Firebaseコンソールでメールアドレスとパスワードによるログインを有効にしておくこと
+- アカウント作成
+  ```javascript
+  import { createUserWithEmailAndPassword } from "firebase/auth";
+  import { auth } from "./firebase";
+
+  // アカウントを作成する。email,passwordは各自作ったフォームで取得する
+  createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in
+      const user = userCredential.user;
+      // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // ..
+    });
+  ```
+- 作成済みアカウントにログイン
+  ```javascript
+  import { signInWithEmailAndPassword } from "firebase/auth";
+  import { auth } from "./firebase";
+
+  // アカウントにログイン。email,passwordは各自作ったフォームで取得する
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in
+      const user = userCredential.user;
+      // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+    });
+  ```
+- ログアウト
+  ```javascript
+  import { getAuth, signOut } from "firebase/auth";
+  import { auth } from "./firebase";
+
+  signOut(auth).then(() => {
+    // Sign-out successful.
+  }).catch((error) => {
+    // An error happened.
+  });
+  ```
+- メールアドレスの更新
+  ```javascript
+  import { getAuth, updateEmail } from "firebase/auth";
+  import { auth } from "./firebase";
+
+  updateEmail(auth.currentUser, "user@example.com").then(() => {
+    // Email updated!
+    // ...
+  }).catch((error) => {
+    // An error occurred
+    // ...
+  });
+  ```
+- パスワードの更新
+  ```javascript
+  import { getAuth, updatePassword } from "firebase/auth";
+  import { auth } from "./firebase";
+
+  const user = auth.currentUser;
+  const newPassword = getASecureRandomPassword();
+
+  updatePassword(user, newPassword).then(() => {
+    // Update successful.
+  }).catch((error) => {
+    // An error ocurred
+    // ...
+  });
+
+  ```
+- パスワードのリセットメール送信
+  ```javascript
+  import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+  import { auth } from "./firebase";
+
+  sendPasswordResetEmail(auth, email)
+    .then(() => {
+      // Password reset email sent!
+      // ..
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // ..
+    });
+  ```
+- ユーザー削除
+  ```javascript
+  import { deleteUser } from "firebase/auth";
+  import { auth } from "./firebase";
+
+  const user = auth.currentUser;
+
+  deleteUser(user).then(() => {
+    // User deleted.
+  }).catch((error) => {
+    // An error ocurred
+    // ...
+  });
+  ```
 
 
-## auth(firebase.auth)のユーザー認証等の各メソッドについて
-- まずはfirebaseコンソールから、signin方法を選択して有効にする。
-  動画ではこの後にconfig.jsへ設定コピーしていたがいつでもいいと思う
+### メールリンク認証
+ログイン用のリンクを含むメールをユーザーに返信してログインしてもらう方式
+
+### Googleログイン
+
+
+### Authenticationのメソッド色々使用例
 - `auth.createUserWithEmailAndPassword(email, password).then(result => {})`  
   →メールアドレスとパスワードでユーザーアカウントを作成する。resultにはuser情報とかが入っているオブジェクトが入る。作成に成功したら、dbにもresult.user.uidをidとするドキュメントを登録するとよい。作成したユーザーを記録しておき、必要に応じて使えるよ
 - `auth.signInWithEmailAndPassword(email, password).then(result => {})`  
@@ -128,8 +301,9 @@ hint: **ReactもReactNative(expo)もwebアプリの追加**でOKなはず。ど�
   →現在のログイン状態を確認できる。userにはユーザー情報が入りuser.uidがユーザーIDとなる。rulesでのresource.auth.uidとかと一緒のはず？
   
 ---
+## Firestore
 
-## db(firebase.firestore)の構造
+### db(firebase.firestore)の構造
 dbにアクセスするときは**collection**,**document**,**data**の三つの要素が出てくる。画像のようなイメージをとらえておくと良い。
 
 - collection  
@@ -145,11 +319,7 @@ dbにアクセスするときは**collection**,**document**,**data**の三つの
 
 ![画像](structure-data.png)
 
-
-
----
-
-## まずはdbのデータ構造の設計をしっかりと
+### まずはdbのデータ構造の設計をしっかりと
 →reduxのように！DBで保存したい項目(コレクション)をリストアップして予めしっかり設計しておくこと。これ考えておかないとあとから手戻り必須なので  
 例えば
 ```
@@ -161,11 +331,11 @@ dbにアクセスするときは**collection**,**document**,**data**の三つの
 ```
 みたいな。エクセルとかで書いておくといいかも
 
----
+### FireStoreのメソッド色々使用例
+`db`はfirebaseの中で`firebase.firestore.getFirestore`で取得している。
+手軽に使えるデータベース。
 
-## FireStoreのメソッド色々使用例
-`db`はfirebaseの中で`firebase.firestore.getFirestore`で取得している
-### コレクション、ドキュメントの参照の取得
+#### コレクション、ドキュメントの参照の取得
 コレクション、ドキュメントに対して色々処理したいときに、各々の参照を使いまわしたいときがある。
 以下の方法で参照を取得して使いまわすことができる。
 ```javascript
@@ -187,7 +357,7 @@ const docRef3 = doc(colRef);
 const colRef = collection(db, 'users');
 ```
 
-### データの書込み <small>設定・追加・更新</small>
+#### データの書込み <small>設定・追加・更新</small>
 以下、asyncメソッドが殆どなので、`await`して、`try`と`catch`で例外処理をするのが良いと思う
 - `setDoc()`  
   ドキュメントIDを指定したドキュメントの**追加、上書き**
@@ -375,7 +545,7 @@ const colRef = collection(db, 'users');
   await batch.commit();
   ```
 
-### データの読取 <small>読出・選択・並替・制限・データ変更検知</small>
+#### データの読取 <small>読出・選択・並替・制限・データ変更検知</small>
 - `getDoc` と `getDocs`  
   単一ドキュメントを丸ごと、または単一コレクション内のすべてのドキュメントを取得する  
   それぞれドキュメント、コレクションを引数に渡す
@@ -583,7 +753,7 @@ const colRef = collection(db, 'users');
   ```
 
 
-### データの削除
+#### データの削除
 - `deleteDoc`  
   firestore上のドキュメントを削除する。    
   ただし**サブコレクションは削除されない**。コンソールから操作して削除しなければならない。同様にコレクション自体を削除するときもコンソールからの操作が必要となる。
@@ -621,9 +791,7 @@ const colRef = collection(db, 'users');
     ```
     なんかのdocを取得したときは引数はsnapshot、またはsnapshotsに　それをforEachで回す
 
----
-
-## dbのルール設定
+### dbのルール設定
 firestore.rulesにdbへのオペレーションを制御するルールを記述できる。  
 基本的にはデフォルト状態では全てのドキュメントへのオペレーションはfalseで  
 許可するオペレーションを一つ一つ条件付きで許可する形で書く。  
@@ -634,9 +802,9 @@ firestore.rulesにdbへのオペレーションを制御するルールを記述
 ---
 
 ## Storageのメソッド色々使用例
-画像・音声・動画やらなんやらのファイルを保存できるサービスだよ  
-storageを使うためには、`firebaseConfig`オブジェクトに、バケットURLを含めておく必要がある。多分デフォルトで設定されてるはずだけど、 `storageBucket`プロパティがあるか確認！   
 `storage`はfirebaseの中で`firebase.storage.getStorage`で取得している
+storageを使うためには、`firebaseConfig`オブジェクトに、バケットURLを含めておく必要がある。多分デフォルトで設定されてるはずだけど、 `storageBucket`プロパティがあるか確認！   
+画像・音声・動画やらなんやらのファイルを保存できるサービスだよ  
 ### 参照の作成
 `firestore`でいうところのコレクション、ドキュメントへの参照のような感じでパスをスラッシュ区切りで指定して、`storage`への参照を取得できる。取得した参照から相対的に階層を移動したり、各種のプロパティが使える。
 アップロードするときは、まだアップロードしていないファイルの参照を作成することになるが、作成には問題ない。
@@ -865,7 +1033,7 @@ const httpsReference = ref(storage, 'https://firebasestorage.googleapis.com/b/bu
       // エラー時の処理
     });
   ```
-- `list`
+- `list`  
   リストの結果をページ分割できる。二つ目の引数に
   { maxResults: 結果を取得する制限数 }のオブジェクトを渡すと取得数が制限でき、
   さらに{ pageToken: firstPage.nextPageToken }を追加で渡すと最初に取得した
@@ -921,6 +1089,10 @@ const httpsReference = ref(storage, 'https://firebasestorage.googleapis.com/b/bu
 ### storageのルール設定
 
 ---
+
+## 各セキュリティルールの設定
+
+--- 
 
 ## トラハックyoutube実践編で作成していた主な機能まとめ　
 - 商品管理
