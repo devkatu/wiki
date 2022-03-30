@@ -147,16 +147,55 @@ Firestore、Storageのルール設定において、ログイン済みユーザ�
 - Firebase SDK Authenticationでは、自分でUIを実装してログイン処理を実装付けていく。こちらがメインかも？但しUIは自分で実装するので**入力フォームのバリデーション等しっかり作りこまなければならない**
 
 ### Authコンポーネント
-自分でカスタムしてつくるコンポーネント。認証がされていなければアクセスさせたくないコンポーネントはこのAuthコンポーネントで囲う。
+自分でカスタムしてつくるコンポーネント。  
+ onAuthStateChangeイベントでサインイン状態をへ判定して、随時state等の状態に反映して、サインイン状態によって子要素をレンダリングするか判定する。  
+ サインイン状態でなければサインイン画面をレンダリングしたりするのもありかも
 ```
-import { Auth } from "./Auth";
-<Auth>
-{/* 認証状態でなれば見られないコンポーネント部分 */}
-</Auth>
+import React, {useEffect, useState} from 'react';
+import { onAuthStateChanged } from 'firebas,e/auth';
+import { auth } from './firebase';
 
-// onAuthStateChangeイベントでサインイン状態をへ判定して、随時state等に反映する。
-// Authではサインイン状態では渡された子要素をレンダリングして、サインアウト状態では、
-// サインイン画面等をレンダリングするように条件分岐しておく
+const Auth = (props) => {
+  
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  
+  useEffect( () => {
+    // ログイン状態が変更されたら走るイベントを登録
+    onAuthStateChanged(auth, (user) => {
+      if(user){
+        setIsSignedIn(true)
+      }else{
+        setIsSignedIn(false)
+      }
+    })
+  },[])
+
+  if(!isSignedIn){
+    return <></>
+  }else{
+    return props.children
+  }
+}
+
+export default Auth;
+```
+作成したコンポーネントで認証状態でなければ見られないコンポーネントを囲えばOK
+```
+function App() {
+  return (
+    <div className="App">
+        <Switch>
+          <Route exact path="/SignUp" component={SignUp}/>
+          <Route exact path="/SignIn" component={SignIn}/>          
+          <Auth>
+            <Route exact path="/" component={Todo}/>
+            <Route exact path="/detail" component={Detail}/>
+            <Route exact path="/a" component={Setting} />
+          </Auth>
+        </Switch>
+    </div>
+  );
+}
 ```
 
 ### 認証状態イベント
