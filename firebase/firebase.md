@@ -911,11 +911,11 @@ const colRef = collection(db, 'users');
     ```
     なんかのdocを取得したときは引数はsnapshot、またはsnapshotsに　それをforEachで回す
 
-### dbのルール設定
+### Firestoreのルール設定
 firestore.rulesにdbへのオペレーションを制御するルールを記述できる。  
 基本的にはデフォルト状態では全てのドキュメントへのオペレーションはfalseで  
 許可するオペレーションを一つ一つ条件付きで許可する形で書く。  
-書き方はfirestore.rulesにコメント書いてあるので参照。  
+ルールの記述は**セキュリティルール**にて  
 更新したら `$ firebase deploy --only firestore:rules` でデプロイすること  
 新しいコレクションを追加したときには忘れずに。。
 
@@ -1207,10 +1207,36 @@ const httpsReference = ref(storage, 'https://firebasestorage.googleapis.com/b/bu
 
 
 ### storageのルール設定
+storage.rulesにstorageへのオペレーションを制御するルールを記述できる。  
+基本的にはデフォルト状態では全てのドキュメントへのオペレーションはfalseで  
+許可するオペレーションを一つ一つ条件付きで許可する形で書く。  
+ルールの記述は**セキュリティルール**にて  
+更新したら `$ firebase deploy --only storage:rules` でデプロイすること  
+新しいパスを追加したときには忘れずに。。
 
 ---
 
 ## 各セキュリティルールの設定
+Firestore(ちょっとルールの構文違うけどRealtimeDatabaseも),Storage上のデータへのセキュリティを設定できる
+Firestoreにはfirestore.rules,Storageにはstorage.rulesがルール記述ファイルとして存在し、記述したらデプロイすること。もしくはFirebaseコンソールで直接ブラウザから記述することも可能
+次の構文がFirestore,Storageのルールの基本形となる
+```
+rules_version = '2';
+
+// サービスのnameは
+// Firestoreなら cloud.firestore
+// Storageなら firebase.storage
+service <<name>> {
+  // リソースへのパスを指定する
+  match <<path>> {
+    // 次の条件が当てはまる場合にリクエストを許可する
+    allow <<methods>> : if <<condition>>
+  }
+}
+```
+複数のルールが一つのパスに一致し、**いずれかのルールにがアクセス権を与えると、その他のルールでアクセス権を拒否しようとしてもアクセス権は付与されたまま**となるので注意。
+基本的には初期状態では全てのアクセス権は与えられず、ルールを適用して
+
 
 --- 
 
