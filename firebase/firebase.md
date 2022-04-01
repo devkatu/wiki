@@ -1234,8 +1234,105 @@ service <<name>> {
   }
 }
 ```
+
+```
+rules_version = '2';
+service firebase.storage{
+  
+}
+```
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+  // ここまでの記述はお約束
+  // firestoreのルールだよ、の宣言みたいなもん
+  // あとはこの括弧内にドキュメントを指定し、それに対する
+  // ルールを一つ一つ条件付きで許可する形で書いていく(ホワイトリスト)
+
+    // ★ドキュメントの指定
+    // match /コレクション/ドキュメント{...}
+    // のように"ドキュメント"を指定する
+    // 直接文字列を指定してもいいし、{xxx}のようなワイルドカード指定もできる
+    match /todos/{todosId} {
+
+
+      allow read, write;
+      //以下の制約があるなら、クエリを投げる側も同じwhere文を書かなければならない
+      //allow read: if resource.data.color == 'none';
+      //allow write;
+
+
+      // ★ルールの設定
+      // allow 読み書きオペレーション: if 条件式;
+      // のような形で書いていく。 ※allow オペレーション; は allow オペレーション: if true;と同じ
+      // オペレーションの種類は
+      // read
+      //    get
+      //    list
+      // write
+      //    create
+      //    update
+      //    delete
+      // とあり、 , でまとめて書くことができる。
+
+      // ドキュメントの中にさらにコレクションをネスト(サブコレクション)しているときは
+      // このようなルールになる。場合によってはルールの記述はネストせずに直接全パスを
+      // 記述してもOK。(match /todos/{todosId}/subcollection/{subId} のような感じ)
+      // match /subcollection/{subId}{
+      //   allow read;
+      // }
+      
+      // ルールが深い階層に適用されるようにするには、再帰ワイルドカード構文{name=**}を使う
+      // match /subcollection/{document=**}{
+      //    この中でのdocument変数の値は対象のドキュメントのパスと一致するものになる
+      //    /subcollection/landmark/tower のドキュメントのルールを設定するときには
+      //    document変数にはsubcollection/landmark/towerが入っている
+      // }
+    }
+    match /users/{userId} {
+      // ★usersコレクションに含まれている{userId}をIDとするドキュメントと、
+      // 認証情報のuid(データ要求しているユーザーのID…サインアップしたときとかに帰ってくる値にも含まれていると思う)が一致する時のみ許可
+      // ※request.authへはでーたを要求しているクライアントの認証情報が入る
+      // allow read, update, delete: if request.auth != null && request.auth.uid == userId;
+      
+      // ★ログインしていれば許可
+      // allow create: if request.auth != null;
+
+      // ★ドキュメントに格納されているデータによってもオペレーションを制御できる
+      // resource.dataにはすべてのドキュメントに格納されているフィールドが指定でき、中身を参照できる
+      // 書込み時にはrequset.resource.dataにはやろうとしているオペレーション後のドキュメント(の状態)
+      // を指定できる。
+      // ここではusersコレクションの任意のドキュメントのフィールドが(request.)resource.dataとなる
+      // ※クエリを投げる場合はfirestore.rulesのread(list)で見ている条件を必ず書かなければならない
+      // 以下のような条件があるならクエリは ...where('visibility', '==', visibility)のような感じ
+      // allow read: if resource.data.visibility == 'public';
+      // allow update:if request.resorce.data.population > 0 
+      //               && requset.resource.data.name == resource.data.name;
+
+      // ★複雑な条件はコンソールからルールのプレイグラウンドでテストしたりもできる
+
+
+      allow get;
+      allow list;
+      allow create;
+      allow update;
+      allow delete;
+      
+    }
+    match /order/{orderId} {
+      // ★他にも頻出する条件は関数化できたり、条件を記述するドキュメントとは別の
+      // パスの状態をチェックすることもできるけど必要になったら見てみよう
+      allow read;
+      allow write;
+    }
+  }
+}
+```
 複数のルールが一つのパスに一致し、**いずれかのルールにがアクセス権を与えると、その他のルールでアクセス権を拒否しようとしてもアクセス権は付与されたまま**となるので注意。
-基本的には初期状態では全てのアクセス権は与えられず、ルールを適用して
+基本的には初期状態では全てのアクセス権は与えられず、ルールを適用して一つずつホワイトリスト形式で許可していくイメージとなる
+`request` `resource`の変数が存在し、利用できる。
 
 
 --- 
