@@ -1219,6 +1219,17 @@ storage.rulesにstorageへのオペレーションを制御するルールを記
 ## 各セキュリティルールの設定
 Firestore(ちょっとルールの構文違うけどRealtimeDatabaseも),Storage上のデータへのセキュリティを設定できる
 Firestoreにはfirestore.rules,Storageにはstorage.rulesがルール記述ファイルとして存在し、記述したらデプロイすること。もしくはFirebaseコンソールで直接ブラウザから記述することも可能
+
+
+
+---
+service firestore、storageで固定の記述
+match firestore、storageのお約束記述、パスの記述方法、変数、ワイルドカード指定
+allow requst、resourceの変数が使える、メソッドの種類、
+それぞれについて補足
+最後に各種本番環境対応のルールを記述しよう
+---
+
 次の構文がFirestore,Storageのルールの基本形となる
 ```
 rules_version = '2';
