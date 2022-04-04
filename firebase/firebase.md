@@ -1220,6 +1220,45 @@ storage.rulesにstorageへのオペレーションを制御するルールを記
 Firestore(ちょっとルールの構文違うけどRealtimeDatabaseも),Storage上のデータへのセキュリティを設定できる
 Firestoreにはfirestore.rules,Storageにはstorage.rulesがルール記述ファイルとして存在し、記述したらデプロイすること。もしくはFirebaseコンソールで直接ブラウザから記述することも可能
 
+- `rules_version = '2';`  
+  ルールバージョンの指定は2が最新らしい(2022年現在)
+- `service <<name>>`  
+  ルールを適用するサービスを指定する。  
+  Firestoreなら`cloud.firestore`、Storageなら`firebase.storage`
+- `match <<path>>`  
+  - トップの`match`ブロックには   
+    Firestoreなら`/databases/{database}/documents`  
+    Storageなら`/b/{bucket}/o`  
+    をお約束で記述。これらは  
+    プロジェクト内の Cloud Firestore データベースと一致する、
+    またはプロジェクト内のすべてのバケットに適用されることを示す。
+  - ルールを適用するパスパターンを宣言する。パスパターンは`request.path`と照合される。  
+  パスパターンが完全一致であればそのルールが適用され、部分一致であればネストされているパスを探しに行く。  
+  パスパターンには**ワイルドカード変数**を`{var}`のように波括弧で囲う事で宣言でき、`match`ブロック内で文字列型の変数として使用できる。`{var=**}`とすると**再帰ワイルドカード変数**となり、設定したパスの下位にある全てのパスと一致する。
+  - {}内では指定したパスのルールを記述したり、さらに`match`をネストしていく。ネストされた`match`は親の`match`ブロックからの相対パスとなる。 
+- `allow <<methods>> : if <<condition>>`  
+  `match`で指定したデータへの操作ルールを設定する。  
+  複数のルールが一つのパスに一致し、**いずれかのルールがアクセス権を与えると、その他のルールでアクセス権を拒否しようとしてもアクセス権は付与されたまま**となるので注意。  
+  methodsにはデータへの下記のオペレーションを指定する。  
+  - `read`  
+    下記含む全ての読取リクエスト
+    - `get`  
+      単一のドキュメントやファイルを対象とした読み取りリクエスト
+    - `list`  
+      クエリとコレクションを対象とした読み取りリクエスト
+  - `write`  
+    下記含む全ての書込リクエスト
+    - `create`  
+      新しいドキュメントやファイルへの書き込み
+    - `update`  
+      既存のデータベース ドキュメントへの書き込み、またはファイル メタデータの更新
+    - `delete`  
+      データの削除  
+  conditionは条件式が`true`になればアクセス許可が与えられる。ここでは`requset`、`resource`や、`match`のパス宣言でワイルドカード変数指定した変数が使用できる。
+  - `request`  
+  - `resource`
+
+
 
 
 ---
@@ -1230,28 +1269,9 @@ allow requst、resourceの変数が使える、メソッドの種類、
 最後に各種本番環境対応のルールを記述しよう
 ---
 
-次の構文がFirestore,Storageのルールの基本形となる
-```
-rules_version = '2';
 
-// サービスのnameは
-// Firestoreなら cloud.firestore
-// Storageなら firebase.storage
-service <<name>> {
-  // リソースへのパスを指定する
-  match <<path>> {
-    // 次の条件が当てはまる場合にリクエストを許可する
-    allow <<methods>> : if <<condition>>
-  }
-}
-```
 
-```
-rules_version = '2';
-service firebase.storage{
-  
-}
-```
+
 
 ```
 rules_version = '2';
@@ -1341,9 +1361,6 @@ service cloud.firestore {
   }
 }
 ```
-複数のルールが一つのパスに一致し、**いずれかのルールにがアクセス権を与えると、その他のルールでアクセス権を拒否しようとしてもアクセス権は付与されたまま**となるので注意。
-基本的には初期状態では全てのアクセス権は与えられず、ルールを適用して一つずつホワイトリスト形式で許可していくイメージとなる
-`request` `resource`の変数が存在し、利用できる。
 
 
 --- 
