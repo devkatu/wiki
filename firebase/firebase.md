@@ -1233,7 +1233,7 @@ Firestoreにはfirestore.rules,Storageにはstorage.rulesがルール記述フ�
     プロジェクト内の Cloud Firestore データベースと一致する、
     またはプロジェクト内のすべてのバケットに適用されることを示す。
   - ルールを適用するパスパターンを宣言する。パスパターンは`request.path`と照合される。  
-  パスパターンが完全一致であればそのルールが適用され、部分一致であればネストされているパスを探しに行く。  
+  パスパターンが**完全一致であればそのルールが適用**され、**部分一致であればネストされているパス**を探しに行く。  
   パスパターンには**ワイルドカード変数**を`{var}`のように波括弧で囲う事で宣言でき、`match`ブロック内で文字列型の変数として使用できる。`{var=**}`とすると**再帰ワイルドカード変数**となり、設定したパスの下位にある全てのパスと一致する。
   - {}内では指定したパスのルールを記述したり、さらに`match`をネストしていく。ネストされた`match`は親の`match`ブロックからの相対パスとなる。 
 - `allow <<methods>> : if <<condition>>`  
@@ -1254,19 +1254,38 @@ Firestoreにはfirestore.rules,Storageにはstorage.rulesがルール記述フ�
       既存のデータベース ドキュメントへの書き込み、またはファイル メタデータの更新
     - `delete`  
       データの削除  
-  conditionは条件式が`true`になればアクセス許可が与えられる。ここでは`requset`、`resource`や、`match`のパス宣言でワイルドカード変数指定した変数が使用できる。
+
+  conditionは条件式が`true`になればアクセス許可が与えられる。  
+  ここでは`requset`、`resource`や、`match`のパス宣言でワイルドカード変数指定した変数が使用できる。
   - `request`  
-  - `resource`
+    - `request.auth`  
+      FirebaseAuthenticationから取得する認証情報
+    - `request.method`  
+      リクエストした`read`、`write`等の操作の種類
+    - `request.params`  
+      ？？
+    - `request.path`  
+      対象のリソースのパス
+    - `request.resource`  
+      書込みオペレーションを行うドキュメントの書込み後の状態
+  - `resource`  
+    - `resource.data`  
+      指定したドキュメントの現在の全てのフィールドと値
+
+  conditionを指定せずに`allow <<methods>>;`のみとすると指定してた操作は常に許可されることなる。
 
 
 
 
 ---
+
 service firestore、storageで固定の記述
 match firestore、storageのお約束記述、パスの記述方法、変数、ワイルドカード指定
 allow requst、resourceの変数が使える、メソッドの種類、
-それぞれについて補足
+それぞれについて補足、実例
 最後に各種本番環境対応のルールを記述しよう
+エミュレーターやルールのプレイグラウンドでもテストできる
+
 ---
 
 
