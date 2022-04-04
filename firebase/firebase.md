@@ -1226,15 +1226,16 @@ Firestoreにはfirestore.rules,Storageにはstorage.rulesがルール記述フ�
   ルールを適用するサービスを指定する。  
   Firestoreなら`cloud.firestore`、Storageなら`firebase.storage`
 - `match <<path>>`  
+  スラッシュ区切りでルールを適用するパスを指定していく
   - トップの`match`ブロックには   
     Firestoreなら`/databases/{database}/documents`  
     Storageなら`/b/{bucket}/o`  
     をお約束で記述。これらは  
-    プロジェクト内の Cloud Firestore データベースと一致する、
+    プロジェクト内の Cloud Firestore データベースに、、
     またはプロジェクト内のすべてのバケットに適用されることを示す。
-  - ルールを適用するパスパターンを宣言する。パスパターンは`request.path`と照合される。  
+  - トップより下位でルールを適用するパスパターンを宣言する。パスパターンは`request.path`と照合される。  
   パスパターンが**完全一致であればそのルールが適用**され、**部分一致であればネストされているパス**を探しに行く。  
-  パスパターンには**ワイルドカード変数**を`{var}`のように波括弧で囲う事で宣言でき、`match`ブロック内で文字列型の変数として使用できる。`{var=**}`とすると**再帰ワイルドカード変数**となり、設定したパスの下位にある全てのパスと一致する。
+  パスパターンには**ワイルドカード変数**(パスのワイルドカード指定ができる)を`{var}`のように波括弧で囲う事で宣言でき、`match`ブロック内で文字列型の変数として使用できる。`{var=**}`とすると**再帰ワイルドカード変数**となり、設定したパスの下位にある全てのパスと一致する。
   - {}内では指定したパスのルールを記述したり、さらに`match`をネストしていく。ネストされた`match`は親の`match`ブロックからの相対パスとなる。 
 - `allow <<methods>> : if <<condition>>`  
   `match`で指定したデータへの操作ルールを設定する。  
@@ -1255,51 +1256,32 @@ Firestoreにはfirestore.rules,Storageにはstorage.rulesがルール記述フ�
     - `delete`  
       データの削除  
 
-  conditionは条件式が`true`になればアクセス許可が与えられる。  
+  conditionは条件式が`true`になればアクセス許可が与えられる。conditionを指定せずに`allow <<methods>>;`のみとすると指定してた操作は常に許可されることなる。  
   ここでは`requset`、`resource`や、`match`のパス宣言でワイルドカード変数指定した変数が使用できる。
   - `request`  
     - `request.auth`  
-      FirebaseAuthenticationから取得する認証情報
+      FirebaseAuthenticationから取得する認証情報。リクエストしたユーザーがログインしていない場合は`null`になる。  
+      - `request.auth.uid`  
+        リクエストしたユーザーの一意のID。サインアップ時にユーザーIDが決まるはずなのでFirestoreにもデータ登録しておくとルールで使うことができるのでいいかも
+      - `request.token`  
     - `request.method`  
       リクエストした`read`、`write`等の操作の種類
     - `request.params`  
       ？？
     - `request.path`  
       対象のリソースのパス
-    - `request.resource`  
-      書込みオペレーションを行うドキュメントの書込み後の状態
+    - `request.resource.data`  
+      書込みオペレーションを行うドキュメントの書込み後の状態。該当パスのフィールドに`hoge`があるなら、`request.resource.data.hoge`で指定できるはず。
   - `resource`  
     - `resource.data`  
-      指定したドキュメントの現在の全てのフィールドと値
+      指定したドキュメントの現在の全てのフィールドと値。該当パスのフィールドに`hoge`があるなら、`resource.data.hoge`で指定できるはず。
 
-  conditionを指定せずに`allow <<methods>>;`のみとすると指定してた操作は常に許可されることなる。
-
-
-
-
----
-
-service firestore、storageで固定の記述
-match firestore、storageのお約束記述、パスの記述方法、変数、ワイルドカード指定
-allow requst、resourceの変数が使える、メソッドの種類、
-それぞれについて補足、実例
-最後に各種本番環境対応のルールを記述しよう
-エミュレーターやルールのプレイグラウンドでもテストできる
-
----
-
-
-
-
-
+Firestoreでのルールサンプルはこちら
 ```
 rules_version = '2';
 service cloud.firestore {
+  // プロジェクト内の Cloud Firestore データベースに適用される記述
   match /databases/{database}/documents {
-  // ここまでの記述はお約束
-  // firestoreのルールだよ、の宣言みたいなもん
-  // あとはこの括弧内にドキュメントを指定し、それに対する
-  // ルールを一つ一つ条件付きで許可する形で書いていく(ホワイトリスト)
 
     // ★ドキュメントの指定
     // match /コレクション/ドキュメント{...}
@@ -1307,48 +1289,40 @@ service cloud.firestore {
     // 直接文字列を指定してもいいし、{xxx}のようなワイルドカード指定もできる
     match /todos/{todosId} {
 
-
+      // ★if <<condition>>を省略すると常に許可になる
       allow read, write;
-      //以下の制約があるなら、クエリを投げる側も同じwhere文を書かなければならない
-      //allow read: if resource.data.color == 'none';
-      //allow write;
+      // 以下のようなルール制限がある場合、それに合わせたクエリを投げないと失敗する
+      allow read: if resource.data.color == 'none';
 
 
-      // ★ルールの設定
-      // allow 読み書きオペレーション: if 条件式;
-      // のような形で書いていく。 ※allow オペレーション; は allow オペレーション: if true;と同じ
-      // オペレーションの種類は
-      // read
-      //    get
-      //    list
-      // write
-      //    create
-      //    update
-      //    delete
-      // とあり、 , でまとめて書くことができる。
-
-      // ドキュメントの中にさらにコレクションをネスト(サブコレクション)しているときは
-      // このようなルールになる。場合によってはルールの記述はネストせずに直接全パスを
-      // 記述してもOK。(match /todos/{todosId}/subcollection/{subId} のような感じ)
-      // match /subcollection/{subId}{
-      //   allow read;
-      // }
+      // ★matchをネスト。ここでリクエストが /todos/todo/subcollection/hoge ならここのルールが適用となる。
+      // 親matchブロックのルールは適用されない。
+      // リクエストが /todos/todo では当然ここのブロックは適用されない
+      match /subcollection/{subId}{
+        allow read;
+      }
       
-      // ルールが深い階層に適用されるようにするには、再帰ワイルドカード構文{name=**}を使う
-      // match /subcollection/{document=**}{
-      //    この中でのdocument変数の値は対象のドキュメントのパスと一致するものになる
-      //    /subcollection/landmark/tower のドキュメントのルールを設定するときには
-      //    document変数にはsubcollection/landmark/towerが入っている
-      // }
+      // ★ルールが深い階層に適用されるようにするには、再帰ワイルドカード構文{name=**}を使う
+      //  この中でのdocument変数の値は対象のドキュメントのパスと一致するものになる
+      //  /subcollection/landmark/tower のドキュメントのルールを設定するときには
+      //  document変数にはsubcollection/landmark/towerが入っている
+      match /subcollection/{document=**}{
+        
+        // ★ここで読取を拒否しようとしても上のmatchブロックで許可しているので意味なし
+        // 一致するパスが複数あり、どこか一個でもアクセス許可が得られるとアクセス可能となる
+        allow read: if false;
+
+      }
     }
+
     match /users/{userId} {
       // ★usersコレクションに含まれている{userId}をIDとするドキュメントと、
-      // 認証情報のuid(データ要求しているユーザーのID…サインアップしたときとかに帰ってくる値にも含まれていると思う)が一致する時のみ許可
+      // 認証情報のuid(データ要求しているユーザーのID)が一致する時のみ許可
       // ※request.authへはでーたを要求しているクライアントの認証情報が入る
-      // allow read, update, delete: if request.auth != null && request.auth.uid == userId;
+      allow read, update, delete: if request.auth != null && request.auth.uid == userId;
       
       // ★ログインしていれば許可
-      // allow create: if request.auth != null;
+      allow create: if request.auth != null;
 
       // ★ドキュメントに格納されているデータによってもオペレーションを制御できる
       // resource.dataにはすべてのドキュメントに格納されているフィールドが指定でき、中身を参照できる
@@ -1357,29 +1331,25 @@ service cloud.firestore {
       // ここではusersコレクションの任意のドキュメントのフィールドが(request.)resource.dataとなる
       // ※クエリを投げる場合はfirestore.rulesのread(list)で見ている条件を必ず書かなければならない
       // 以下のような条件があるならクエリは ...where('visibility', '==', visibility)のような感じ
-      // allow read: if resource.data.visibility == 'public';
-      // allow update:if request.resorce.data.population > 0 
-      //               && requset.resource.data.name == resource.data.name;
+      allow read: if resource.data.visibility == 'public';
+      allow update:if request.resorce.data.population > 0 
+                    && requset.resource.data.name == resource.data.name;
 
-      // ★複雑な条件はコンソールからルールのプレイグラウンドでテストしたりもできる
-
-
-      allow get;
-      allow list;
-      allow create;
-      allow update;
-      allow delete;
-      
-    }
-    match /order/{orderId} {
-      // ★他にも頻出する条件は関数化できたり、条件を記述するドキュメントとは別の
-      // パスの状態をチェックすることもできるけど必要になったら見てみよう
-      allow read;
-      allow write;
     }
   }
 }
 ```
+
+---
+
+service firestore、storageで固定の記述
+match firestore、storageのお約束記述、パスの記述方法、変数、ワイルドカード指定
+allow requst、resourceの変数が使える、メソッドの種類、
+それぞれについて補足、実例(完全に一致するパス、複数のルールが一つのパスに一致する)
+最後に各種本番環境対応のルールを記述しよう
+エミュレーターやルールのプレイグラウンドでもテストできる
+
+---
 
 
 --- 
