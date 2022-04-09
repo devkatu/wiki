@@ -1220,6 +1220,7 @@ storage.rulesにstorageへのオペレーションを制御するルールを記
 Firestore(ちょっとルールの構文違うけどRealtimeDatabaseも),Storage上のデータへのセキュリティを設定できる
 Firestoreにはfirestore.rules,Storageにはstorage.rulesがルール記述ファイルとして存在し、記述したらデプロイすること。もしくはFirebaseコンソールで直接ブラウザから記述することも可能
 
+### 記述する項目
 - `rules_version = '2';`  
   ルールバージョンの指定は2が最新らしい(2022年現在)
 - `service <<name>>`  
@@ -1276,8 +1277,8 @@ Firestoreにはfirestore.rules,Storageにはstorage.rulesがルール記述フ�
     - `resource.data`  
       指定したドキュメントの現在の全てのフィールドと値。該当パスのフィールドに`hoge`があるなら、`resource.data.hoge`で指定できるはず。
 
-Firestoreでのルールサンプルはこちら
-```
+### 以上を踏まえた上でのFirestoreでのルールサンプル
+```javascript
 rules_version = '2';
 service cloud.firestore {
   // プロジェクト内の Cloud Firestore データベースに適用される記述
@@ -1340,21 +1341,90 @@ service cloud.firestore {
 }
 ```
 
+### 実用的例
+- ログインしてればOK。開発中につかう  
+  Firestore
+  ```javascript
+  service cloud.firestore {
+    match /databases/{database}/documents {
+      match /{document=**} {
+        allow read, write: if request.auth != null;
+      }
+    }
+  }
+  ```
+  Storage
+  ```javascript
+  service firebase.storage {
+    match /b/{bucket}/o {
+      match /{allPaths=**} {
+        allow read, write: if request.auth != null;
+      }
+    }
+  }
+  ```
+- ここから本番用。認証済みコンテンツ所有者のみ  
+  {userId}を認証されている人のIDになるようにデータベースを設計しておくこと  
+  Firestore
+  ```javascript
+  service cloud.firestore {
+    match /databases/{database}/documents {
+      // Allow only authenticated content owners access
+      match /some_collection/{userId}/{documents=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId
+      }
+    }
+  }
+  ```
+  Storage
+  ```javascript
+  // Grants a user access to a node matching their user ID
+  service firebase.storage {
+    match /b/{bucket}/o {
+      // Files look like: "user/<UID>/path/to/file.txt"
+      match /user/{userId}/{allPaths=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+  }
+  ```
+- 誰でも読取可能。けど書込みは認証済みのコンテンツ所有者  
+  Firestore
+  ```javascript
+  service cloud.firestore {
+    match /databases/{database}/documents {
+      // Allow public read access, but only content owners can write
+      match /some_collection/{document} {
+        allow read: if true
+        allow create: if request.auth.uid == request.resource.data.author_uid;
+        allow update, delete: if request.auth.uid == resource.data.author_uid;
+      }
+    }
+  }
+  ```
+  Storage
+  ```javascript
+  service firebase.storage {
+    match /b/{bucket}/o {
+      // Files look like: "user/<UID>/path/to/file.txt"
+      match /user/{userId}/{allPaths=**} {
+        allow read;
+        allow write: if request.auth.uid == userId;
+      }
+    }
+  }
+  ```
+
 ---
 
-service firestore、storageで固定の記述
-match firestore、storageのお約束記述、パスの記述方法、変数、ワイルドカード指定
-allow requst、resourceの変数が使える、メソッドの種類、
-それぞれについて補足、実例(完全に一致するパス、複数のルールが一つのパスに一致する)
-最後に各種本番環境対応のルールを記述しよう
-エミュレーターやルールのプレイグラウンドでもテストできる
-
----
-
+## 各種テストについて
+エミュレーターを`$ firebase emulators:start`で起動できたり、
+セキュリティルールについてはブラウザ上でプレイグラウンドなるものを使用してテストできるらしい。  
+使ってみたら簡単に書く。
 
 --- 
 
-## トラハックyoutube実践編で作成していた主な機能まとめ　
+## トラハックyoutube実践編で作成していた主な機能まとめ(雑記)
 - 商品管理
   - 追加  
   ProductEditコンポーネントが呼ばれるとき、  
@@ -1415,10 +1485,3 @@ allow requst、resourceの変数が使える、メソッドの種類、
   ドロワーメニューの中にメンズ、レディースのリストボタンがあり、そのボタンをクリックすると
   `/?gender=xxx`または`/?category=xxx`のようなクエリストリングつきのURLへdispatchされる。該当パスではproductListコンポーネントが呼ばれ、そのマウント時に、`db.collection('product')`からまずupdateについて並び替えしたデータに対し`.where`へつなげて
   入力されたクエリのgenderまたはcategoryに合うデータを取り出している
-
-ちなみにチャットボットアプリの方はdbは大した使用していず。
-質問＆回答のデータセットを読込むのにつかっているだけ
-
-★未完
-updateとset({merge:true}つき)は何が違う？
-決済の方法
