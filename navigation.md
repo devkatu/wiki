@@ -58,7 +58,7 @@
   - [Expo](react-native/expo.md)
   - [React Navigation](react-native/react-navigation.md)
   - [React Native Elements](react-native/react-native-elements.md)
-  - []()
+  - [React Native Storage](react-native/react-native-storage.md)
   
 [VScode](vscode/index.md)
 [gimmick:themechooser](テーマを変える)
