@@ -199,7 +199,8 @@ $ yarn add @react-native-async-storage/async-storage
   ```
 - リモートデータの同期
   storageのコンストラクタ―でsyncメソッドをオブジェクトの関数として渡すか、以下に示す自分で同期処理を記述していく方法で同期を設定することができる。  
-  `load`で読み出そうとしたデータが存在しないときに`storage.sync.hoge`が呼出されるみたい。`hoge`の部分は指定した`key`になるのでデータのキー名に対応させること。
+  `load`で読み出そうとしたデータが存在しないとき、またはデータが期限切れになっていたとき、`storage.sync.hoge`が呼出されるみたい。`hoge`の部分は指定した`key`になるのでデータのキー名に対応させること。  
+  データ保存時の同期はしないっぽい。
   ```javascript
   import storage from './storage';
 
