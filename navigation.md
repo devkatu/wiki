@@ -41,15 +41,7 @@
 [React]()
 
   - [基礎](react/basic.md)
-  - [Fire Base](firebase/firebase.md)
-  - []()
-  - []()
-  
-[Redux]()
-
-  - []()
-  - []()
-  - []()
+  - [Redux](react/redux.md)
   - []()
   
 [React Native]()
@@ -60,5 +52,6 @@
   - [React Native Elements](react-native/react-native-elements.md)
   - [React Native Storage](react-native/react-native-storage.md)
   
+[Fire Base](firebase/firebase.md)
 [VScode](vscode/index.md)
 [gimmick:themechooser](テーマを変える)
