@@ -1,4 +1,35 @@
 # React
+- インストール、createreactapp
+- jsx、props、props.children、条件付きレンダー、イベントコールバックの記述,state、mapでのけkey
+- ライフサイクル
+- 制御されたフォーム
+- fragment
+- コンテキストについて
+
+## インストール
+create react app を使用するなら
+`$ npx create-react-app my-app`
+`$ cd my-app`
+`$ npm start`
+ですぐに開発開始できる
+
+`$ npm run build`
+で`build`フォルダーが出来上がり、その中にデプロイするものが出来上がる。
+
+Next.jsも使える。使ったらそのうちまとめる
+
+## jsx記法
+基本的にはhtmlをそのまま書いていく感じでOKだが次のような決まり事あり
+- クラスコンポーネントのrender()や関数コンポーネントのreturnでは一つの要素のみしか返せない。複数の要素を返したいときは`<div></div>`で囲う等必要
+- 属性においては予約語とかぶったりしないように次のように記述する。キャメルケースを使う。
+  - `class`   →   `className`
+  - (labelの)`for`   →   `htmlFor`
+  - `onclick="handle"`   →   `onClick={handle}` (キャメルケースでhandleは{関数})
+- jsx中で変数を使う場合は波括弧`{}`で囲う
+- カスタムコンポーネントでは属性を指定すると、コンポーネント内で`props.属性名`で引数のように指定ができる。関数コンポーネントでは引数に分割代入することもしばしばある。
+- カスタムコンポーネントで挟んだ要素は該当のカスタムコンポーネント内で`props.children`で呼出せる
+
+
 attention: 
 ・レンダリングの都度コンポーネント関数の呼出しが発生する
 　そのためsetstateしてもvalueはその関数の実行中は変化せず
@@ -8,12 +39,6 @@ attention:
 　その為、useeffectの第二引数とかで関数やオブジェクトをそのままぶち込んでも
 　毎回実体が異なるのでusecallbackとかusememoとかしないとダメ
 
-- インストール、createreactapp
-- jsx、props、props.children、条件付きレンダー、イベントコールバックの記述,state、mapでのけkey
-- ライフサイクル
-- 制御されたフォーム
-- fragment
-- コンテキストについて
 
 
 - view関係は共通要素のcomponentsとページ呼出し単位のpagesくらいの分け方で
