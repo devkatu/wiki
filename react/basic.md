@@ -1,10 +1,9 @@
-# React
+# React基礎
+ある程度の基礎は理解している前提のもと、コーディングに関する備忘録と、tips的な纏めを書いておく！  
+結局コンポーネントにstateがあって、それが変化するとコンポーネントの更新と判断してレンダーが起こり、それをpropsとして受け取っているコンポーネントも更新されるのを理解しておけば概ねいいかな
+
 - インストール、createreactapp
-- jsx、props、props.children、条件付きレンダー、イベントコールバックの記述,state、mapでのけkey
-- ライフサイクル
-- 制御されたフォーム
 - イミュータブル？
-- fragment
 - コンテキストについて
 
 ## インストール
@@ -18,22 +17,187 @@
   で`build`フォルダーが出来上がり、その中にデプロイするものが出来上がる。
 - Next.jsも選択肢。使ったらそのうちまとめる
 
-## jsx記法
-基本的にはhtmlをそのまま書いていく感じでOKだが次のような決まり事あり
-- クラスコンポーネントのrender()や関数コンポーネントのreturnでは一つの要素のみしか返せない。複数の要素を返したいときは`<div></div>`で囲う等必要
-- 属性においては予約語とかぶったりしないように次のように記述する。
+## jsx記法について
+- 変数にjsx記法でコンポーネントを代入していく事ができる。
+  ```
+  const element = <h1>Hello, world!</h1>;
+  ```
+- jsx中で式、変数を使う場合は波括弧`{}`で囲う
+  ```
+  const name = 'Josh Perez';
+  const element = <h1>Hello, {name}</h1>;
+  ```
+  ```
+  function formatName(user) {
+    return user.firstName + ' ' + user.lastName;
+  }
+  const element = (
+    <h1>
+      Hello, {formatName(user)}!
+    </h1>
+  );
+  ```
+  ```
+  const element = <img src={user.avatarUrl}></img>;
+  ```
+- クラスコンポーネントの`render`や関数コンポーネントの戻り値では一つの要素のみしか返せない。複数の要素を返したいときは`<div></div>`で囲う、または`<div>`だとセマンティックでなくなってしまうなら、`<> </>`(`<React.Fragment></React.Fragment>`)で囲う必要あり
+  ```
+  const Columns = () => {
+    return (
+      <>
+        <td>Hello</td>
+        <td>World</td>
+      </>
+    );
+  }
+  ```
+- 属性においては予約語とかぶったりしないように記述する。
   - `class`   →   `className`
-  - (labelの)`for`   →   `htmlFor`
-  - `onclick="handle"`   →   `onClick={handle}`
+  - (labelの)`for`   →   `htmlFor` など
 - 基本的に属性やcssのプロパティなどは**キャメルケース**を使う
-- jsx中で変数を使う場合は波括弧`{}`で囲う
-- カスタムコンポーネントでは属性を指定すると、コンポーネント内で`props.属性名`で引数のように指定ができる。関数コンポーネントでは、その関数の引数に分割代入することもしばしばある。
-- カスタムコンポーネントで挟んだ要素は該当のカスタムコンポーネント内で`props.children`で呼出せる
+  - `onclick="handle"`   →   `onClick={handle}`
+  - `tabindex`   →   `tabIndex` など
 - コールバックの記述について
-  - 基本的にはアロー関数で記述してリスナに登録する。これでbindが不要になる
+  - クラスコンポーネントで記述する場合は、基本的にはアロー関数で記述してリスナに登録する。これでクラスコンポーネントでもbindが不要になる
   - リスナに設定する際はhtmlのような`onclick="hanle()"`にせずに`onClick={handle}`と()省略すること。あくまでjavascriptとして記述しているので()付きだとレンダリングの都度その関数が実行されてしまう
-  - `e.preventDefault();` はハンドラが設定された要素の規定の動作をキャンセルする。aタグだったらページ遷移したりチェックボックスだったらチェック入れるのやめたり`return false;`みたいな感じ
-  
+  - イベントハンドラには`SyntheticEvent`のインスタンスが渡される。ブラウザのイベントと同様に使える  
+  `e.preventDefault();` はハンドラが設定された要素の規定の動作をキャンセルする。aタグだったらページ遷移したりチェックボックスだったらチェック入れるのやめたり。
+  バニラjavascriptで`return false;`は有効だったけど、ReactではNGなので注意。
+  `return false;`のことはjqueryの基礎の所に纏めてある
+  ```
+  function Form() {
+    function handleSubmit(e) {
+      e.preventDefault();
+      console.log('You clicked submit.');
+    }
+
+    return (
+      <form onSubmit={handleSubmit}>
+        <button type="submit">Submit</button>
+      </form>
+    );
+  }
+  ```
+- 条件付きでのレンダリング
+  レンダリングしたい変数が存在するかチェックするパターン
+  ```
+  function Mailbox(props) {
+    const unreadMessages = props.unreadMessages;
+    return (
+      <div>
+        <h1>Hello!</h1>
+        {unreadMessages.length > 0 &&
+          <h2>
+            You have {unreadMessages.length} unread messages.
+          </h2>
+        }
+      </div>
+    );
+  }
+  ```
+  三項演算子のパターン
+  ```
+  function Loggin() {
+    // 中略
+    return (
+      <div>
+        {isLoggedIn
+          ? <LogoutButton onClick={handleLogoutClick} />
+          : <LoginButton onClick={handleLoginClick} />
+        }
+      </div>
+    );
+  }
+  ```
+- mapを使った複数のコンポーネントレンダーをする際、兄弟属性の中で一意となるkey属性を渡す。一意であるならなんでもいい。reactがどの要素に変更あったかを識別するために必要。 
+  ```
+  // mapの第二引数に配列のindexがくるのでそれを渡すのが簡単
+  const todoItems = todos.map((todo, index) =>
+    // Only do this if items have no stable IDs
+    <li key={index}>
+      {todo.text}
+    </li>
+  );
+  ```
+- カスタムコンポーネントでは属性を指定すると、コンポーネント内で`props.属性名`で引数のように指定ができる。  
+  呼び出し側は以下の通り
+  ```
+  const function App(){
+    return (
+      <MyComponent title="My Title" discription="My Discription"/>
+    )
+  }
+  ```
+  定義は以下の通り
+  ```
+  const MyComponent = (props) => {
+    return (
+      <>
+        <Title value={props.title}/>
+        <Discription value={props.discription}/>
+      </>
+    )
+  }
+  ```
+  下はpropsを分割代入にしている。
+  ```
+  const MyComponent = ({title, discription}) => {
+    return (
+      <>
+        <Title value={title}/>
+        <Discription value={discription}/>
+      </>
+    )
+  }
+  ```
+- カスタムコンポーネントで挟んだ要素は該当のカスタムコンポーネント内で`props.children`で呼出せる。containerのようなコンポーネントで使う事がある
+  以下のようなコンテナを用意して
+  ```
+  function FancyBorder(props) {
+    return (
+      <div className={'FancyBorder FancyBorder-' + props.color}>
+        {props.children}
+      </div>
+    );
+  }
+  ```
+  下のように使う
+  ```
+  function WelcomeDialog() {
+    return (
+      <FancyBorder color="blue">
+        <h1 className="Dialog-title">
+          Welcome
+        </h1>
+        <p className="Dialog-message">
+          Thank you for visiting our spacecraft!
+        </p>
+      </FancyBorder>
+    );
+  }
+  ```
+- プロパティのデフォルト値は`true`になるがなるべく記述するのが推奨  
+  以下二つは同義
+  ```
+  <MyTextBox autocomplete />
+
+  <MyTextBox autocomplete={true} />
+  ```
+
+- jsxでの
+  ```
+  <MyButton color="blue" shadowSize={2}>
+    Click Me
+  </MyButton>
+  ```
+  のような記述は下のように変換される
+  ```javascript
+  React.createElement(
+    MyButton,
+    {color: 'blue', shadowSize: },
+    'Click Me'
+  )
+  ```
 ```
 
 ```
@@ -65,7 +229,8 @@ attention:
 ★★★メモ！★★★
 
 
-・react各フック
+## フックで使える色々
+基本的には下記フックは関数コンポーネントのトップレベルで呼び出すこと。
 　useState
 　　→クラスコンポーネントでの初期state設定、setState、state読み出しを便利に使える
 　　[value, setValue] = useState(initial);
@@ -80,6 +245,7 @@ attention:
 　　なお、このsetValueは更新前のstateとマージされないのでオブジェクトや配列のセット時は
 　　setValue(prev => [...prev, newValue])
 　　のようにスプレッドで前回stateを反映すること
+クラスコンポーネントのthis.setStateだとマージされる・・・
 　useEffect
 　　→クラスコンポーネントでのcomponentDidmount,componentWillunmountとかの処理を関数コンポーネントで使える上に一気にかける
 　　第一引数は副作用時(副作用のタイミングは第二引数によってきまる)に実行したい処理を書く。第一引数のreturnする値はクリーンアップするためのものであり、
@@ -93,6 +259,7 @@ attention:
 　　一つ目の引数に普通にコンポーネントに渡す感じの関数を書いて、
 　　二つ目の引数(配列リテラルで渡す)にはその依存する変数の配列を渡す。
 　　二つ目の配列の中身が変化しなければ関数の再計算はせずにキャッシュした関数の戻り値のみを使用する
+- useContext
 
 
 
