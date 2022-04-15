@@ -2,10 +2,6 @@
 ある程度の基礎は理解している前提のもと、コーディングに関する備忘録と、tips的な纏めを書いておく！  
 結局コンポーネントにstateがあって、それが変化するとコンポーネントの更新と判断してレンダーが起こり、それをpropsとして受け取っているコンポーネントも更新されるのを理解しておけば概ねいいかな
 
-- インストール、createreactapp
-- イミュータブル？
-- コンテキストについて
-
 ## インストール
 - create react app を使用するなら  
   `$ npx create-react-app my-app`  
@@ -16,6 +12,8 @@
   `$ npm run build`  
   で`build`フォルダーが出来上がり、その中にデプロイするものが出来上がる。
 - Next.jsも選択肢。使ったらそのうちまとめる
+
+---
 
 ## jsx記法について
 - 変数にjsx記法でコンポーネントを代入していく事ができる。
@@ -184,13 +182,13 @@
   <MyTextBox autocomplete={true} />
   ```
 
-- jsxでの
+- jsxでの以下のような記述は
   ```
   <MyButton color="blue" shadowSize={2}>
     Click Me
   </MyButton>
   ```
-  のような記述は下のように変換される
+  下のように変換される
   ```javascript
   React.createElement(
     MyButton,
@@ -198,12 +196,60 @@
     'Click Me'
   )
   ```
+
+---
+
+## イミュータブルな操作
+Reactではイミュータブルなデータの変更操作が必要となる。  
+
+ミュータブル : 元のデータの変更を伴う(可変な)操作
+```
+var player = {score: 1, name: 'Jeff'};
+player.score = 2;
+// Now player is {score: 2, name: 'Jeff'}
 ```
 
+イミュータブル : 元のデータの変更を伴わない(不変な)操作
+```
+var player = {score: 1, name: 'Jeff'};
+
+var newPlayer = Object.assign({}, player, {score: 2});
+// playerはもとのデータのままで変化無し
+// newPlayer は {score: 2, name: 'Jeff'}
+
+// スプレッド構文の方が楽ちん
+// var newPlayer = {...player, score: 2};
 ```
 
+これをやることで
+- reactチュートリアルでやってたような履歴保持の機能とかが比較的簡単に実装できる
+- イミュータブルな操作だと元のデータとの参照が別のものになるので変更の検出が容易になり、パフォーマンスの最適化に繋がるらしい
 
-attention: 
+---
+
+## フックで使える色々な機能
+色々あるけど、基本的には下記フックは関数コンポーネントのトップレベルで呼び出すこと。
+- useState  
+→初期state設定を行い、setStateメソッドと
+```javascript
+[value, setValue] = useState(initial);
+```
+とあるときに、valueが初期initialを初期stateとしてvalueに設定し、その更新用関数がsetValueとなる
+setValue()にはそのまま更新したい値を渡してもいいが、関数を渡すとその関数の引数には更新前のstateが渡される
+setValue(prev => prev + 1);　みたいな感じ。
+これは以下のようにuseCallbackでstate更新関数をメモ化するときに使える。
+```javascript
+useCallback(() => {
+     setValue(prev => prev + 1);
+},[setValue])
+```
+このsetValueの所をsetValue(value+1)とかにしちゃうとvalueが最初のcallback作ったときの値に固定されてしまう
+なお、このsetValueは更新前のstateとマージされないのでオブジェクトや配列のセット時は
+```
+setValue(prev => [...prev, newValue])
+```
+のようにスプレッドで前回stateを反映すること
+クラスコンポーネントのthis.setStateだとマージされる・・・
 ・レンダリングの都度コンポーネント関数の呼出しが発生する
 　そのためsetstateしてもvalueはその関数の実行中は変化せず
 　次にレンダリングが発生したときに変化する
@@ -211,9 +257,22 @@ attention:
 　コンポーネントの呼び出し毎に異なる参照の関数やオブジェクトが作られる
 　その為、useeffectの第二引数とかで関数やオブジェクトをそのままぶち込んでも
 　毎回実体が異なるのでusecallbackとかusememoとかしないとダメ
+- useEffect
+　　→クラスコンポーネントでのcomponentDidmount,componentWillunmountとかの処理を関数コンポーネントで使える上に一気にかける
+　　第一引数は副作用時(副作用のタイミングは第二引数によってきまる)に実行したい処理を書く。第一引数のreturnする値はクリーンアップするためのものであり、
+　　componentWillunmount時に実行される
+　　第二引数を省略すると、render後に毎回、第一引数の関数を実行
+　　第二引数にある値の配列を渡すと、componentDidmount時と、render時に指定されたある値に変化があったとき第一引数の関数を実行
+　　第二引数に空の配列[]を渡すと、変化がまったくないものとして考えられるのでcomponentDidmount時にのみ第一引数に渡した関数を実行
+　　　→useEffectでコールバックを設定をするときにこれを使うと初回のマウント時のコールバックのみを保持することに注意！
+- useCallback
+→コールバック関数の再計算をせずにすむ
+一つ目の引数に普通にコンポーネントに渡す感じの関数を書いて、
+二つ目の引数(配列リテラルで渡す)にはその依存する変数の配列を渡す。
+二つ目の配列の中身が変化しなければ関数の再計算はせずにキャッシュした関数の戻り値のみを使用する
+- useContext
 
-
-
+## その他tips
 - view関係は共通要素のcomponentsとページ呼出し単位のpagesくらいの分け方で
 　componentsの中身はatomicデザインのざっくりした感じ。
 　pagesの中身はcomponentsのつなぎ合わせとpage固有の要素
@@ -225,43 +284,6 @@ attention:
 　imgは基本importでいいはず。publicフォルダはfaviconとか？？
 　assetsもpagesと同じような分け方のほうが見やすいかな
 　各ページに細かくスタイル分けるなら…
-
-★★★メモ！★★★
-
-
-## フックで使える色々
-基本的には下記フックは関数コンポーネントのトップレベルで呼び出すこと。
-　useState
-　　→クラスコンポーネントでの初期state設定、setState、state読み出しを便利に使える
-　　[value, setValue] = useState(initial);
-　　とあるときに、valueが初期initialを初期stateとしてvalueに設定し、その更新用関数がsetValueとなる
-　　setValue()にはそのまま更新したい値を渡してもいいが、関数を渡すとその関数の引数には更新前のstateが渡される
-　　setValue(prev => prev + 1);　みたいな感じ。
-　　これは以下のようにuseCallbackでstate更新関数をメモ化するときに使える。
-　　useCallback(() => {
-      setValue(prev => prev + 1);
-　　},[setValue])
-　　このsetValueの所をsetValue(value+1)とかにしちゃうとvalueが最初のcallback作ったときの値に固定されてしまう
-　　なお、このsetValueは更新前のstateとマージされないのでオブジェクトや配列のセット時は
-　　setValue(prev => [...prev, newValue])
-　　のようにスプレッドで前回stateを反映すること
-クラスコンポーネントのthis.setStateだとマージされる・・・
-　useEffect
-　　→クラスコンポーネントでのcomponentDidmount,componentWillunmountとかの処理を関数コンポーネントで使える上に一気にかける
-　　第一引数は副作用時(副作用のタイミングは第二引数によってきまる)に実行したい処理を書く。第一引数のreturnする値はクリーンアップするためのものであり、
-　　componentWillunmount時に実行される
-　　第二引数を省略すると、render後に毎回、第一引数の関数を実行
-　　第二引数にある値の配列を渡すと、componentDidmount時と、render時に指定されたある値に変化があったとき第一引数の関数を実行
-　　第二引数に空の配列[]を渡すと、変化がまったくないものとして考えられるのでcomponentDidmount時にのみ第一引数に渡した関数を実行
-　　　→useEffectでコールバックを設定をするときにこれを使うと初回のマウント時のコールバックのみを保持することに注意！
-　useCallback
-　　→コールバック関数の再計算をせずにすむ
-　　一つ目の引数に普通にコンポーネントに渡す感じの関数を書いて、
-　　二つ目の引数(配列リテラルで渡す)にはその依存する変数の配列を渡す。
-　　二つ目の配列の中身が変化しなければ関数の再計算はせずにキャッシュした関数の戻り値のみを使用する
-- useContext
-
-
 
 
 
