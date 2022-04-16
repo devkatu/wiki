@@ -227,37 +227,47 @@ var newPlayer = Object.assign({}, player, {score: 2});
 
 ---
 
-## フックで使える色々な機能
-色々あるけど、基本的には下記フックは関数コンポーネントのトップレベルで呼び出すこと。
-- useState  
-→初期state設定を行い、setStateメソッドと
-```javascript
-[value, setValue] = useState(initial);
-```
-とあるときに、valueが初期initialを初期stateとしてvalueに設定し、その更新用関数がsetValueとなる
-setValue()にはそのまま更新したい値を渡してもいいが、関数を渡すとその関数の引数には更新前のstateが渡される
-setValue(prev => prev + 1);　みたいな感じ。
-これは以下のようにuseCallbackでstate更新関数をメモ化するときに使える。
-```javascript
-useCallback(() => {
-     setValue(prev => prev + 1);
-},[setValue])
-```
-このsetValueの所をsetValue(value+1)とかにしちゃうとvalueが最初のcallback作ったときの値に固定されてしまう
-なお、このsetValueは更新前のstateとマージされないのでオブジェクトや配列のセット時は
-```
-setValue(prev => [...prev, newValue])
-```
-のようにスプレッドで前回stateを反映すること
-クラスコンポーネントのthis.setStateだとマージされる・・・
-・レンダリングの都度コンポーネント関数の呼出しが発生する
-　そのためsetstateしてもvalueはその関数の実行中は変化せず
-　次にレンダリングが発生したときに変化する
-・コンポーネント内で定義した関数やオブジェクト等についても同じく
-　コンポーネントの呼び出し毎に異なる参照の関数やオブジェクトが作られる
-　その為、useeffectの第二引数とかで関数やオブジェクトをそのままぶち込んでも
-　毎回実体が異なるのでusecallbackとかusememoとかしないとダメ
-- useEffect
+## フックで使う色々な機能
+関数コンポーネントにクラスコンポーネントのような色々な機能をもたせることができる。
+> 原理的には関数は状態を持てません。ですが、React本体側にコンポーネント専用の変数領域を用意してもらって、その領域にデータを保存しておけば、見かけ上はまるで関数が状態を持っているように見せかけることができると思いませんか？useStateはまさにそれを行っているHooksであり、関数ではなくReact本体側にデータを保存します。  
+[参考](https://sbfl.net/blog/2019/11/12/react-hooks-introduction/)
+
+Reactフックは関数コンポーネントで使い、必ずトップレベルで呼び出すこと。  
+### useState  
+- 関数コンポーネントにstateを持たせることができる。  
+`value`がstateそのもの、  
+`setValue`がstate更新用関数、  
+`initial`が初期stateとなる。
+  ```javascript
+  [value, setValue] = useState(initial);
+  ```
+- `setValue()`にはそのまま更新したい値を渡してもいいが、関数を渡すとその関数の引数には更新前のstateが渡される
+  ```javascript
+  setValue(prev => prev + 1);
+  ```
+  これは`setValue`を連打したりしてレンダリングが複数回発生したりするとstateが正しく更新されない問題を解決したり、、  
+  また以下のようにuseCallbackでstate更新関数をメモ化するときに使える。
+  ```javascript
+  useCallback(() => {
+      setValue(prev => prev + 1);
+  },[setValue])
+  ```
+  この`setValue`の所を`setValue(value+1)`とかにしちゃうと`value`が最初の`callback`作ったときの値に固定されてしまう
+- なお、この`setValue`は更新前の`state`とマージされないのでオブジェクトや配列のセット時は以下のようにスプレッドで前回stateを反映すること
+  ```javascript
+  setValue(prev => [...prev, newValue])
+  ```
+  クラスコンポーネントの`this.setState`だとマージされるみたいで分かりずらい・・・
+- レンダリングの都度コンポーネント関数の呼出しが発生する  
+そのため`setstate`しても`value`はその関数の実行中は変化せず、次にレンダリングが発生(関数呼び出し)したときに`value`に反映されることに注意
+
+- レンダリングの都度コンポーネント関数の呼出しが発生する  
+コンポーネント内で定義した関数やオブジェクト等についても同じく
+  コンポーネントの呼び出し毎に異なる参照の関数やオブジェクトが作られる
+  その為、`useEffect`の第二引数とかで関数やオブジェクトをそのままぶち込んでも
+  毎回実体が異なるので`usecallback`とか`usememo`とかしないとダメ
+
+### useEffect
 　　→クラスコンポーネントでのcomponentDidmount,componentWillunmountとかの処理を関数コンポーネントで使える上に一気にかける
 　　第一引数は副作用時(副作用のタイミングは第二引数によってきまる)に実行したい処理を書く。第一引数のreturnする値はクリーンアップするためのものであり、
 　　componentWillunmount時に実行される
@@ -265,12 +275,14 @@ setValue(prev => [...prev, newValue])
 　　第二引数にある値の配列を渡すと、componentDidmount時と、render時に指定されたある値に変化があったとき第一引数の関数を実行
 　　第二引数に空の配列[]を渡すと、変化がまったくないものとして考えられるのでcomponentDidmount時にのみ第一引数に渡した関数を実行
 　　　→useEffectでコールバックを設定をするときにこれを使うと初回のマウント時のコールバックのみを保持することに注意！
-- useCallback
+
+### useCallback
 →コールバック関数の再計算をせずにすむ
 一つ目の引数に普通にコンポーネントに渡す感じの関数を書いて、
 二つ目の引数(配列リテラルで渡す)にはその依存する変数の配列を渡す。
 二つ目の配列の中身が変化しなければ関数の再計算はせずにキャッシュした関数の戻り値のみを使用する
-- useContext
+
+### useContext
 
 ## その他tips
 - view関係は共通要素のcomponentsとページ呼出し単位のpagesくらいの分け方で
