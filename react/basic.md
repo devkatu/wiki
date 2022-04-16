@@ -261,26 +261,89 @@ Reactフックは関数コンポーネントで使い、必ずトップレベル
 - レンダリングの都度コンポーネント関数の呼出しが発生する  
 そのため`setstate`しても`value`はその関数の実行中は変化せず、次にレンダリングが発生(関数呼び出し)したときに`value`に反映されることに注意
 
-- レンダリングの都度コンポーネント関数の呼出しが発生する  
-コンポーネント内で定義した関数やオブジェクト等についても同じく
-  コンポーネントの呼び出し毎に異なる参照の関数やオブジェクトが作られる
-  その為、`useEffect`の第二引数とかで関数やオブジェクトをそのままぶち込んでも
-  毎回実体が異なるので`usecallback`とか`usememo`とかしないとダメ
-
 ### useEffect
-　　→クラスコンポーネントでのcomponentDidmount,componentWillunmountとかの処理を関数コンポーネントで使える上に一気にかける
-　　第一引数は副作用時(副作用のタイミングは第二引数によってきまる)に実行したい処理を書く。第一引数のreturnする値はクリーンアップするためのものであり、
-　　componentWillunmount時に実行される
-　　第二引数を省略すると、render後に毎回、第一引数の関数を実行
-　　第二引数にある値の配列を渡すと、componentDidmount時と、render時に指定されたある値に変化があったとき第一引数の関数を実行
-　　第二引数に空の配列[]を渡すと、変化がまったくないものとして考えられるのでcomponentDidmount時にのみ第一引数に渡した関数を実行
-　　　→useEffectでコールバックを設定をするときにこれを使うと初回のマウント時のコールバックのみを保持することに注意！
+- 関数コンポーネントに、ライフサイクルを持たせる事ができる。クラスコンポーネントでの(componentDidmount,componentWillunmountとかの処理)  
+渡したコールバックを**レンダリング後**に実行する。
+  ```javascript
+  useEffect(() => {
+    someFunc(deps);
+    return () => {
+      cleanUp();
+    }
+  },[deps])
+  ```
+- 第一引数は副作用時(副作用のタイミングは第二引数によってきまる)に実行したい処理を書く。
+- 第一引数のreturnする値はクリーンアップするためのものであり、コンポーネントがアンマウントされるとき(componentWillunmount時)に実行される
+- 第二引数を省略  
+  render後に毎回、第一引数の関数を実行(componentDidUpdate)
+- 第二引数に依存する値の配列  
+  初回のレンダリング後(componentDidmount)と、依存する値に変化があったときのレンダリング後に、第一引数の関数を実行
+- 第二引数に空の配列`[]`を渡す  
+  変化がまったくないものとして考えられるので初回のレンダリング後(componentDidmount)にのみ第一引数に渡した関数を実行  
+  →クリーンアップのコールバックを設定をするときにこれを使うと初回のマウント時のコールバックのみを保持することに注意！
+- レンダリングの都度コンポーネント関数の呼出しが発生する  
+そのため、コンポーネントの呼び出し毎に異なる参照の関数やオブジェクトが作られることとなり、`useEffect`の第二引数でオブジェクトをそのままぶち込んでも、毎回実体が異なるので、`前回レンダリングオブジェクト === 今回レンダリングのオブジェクト`は成立しない。これを解決するには
+  - オブジェクト全体を比較せず、プロパティを指定、もしくは分割代入で依存配列を指定する(プリミティブな値を指定する)
+  - `useMemo`で依存配列をメモ化する(オブジェクトの中身が変わらなければ、同じインスタンスを返すようにする)
+  ```
+  import { useState, useCallback, useEffect, useMemo } from "react";
+
+  // カスタムフック
+  const useCounter = () => {
+    const [count, setCount] = useState(0);
+    const countUp = useCallback(() => setCount(count + 1), [count]);
+    // 返す値をメモ化しておく。これでcount,countUpが変化しない限り同じインスタンスが返される
+    return useMemo(() => ({
+      count,
+      countUp,
+    }), [count, countUp]);
+  };
+
+  export default () => {
+    const counter1 = useCounter();
+    const counter2 = useCounter();
+
+    const [message, setMessage] = useState();
+
+    // - useCounterの返す値がメモ化されていないと、counter2のボタンをクリックしても副作用が反応してしまう
+    // - counter1はオブジェクトだが、メモ化されているので、
+    //   各プロパティ値が変化しない限り、同じインスタンスが返されて、
+    //   無駄なレンダリングが発生しない。
+    // - メモ化しないでcounter1.countを指定したり、分割代入でcountを取り出して指定してもOK
+    useEffect(() => {
+      setMessage(`${new Date().toString()} に counter1 が変更されました`);
+    }, [counter1]);
+
+    return (
+      <>
+        <div>
+          <button onClick={counter1.countUp}>counter1</button>
+        </div>
+        <div>
+          <button onClick={counter2.countUp}>counter2</button>
+        </div>
+        <div>
+          {message}
+        </div>
+      </>
+    );
+  };
+  ```
 
 ### useCallback
 →コールバック関数の再計算をせずにすむ
+イベントハンドラーのようなcallback関数をメモ化し、不要に生成される関数インスタンスの作成を抑制、再描画を減らすことにより、都度計算しなくて良くなることからパフォーマンスを向上が期待できます。
 一つ目の引数に普通にコンポーネントに渡す感じの関数を書いて、
 二つ目の引数(配列リテラルで渡す)にはその依存する変数の配列を渡す。
 二つ目の配列の中身が変化しなければ関数の再計算はせずにキャッシュした関数の戻り値のみを使用する
+```
+const [count, setCount] = useState(0);
+const countUp = useCallback(() => setCount(count + 1), [count]);
+```
+
+### useMemo
+useCallbackが関数自体をメモかするが、関数の処理結果をメモする。
+何回やっても結果が同じ場合の値などを保存し、処理に要する時間を削減できる。
 
 ### useContext
 
