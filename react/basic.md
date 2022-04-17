@@ -222,17 +222,19 @@ var newPlayer = Object.assign({}, player, {score: 2});
 ```
 
 これをやることで
+
 - reactチュートリアルでやってたような履歴保持の機能とかが比較的簡単に実装できる
 - イミュータブルな操作だと元のデータとの参照が別のものになるので変更の検出が容易になり、パフォーマンスの最適化に繋がるらしい
 
 ---
 
 ## フックで使う色々な機能
-関数コンポーネントにクラスコンポーネントのような色々な機能をもたせることができる。
+関数コンポーネントにクラスコンポーネントのような色々な機能をもたせることができる。useStateでは
 > 原理的には関数は状態を持てません。ですが、React本体側にコンポーネント専用の変数領域を用意してもらって、その領域にデータを保存しておけば、見かけ上はまるで関数が状態を持っているように見せかけることができると思いませんか？useStateはまさにそれを行っているHooksであり、関数ではなくReact本体側にデータを保存します。  
 [参考](https://sbfl.net/blog/2019/11/12/react-hooks-introduction/)
 
-Reactフックは関数コンポーネントで使い、必ずトップレベルで呼び出すこと。  
+Reactフックは関数コンポーネントで使い、必ずトップレベルで呼び出すこと。
+
 ### useState  
 - 関数コンポーネントにstateを持たせることができる。  
 `value`がstateそのもの、  
@@ -241,18 +243,19 @@ Reactフックは関数コンポーネントで使い、必ずトップレベル
   ```javascript
   [value, setValue] = useState(initial);
   ```
-- `setValue()`にはそのまま更新したい値を渡してもいいが、関数を渡すとその関数の引数には更新前のstateが渡される
+- `setValue()`にはそのまま更新したい値を渡してもいいが、関数を渡すとその関数の引数には更新前のstateが渡され、戻り値を更新する値とする事ができる
   ```javascript
   setValue(prev => prev + 1);
   ```
   これは`setValue`を連打したりしてレンダリングが複数回発生したりするとstateが正しく更新されない問題を解決したり、、  
-  また以下のようにuseCallbackでstate更新関数をメモ化するときに使える。
+  また以下のように`useCallback`でstate更新関数をメモ化したり、
   ```javascript
   useCallback(() => {
       setValue(prev => prev + 1);
   },[setValue])
   ```
-  この`setValue`の所を`setValue(value+1)`とかにしちゃうと`value`が最初の`callback`作ったときの値に固定されてしまう
+  前回値を使って複雑な処理をしてから値を更新するときによく使う。  
+  なお、この`setValue(prev => prev + 1)`の所を`setValue(value+1)`とかにしちゃうと`value`が最初の`callback`作ったときの値に固定されてしまう
 - なお、この`setValue`は更新前の`state`とマージされないのでオブジェクトや配列のセット時は以下のようにスプレッドで前回stateを反映すること
   ```javascript
   setValue(prev => [...prev, newValue])
@@ -262,7 +265,7 @@ Reactフックは関数コンポーネントで使い、必ずトップレベル
 そのため`setstate`しても`value`はその関数の実行中は変化せず、次にレンダリングが発生(関数呼び出し)したときに`value`に反映されることに注意
 
 ### useEffect
-- 関数コンポーネントに、ライフサイクルを持たせる事ができる。クラスコンポーネントでの(componentDidmount,componentWillunmountとかの処理)  
+- 関数コンポーネントに、ライフサイクルを持たせる事ができる。(クラスコンポーネントでのcomponentDidmount,componentWillunmountとかの処理)  
 渡したコールバックを**レンダリング後**に実行する。
   ```javascript
   useEffect(() => {
@@ -274,17 +277,18 @@ Reactフックは関数コンポーネントで使い、必ずトップレベル
   ```
 - 第一引数は副作用時(副作用のタイミングは第二引数によってきまる)に実行したい処理を書く。
 - 第一引数のreturnする値はクリーンアップするためのものであり、コンポーネントがアンマウントされるとき(componentWillunmount時)に実行される
-- 第二引数を省略  
+- 第二引数を省略すると  
   render後に毎回、第一引数の関数を実行(componentDidUpdate)
-- 第二引数に依存する値の配列  
+- 第二引数に依存する値の配列すると  
   初回のレンダリング後(componentDidmount)と、依存する値に変化があったときのレンダリング後に、第一引数の関数を実行
-- 第二引数に空の配列`[]`を渡す  
+- 第二引数に空の配列`[]`を渡すと  
   変化がまったくないものとして考えられるので初回のレンダリング後(componentDidmount)にのみ第一引数に渡した関数を実行  
   →クリーンアップのコールバックを設定をするときにこれを使うと初回のマウント時のコールバックのみを保持することに注意！
 - レンダリングの都度コンポーネント関数の呼出しが発生する  
 そのため、コンポーネントの呼び出し毎に異なる参照の関数やオブジェクトが作られることとなり、`useEffect`の第二引数でオブジェクトをそのままぶち込んでも、毎回実体が異なるので、`前回レンダリングオブジェクト === 今回レンダリングのオブジェクト`は成立しない。これを解決するには
   - オブジェクト全体を比較せず、プロパティを指定、もしくは分割代入で依存配列を指定する(プリミティブな値を指定する)
   - `useMemo`で依存配列をメモ化する(オブジェクトの中身が変わらなければ、同じインスタンスを返すようにする)
+
   ```
   import { useState, useCallback, useEffect, useMemo } from "react";
 
@@ -331,75 +335,208 @@ Reactフックは関数コンポーネントで使い、必ずトップレベル
   ```
 
 ### useCallback
-→コールバック関数の再計算をせずにすむ
-イベントハンドラーのようなcallback関数をメモ化し、不要に生成される関数インスタンスの作成を抑制、再描画を減らすことにより、都度計算しなくて良くなることからパフォーマンスを向上が期待できます。
-一つ目の引数に普通にコンポーネントに渡す感じの関数を書いて、
-二つ目の引数(配列リテラルで渡す)にはその依存する変数の配列を渡す。
-二つ目の配列の中身が変化しなければ関数の再計算はせずにキャッシュした関数の戻り値のみを使用する
+**コールバック関数のメモ化**が可能になる。イベントハンドラーのようなcallback関数をメモ化し、不要に生成される関数インスタンスの作成を抑制、再描画を減らすことにより、都度計算しなくて良くなることからパフォーマンスを向上が期待できる。
+
+`memoizedCallback`がメモ化された関数、  
+`() => {doSomething(a, b)}`がメモ化したい関数、  
+`[a, b]`が依存する値の配列となる。  
+```javascript
+const memoizedCallback = useCallback(
+  () => {
+    doSomething(a, b);
+  },
+  [a, b],
+);
 ```
+二つ目の配列の中身が変化しなければ関数の再計算はせず、レンダリングの都度キャッシュした関数が毎回帰ってくる仕組みになっている。  
+
+state更新関数をメモ化するのは下記
+```javascript
 const [count, setCount] = useState(0);
 const countUp = useCallback(() => setCount(count + 1), [count]);
 ```
 
 ### useMemo
-useCallbackが関数自体をメモかするが、関数の処理結果をメモする。
-何回やっても結果が同じ場合の値などを保存し、処理に要する時間を削減できる。
+useCallbackが関数自体をメモ化するが、useMemoは関数の**処理結果をメモ**する。
+何回やっても結果が同じ場合の値などを保存し、処理に要する時間を削減できる。  
+
+下記は`{count: countの値, countUp: countUpの値}`オブジェクトを返す関数が渡されており、`count`、`countUp`が変化しない限り同じインスタンスのオブジェクトを返し続ける。
+```javascript
+useMemo(() => ({
+  count,
+  countUp,
+}), [count, countUp]);
+```
 
 ### useContext
+関数コンポーネントでコンテキストを使えるようになる。
+
+> ある React コンポーネントのツリーに対して「グローバル」とみなすことができる、現在の認証済みユーザ・テーマ・優先言語といったデータを共有するために設計されています。
+
+React公式ではテーマの変更とかに使っている所を紹介していた。  
+コンポーネントのネストが深くなって下層のコンポーネントにのみ、propsのバケツリレーを避けるためにも使える。  
+ReactNavigationでもScreenに追加のpropsを与える所とかで一部おすすめされている箇所があった。Tab間のデータ共有とかに使ったりした。
+
+以下で  
+`ThemeContext = React.createContext(themes.light)`で`themes.light`を初期値とするコンテキストを作成する(初期値は省略可能)    
+`<ThemeContext.Provider value={themes.dark}>`で囲った要素内にコンテキストを提供する。ここでテーマは`value`に`themes.dark`を指定してるけど、これだと固定値になちゃうのでstate化した`theme`を渡すように加筆してる  
+`useContext(ThemeContext)`で関数コンポーネント内で`ThemeContext`のコンテキストを参照できるようになる。この値が変化すると該当のコンポーネントは再レンダリングがされる。
+```
+const themes = {
+  light: {
+    foreground: "#000000",
+    background: "#eeeeee"
+  },
+  dark: {
+    foreground: "#ffffff",
+    background: "#222222"
+  }
+};
+
+// コンテキストを作成
+const ThemeContext = React.createContext(themes.light);
+
+function App() {
+
+  // この辺公式ドキュメントに加筆してるのでちゃんと動くかはわからん
+  const [theme, setTheme] = useState(themes.light);
+  const toggleTheme = useCallback(() => {
+    setTheme(prev => {
+      return prev == themes.light ? themes.dark : themes.light;
+    })
+  },[setTheme])
+  // ここまで加筆
+
+  return (
+    {/* <ThemeContext.Provider value={themes.dark}> */}
+    {/* コンテキストを提供するプロバイダーを設定 */}
+    <ThemeContext.Provider value={theme}>  {/* 加筆 */}
+      <Toolbar />
+      <Button onClick={toggleTheme}>  {/* 加筆 */}
+    </ThemeContext.Provider>
+  );
+}
+
+function Toolbar(props) {
+  return (
+    <div>
+      <ThemedButton />
+    </div>
+  );
+}
+
+function ThemedButton() {
+  // コンテキストを読みだす
+  // useContextを使わない場合はConsumerとかを使わなければならない
+  const theme = useContext(ThemeContext);
+  return (
+    <button style={{ background: theme.background, color: theme.foreground }}>
+      I am styled by theme context!
+    </button>
+  );
+}
+```
+
+### テスト
+テストに必要なデータを用意したいときは[jsonジェネレータ](https://json-generator.com/)があるので使ってみよう
+
+モックAPIが使いたいならjson-server入れてみよう  
+`db.json`に下記を入れて、 
+```javascript
+{
+  "posts": [
+    { "id": 1, "title": "json-server", "author": "typicode" }
+  ],
+  "comments": [
+    { "id": 1, "body": "some comment", "postId": 1 }
+  ],
+  "profile": { "name": "typicode" }
+}
+```
+`$ npx json-server -w db.json`で起動する  
+初期設定であれば`http://localhost:3000/posts/1`にアクセスすると、
+```javascript
+{ "id": 1, "title": "json-server", "author": "typicode" }
+```
+
+`json-server.json`で色々オプション設定できる！
+
+多分Firestore使ってそのテスト機能使うだろうからそんなに出番なさそうかも？
 
 ## その他tips
-- view関係は共通要素のcomponentsとページ呼出し単位のpagesくらいの分け方で
-　componentsの中身はatomicデザインのざっくりした感じ。
-　pagesの中身はcomponentsのつなぎ合わせとpage固有の要素
-　普通にpagesとして作っていって使いまわした要素がでてきたらcomponentsに纏める感じでもいいかも
-　componentsもその中でフォルダ分けしてpage毎に分けたりreducer毎に分けたりするのもいいかも
-- assetsとかは？
-　スタイルは基本cssインポートと、materialUiならmakestyleでいいけど
-　assetsにいれるスタイルは共通のスタイル入れる？
-　imgは基本importでいいはず。publicフォルダはfaviconとか？？
-　assetsもpagesと同じような分け方のほうが見やすいかな
-　各ページに細かくスタイル分けるなら…
+- ディレクトリ構成について  
+view関係は各ページで共通要素(ヘッダーだとか)を纏めたcomponentsと、ページ呼出し単位のpagesくらいの分け方で。pagesの中身はcomponentsのつなぎ合わせとpage固有の要素普通にpagesとして作っていって、使いまわしたい要素がでてきたらcomponentsに纏める感じでもいいかも。componentsもその中でフォルダ分けしてpage毎に分けたりreducer毎に分けたりするのもいいかも
+**ルーティングとか、ディレクトリ構成とか、なにかと面倒と感じるならNext.jsを導入してもいいかも**
+- assetsとかは？  
+スタイルは基本cssインポートと、materialUiならmakestyleでいいけど
+assetsにいれるスタイルは共通のスタイル入れる？
+imgは基本importでいいはず。publicフォルダはfaviconとか？？
+assetsもpagesと同じような分け方のほうが見やすいかな
+各ページに細かくスタイル分けるなら…
 
+こんなイメージ？  
+src  
+  ├ assets  
+  │ ├ css  
+  │ └ img  
+  ├ components  
+  │ ├ componentA  
+  │ ├ componentB  
+  │ └ ...  
+  └ pages  
+    ├ pageA  
+    ├ pageB  
+    └ ...  
 
+- 開発モードだとlogとかしないようにするやつは・・・？  
+`process.env.NODE_ENV === 'development'`に`development`か`product`のような値が入っているのでこれをif文で見て処理を分岐するといいかも？開発中の仮サーバーでは`develpment`だが、buildすると`production`が入る
 
-・開発モードだとlogとかしないようにするやつは・・・？
-　process.env.NODE_ENV === 'development'
-　にdevelopmentかproductのような値が入っているのでこれをif文で見て処理を分岐するといいかも
-　開発中の仮サーバーではdevelpmentだが、buildするとproductionが入る
+### createreactの公式より
+- パブリックフォルダの使用  
+publicフォルダ内のアセットを参照するには`PUBLIC_URL`の環境変数を使用する。  
+例えば`<link rel="icon" href="%PUBLIC_URL%/favicon.ico"/>`のような感じで
+javascript側からは`process.env.PUBLIC_URL`でアクセスできる...が色々欠点あるので
+アセットはsrc側に置いておき、`import`して使うのが無難らしい
 
-createreactの公式読む
-・パブリックフォルダの使用
-　publicフォルダ内のアセットを参照するにはPUBLIC_URLの環境変数を使用する。
-　例えば<link rel="icon" href"%PUBLIC_URL%/favicon.ico"/>のような感じで
-　javascript側からはprocess.env.PUBLIC_URLでアクセスできる...が色々欠点あるので
-　アセットはsrc側に置いておき、importして使うのが無難
+- 環境変数(開発モードでは、のやつとかぶるけど)
+`NODE_ENV`や`REACT_APP`_(こちらはカスタム可能)から始まる環境変数というものがあり、あらかじめ宣言されている変数のように使用することができる。  
+html側からは `%環境変数%` 、javsscript側からは`process.env.環境変数`で使用できる。
+特に`process.env.NODE_ENV`は
+  - npm start しているときは`development`
+  - npm test しているときは`test`
+  - npm run build したときは`production`  
+となるので開発時、テスト時、のみ必要なコードを条件分岐して使用したりするのに良い。
+カスタム環境変数`REACT_APP_`にはコマンドラインから一時的に変数の設定もできるし、
+プロジェクトのルートから `REACT_APP_HOGE = "foo"` みたいに永続的な変数の定義もできる
 
-・環境変数(開発モードでは、のやつとかぶるけど)
-　NODE_ENVやREACT_APP_(こちらはカスタム可能)から始まる環境変数というものがあり、
-　あらかじめ宣言されている変数のように使用することができる。
-　html側からは %環境変数% 、javsscript側からはprocess.env.環境変数で使用できる。
-　特にprocess.env.NODE_ENVは
-　　npm start しているときは'development'
-　　npm test しているときは'test'
-　　npm run build したときは'production'となるので
-　　開発時、テスト時、のみ必要なコードを条件分岐して使用したりするのに良い。
-　カスタム環境変数REACT_APP_にはコマンドラインから一時的に変数の設定もできるし、
-　プロジェクトのルートから REACT_APP_HOGE = "foo" みたいに永続的な変数の定義もできる
+- スタイル(cssモジュール)について  
+複数のcssを読込む場合があるときにクラス名の衝突が考えられるが、
+用意したcssのファイル拡張子を.cssから.module.cssにして
+  ```
+  import styles from 'style.module.css';
 
-・スタイル(cssモジュール)について
-　cssの読み込みは各ページ等に対応したcssファイルを用意してある。
-　複数のcssを読込む場合があるときにクラス名の衝突が考えられるが、
-　用意したcssのファイル拡張子を.cssから.module.cssにして
-　import styles from 'style.module.css';
-　<div className={styles.class}/>
-　のようにすると与えられたクラス名に__ハッシュ値が付与されて名前の衝突が起きなくなる。
-　ちなみに普通にcssを読込むときは
-　import '../assets/css/styles.css';
-　みたいな感じ
-・画像等のassetの追加
-　import logo from './logo.png';
-　とするとlogoにはバンドル後のパス文字列が入る。これにもハッシュ値が付与される。
-　<img src={logo}/>で使用可能となる
-　css側でも
-　background: url(./logo.png);
-　とかで同じような感じになる。
+  // ...
+  <div className={styles.class}/>`
+  // ...
+  ```
+  のようにすると与えられたクラス名に__ハッシュ値が付与されて名前の衝突が起きなくなる。
+  ちなみに普通にcssを読込むときは
+  ```
+  import '../assets/css/styles.css';
+  ```
+  みたいな感じ  
+  ちなみに**sassやリセットcssも公式で用意**してるみたい。
+- 画像等のassetの追加
+  ```
+  import logo from './logo.png';
+
+  // ...
+  <img src={logo}/>
+  // ...
+  ```
+  とすると`logo`にはバンドル後のパス文字列が入る。これにもハッシュ値が付与される。  
+  css側でも
+  ```
+  background: url(./logo.png);
+  ```
+  とかで同じような感じになる。

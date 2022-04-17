@@ -254,6 +254,29 @@ hint: **ストアの提出が便利でビルドするサイズも小さくなる
 ### テスト
 テストに必要なデータを用意したいときは[jsonジェネレータ](https://json-generator.com/)があるので使ってみよう
 
+モックAPIが使いたいならjson-server入れてみよう  
+`db.json`に下記を入れて、 
+```javascript
+{
+  "posts": [
+    { "id": 1, "title": "json-server", "author": "typicode" }
+  ],
+  "comments": [
+    { "id": 1, "body": "some comment", "postId": 1 }
+  ],
+  "profile": { "name": "typicode" }
+}
+```
+`$ npx json-server -w db.json`で起動する  
+初期設定であれば`http://localhost:3000/posts/1`にアクセスすると、
+```javascript
+{ "id": 1, "title": "json-server", "author": "typicode" }
+```
+
+`json-server.json`で色々オプション設定できる！
+
+多分Firestore使ってそのテスト機能使うだろうからそんなに出番なさそうかも？
+
 #### .apk .aabとは
 .apkファイルは古いタイプのバイナリファイル。.aabは次のような特徴がある。
 
