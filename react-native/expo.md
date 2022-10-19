@@ -534,3 +534,15 @@ export default function App() {
 
 
 --- 
+
+## EXPO SDKのアップデート
+ストアに提出しようとしたらandroid12(APIレベル31)を求められて、expo sdkを44→45にしなければならなかったことあり、そのメモ
+- `expo-cli upgrade`でexposdkの更新を行う(結局46にした)
+- ここで`yarnpkg exited with non-zero code: 134`とか出たのでyarn.lockとnode_modulesを削除して`yarn install`
+- ある程度のライブラリはexpo側で勝手に更新してくれるようなので、`expo-cli doctor`でどのライブラリを、どのバージョンまで更新すればいいか確認する
+- `yarn outdated`を行うと最新版でないパッケージが表示される
+- `yarn upgrade-interactive --latest`で、最新へ更新するパッケージは纏めて行う
+- nodeが最新版じゃないとダメって言われたので更新する
+- もう一度`yarn upgrade-interactive --latest`したら実行できた
+- 最新以外のパッケージは個別に`yarn upgrade package@version`で地道に更新(package.jsonを弄ってinstallでもいいのかも)
+- ビルドしてテストしていく。パッケージ変わっているのが多数あるので地道にやろう
