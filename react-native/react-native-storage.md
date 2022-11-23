@@ -247,7 +247,8 @@ $ yarn add @react-native-async-storage/async-storage
   };
   ```
 - バッチダウンロード  
-  指定した各キーのsyncメソッドを呼出し、リモートからデータを纏めてダウンロードする。
+  > 指定した各キーのsyncメソッドを呼出し、リモートからデータを纏めてダウンロードする。
+  公式では上記しか書いていなかったが、試してみたら`getBatchDataWidthIds`はちゃんと`storage`からも読み出すことができた。
   ```javascript
   // `storage.load`に使用するのと同じパラメータを配列として渡して、バッチデータをロードします。
   // 各キーのsyncメソッドを呼び出し、すべてが完了すると、順序付けられた配列のすべてのデータを返します。
@@ -298,4 +299,38 @@ $ yarn add @react-native-async-storage/async-storage
       storage.save({ key: "isFirstOpen", data: false })
       storage.save(lists)
     })
+  ```
+
+  筋トレNOTEアプリのstorageのID対応
+  ```javascript
+  // 記録の保存
+  // id指定で記録を保存する
+  // ここではIDは、保存する際の年日時分秒となっている
+  // data側にもIDをしてした方が後々取り回しが楽かも
+  // ※読み出した後にIDが必要な時があるのでeditDateから判断したりしてる所ある
+  storage.save({
+    key: 'trainingHistoryLists',
+    id: editDate2,
+    data: {
+      date: editDate,
+      title: _trainingTitleInput !== "" ? _trainingTitleInput : "no title",
+      menu: _trainingInputs
+    }
+  }).then(
+    () => ToastAndroid.show('トレーニング結果を保存しました！', ToastAndroid.SHORT)
+  )
+  
+  // 読み出すデータは一度に全て読み出さずに、IDのみを取り出して、context等の状態管理に保持しておく
+  storage.getIdsForKey('trainingHistoryLists').then(ids => {
+    setTrainingHistIds(ids)
+  })
+
+  // データを読み出す必要があるときに、上記のIDから必要なIDのみを取り出して、ID指定で読み出す
+  storage.getBatchDataWithIds({
+    key: 'trainingHistoryLists',
+    ids: matchHistId
+  }).then((result) => {
+  ...
+  })
+
   ```
