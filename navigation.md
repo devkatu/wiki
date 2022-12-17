@@ -54,4 +54,5 @@
   
 [Fire Base](firebase/firebase.md)
 [VScode](vscode/index.md)
+[Git](git/index.md)
 [gimmick:themechooser](テーマを変える)
