@@ -438,11 +438,81 @@ function ThemedButton() {
 ```
 
 ### useRef
-attention: 書きかけの項目
-- 毎回同じオブジェクトのインスタンスが帰ってくる
-- 値の変更は同期的
-- stateとは異なり、renderは発生しない
-- refにコールバックを渡すこともできる
+
+webではDOMのAPIを使ったり、サードパーティのDOMライブラリを使ったりすることができる。
+ReactNativeでもサードパーティのライブラリを入れるとrefを指定するものがあったりした。
+基本的な使い方は下記となる。
+```
+function TextInputWithFocusButton() {
+  // ★refを作成
+  const inputEl = useRef(null);   
+  const onButtonClick = () => {
+    // ★ref.currentでDOMにアクセスしてAPIを使用できる
+    inputEl.current.focus();
+  };
+  
+  // ★refをDOMに設定する
+  // 　ref属性にコールバック関数をわたせばより細かい制御もできたりする
+  return (
+    <>
+      <input ref={inputEl} type="text" />
+      <input ref={element => {inputEl = element}}>
+      <button onClick={onButtonClick}>Focus the input</button>
+    </>
+  );
+}
+```
+
+また、refの特徴として以下のものがあり、
+
+- useStateと異なり、再レンダリングは発生しない
+- 値の変更は同期的に行われる。  
+  useStateではsetStateで値を変更しても、同じレンダー内では値は変わらない
+  ```
+  const Counter = () => {
+    const count = useRef(0);
+    return (
+      <button
+        onClick={() => {
+          console.log(count.current);   // 0が出力される
+          count.current = 1;
+          console.log(count.current);   // 1が出力される
+
+          // useStateの場合は…
+          console.log(count.current);   // 0が出力される
+          setState(1);
+          console.log(count.current);   // 0が出力される
+        }}
+      >
+        カウント1
+      </button>
+    );
+  };
+  ```
+- レンダリング毎に返されるrefオブジェクトは同じインスタンスのものとなる
+- 自作した関数コンポ―ネントにはref属性を使用できない(インスタンスがないので)
+
+react公式より引用
+> 本質的に useRef とは、書き換え可能な値を .current プロパティ内に保持することができる「箱」のようなものです。
+
+> しかしながら useRef() は ref 属性で使うだけではなく、より便利に使えます。これはクラスでインスタンス変数を使うのと同様にして、あらゆる書き換え可能な値を保持しておくのに便利です。  
+> これは useRef() がプレーンな JavaScript オブジェクトを作成するからです。useRef() を使うことと自分で {current: ...} というオブジェクトを作成することとの唯一の違いとは、useRef は毎回のレンダーで同じ ref オブジェクトを返す、ということです。
+
+これらから、**レンダリングが発生しない、値が同期的に更新される点から、直接描画に関与しないが、クラスでのインスタンス変数のような感じで値を保存して扱う事が考えられる。コンポーネントに保持したいけど、レンダリングしなくていいんだよな～ってやつはコレを使える。**  
+以下の例はコンポーネントの呼出し時に一度だけ処理を行いたい時のもの。
+```
+const useEffectOnce = (effect: React.EffectCallback) => {
+  const called = useRef(false);
+
+  useEffect(() => {
+    if (!called.current) {
+      called.current = true;
+      return effect();
+    }
+  }, []);
+};
+```
+[この記事](https://zenn.dev/so_nishimura/articles/c7ebfade970bcc)も参照！
 
 ## パフォーマンス向上
 attention: 書きかけの項目
