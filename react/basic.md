@@ -437,7 +437,17 @@ function ThemedButton() {
 }
 ```
 
-### テスト
+### useRef
+attention: 書きかけの項目
+- 毎回同じオブジェクトのインスタンスが帰ってくる
+- 値の変更は同期的
+- stateとは異なり、renderは発生しない
+- refにコールバックを渡すこともできる
+
+## パフォーマンス向上
+attention: 書きかけの項目
+
+## テスト
 テストに必要なデータを用意したいときは[jsonジェネレータ](https://json-generator.com/)があるので使ってみよう
 
 モックAPIが使いたいならjson-server入れてみよう  
