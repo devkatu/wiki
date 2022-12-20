@@ -90,6 +90,45 @@ hint: これとは別にReactNativeDebuggerというのを入れるとReactDevTo
 一応は[コアコンポーネントとAPI](https://reactnative.dev/docs/components-and-apis)とかに標準で用意されているものいろいろ記載されている
 [expoのAPIリファレンス](https://docs.expo.dev/versions/latest/)の方にもreact nativeのコンポーネントとAPI含め使えそうなexpoSDK記載されているのでここから探してみるのもいいかも
 
+### SafeAreaView
+デバイスのセーフエリア(上部のステータスバーとか下部のナビゲーションバーとか)に被らないようにいい感じにスタイルを設定してくれるもの。
+以下のライブラリからインポートできる。
+- `react-native`
+- `react-native-safe-area-context`
+- `react-native-safe-area-view`
+が、`react-native-safe-area-context`からインポートして使うのが手っ取り早いかも。`SafeAreaProvider`で`SafeAreaView`を囲わなければ変な挙動をすることがあるらしく[おすすめされていた](https://zenn.dev/onigiri_w2/articles/9b9890c5bb5e85)
+こんなことできませんカメラの例↓各Screenコンポーネントが`<SafeAreaView>`で囲われている。
+```
+<SafeAreaProvider>
+    <NavigationContainer>
+        <ThemeProvider theme={theme}>
+        <Stack.Navigator
+            initialRouteName='Home'
+            screenOptions={{ headerShown: false, animation: 'slide_from_right' }}
+        >
+            <Stack.Screen name='Home' component={Home} />
+            <Stack.Screen name='TakePhoto' component={TakePhoto} />
+            <Stack.Screen name='UseExistingImage' component={UseExistingImage} />
+            <Stack.Screen name='Config' component={Config} />
+            <Stack.Screen name='WebView' component={WebView} />
+        </Stack.Navigator>
+        </ThemeProvider>
+    </NavigationContainer>
+</SafeAreaProvider>
+```
+
+以下のようにセーフエリアの内側にwrapを設けるといいかも。これならコンテンツのabsoluteな配置もできる。
+```
+<SafeAreaView style={styles.safeArea}>
+    <View style={styles.viewWrap}>
+        {/* コンテンツ */}
+    </View>
+</SafeAreaView>
+```
+
+ちなみに`react-navigation`での`stack`など、デフォルトでセーフエリアを確保しているライブラリがあったりする。
+`stack`の場合は`screenOptions={{ headerShown: false }}`でヘッダーを消して自分でセーフエリアを整えたり、もしくはヘッダーはそのままにしてボトムに`<SafeAreaView/>`を差込むとかが解決方法となる。
+
 ### コアコンポーネント
 これらコアコンポーネントを記述するとネイティブのコンポーネント(android,iphone上でのコンポーネント)を呼出す。  
 あくまで画面上に表示されるのはネイティブのコンポーネントなので、同じコードでも機種によっては見た目が違う事もある
@@ -98,7 +137,7 @@ hint: これとは別にReactNativeDebuggerというのを入れるとReactDevTo
 | コンポーネント | 説明(htmlのタグでいうと)                                                                                                                                                                                                        |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | View           | スクロール無いdiv                                                                                                                                                                                                               |
-| Text           | p  &lt;Text&gt;&lt;/Text&gt;のなかに&lt;Text&gt;&lt;/Text&gt;をネストすると<br>内側のtextはインラインっぽくなってくれるらしい                                                                                                                               |
+| Text           | p  &lt;Text&gt;&lt;/Text&gt;のなかに&lt;Text&gt;&lt;/Text&gt;をネストすると<br>内側のtextはインラインっぽくなってくれるらしい                                                                                                   |
 | Image          | img                                                                                                                                                                                                                             |
 | ScrollView     | div                                                                                                                                                                                                                             |
 | TextInput      | input:text                                                                                                                                                                                                                      |
@@ -261,6 +300,10 @@ note: 解像度に依存、じゃないよ dpiに依存しないようにして�
 [gimmick: math]()
 
 $$ px = dp \times \frac{dpi}{160} $$
+
+##### 余談
+また、こんなことできませんカメラでハマったのが、base64画像の配列を、`react-native-canvas`へ描画して、gifの１フレームに追加する際、`getImageDate(0,0,幅,高さ)`を走らせるが、**この引数にピクセル単位での幅と高さを指定しても、まともに機能しなかった(canvasの一部分しか画像取得しなかった)**
+これは`getImageData`の引数に指定する幅、高さが、dp単位での幅、高さとなっている為みたいである。`PixelRatio.get()`を使えば、該当端末でのdpi倍率(dpi / 160 の値。これにdpを掛け算するとpxに変換できる)得られるので、指定する幅、高さに掛けて上げると正常なpx指定となった。いつかまた使うかも
 
 #### flexで入力する方法
 `{flex: 1}`等をコンポーネントに指定するとそのコンポーネントが利用可能なスペースをflexで指定した分だけ埋めるようにする。  
