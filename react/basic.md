@@ -263,6 +263,11 @@ Reactフックは関数コンポーネントで使い、必ずトップレベル
   クラスコンポーネントの`this.setState`だとマージされるみたいで分かりずらい・・・
 - レンダリングの都度コンポーネント関数の呼出しが発生する  
 そのため`setstate`しても`value`はその関数の実行中は変化せず、次にレンダリングが発生(関数呼び出し)したときに`value`に反映されることに注意
+- state初期値に渡すものが関数の実行結果等で、計算量が大きい場合、`useState`にコールバックを渡す事で初回呼び出し時のみ、初期値計算を行うようにすることもできる。
+  ```javascript
+  const [count, setCount] = useState(() => heavyFunction())
+  ```
+  あんまり使う機会なさそうかな？
 
 ### useEffect
 - 関数コンポーネントに、ライフサイクルを持たせる事ができる。(クラスコンポーネントでのcomponentDidmount,componentWillunmountとかの処理)  
@@ -361,12 +366,31 @@ useCallbackが関数自体をメモ化するが、useMemoは関数の**処理結
 何回やっても結果が同じ場合の値などを保存し、処理に要する時間を削減できる。  
 
 下記は`{count: countの値, countUp: countUpの値}`オブジェクトを返す関数が渡されており、`count`、`countUp`が変化しない限り同じインスタンスのオブジェクトを返し続ける。
+`useCallback`や`React.memo`ほどは使う機会少なさそう。
 ```javascript
 useMemo(() => ({
   count,
   countUp,
 }), [count, countUp]);
 ```
+
+`react.memo`と似た使い方で下記のようなことも。
+`child1`,`child2`のレンダーコストが高くスキップしたい場合に適用できる…がこれと各コンポーネントを`react.memo`で囲うのと何がちがう？？
+```
+function Parent({ a, b }) {
+  // Only re-rendered if `a` changes:
+  const child1 = useMemo(() => <Child1 a={a} />, [a]);
+  // Only re-rendered if `b` changes:
+  const child2 = useMemo(() => <Child2 b={b} />, [b]);
+  return (
+    <>
+      {child1}
+      {child2}
+    </>
+  )
+}
+```
+関数コンポーネント自体のmemo化は[`React.memo`](#レンダリングの最適化)を参照
 
 ### useContext
 関数コンポーネントでコンテキストを使えるようになる。
@@ -498,8 +522,8 @@ react公式より引用
 > しかしながら useRef() は ref 属性で使うだけではなく、より便利に使えます。これはクラスでインスタンス変数を使うのと同様にして、あらゆる書き換え可能な値を保持しておくのに便利です。  
 > これは useRef() がプレーンな JavaScript オブジェクトを作成するからです。useRef() を使うことと自分で {current: ...} というオブジェクトを作成することとの唯一の違いとは、useRef は毎回のレンダーで同じ ref オブジェクトを返す、ということです。
 
-これらから、**レンダリングが発生しない、値が同期的に更新される点から、直接描画に関与しないが、クラスでのインスタンス変数のような感じで値を保存して扱う事が考えられる。コンポーネントに保持したいけど、レンダリングしなくていいんだよな～ってやつはコレを使える。**  
-以下の例はコンポーネントの呼出し時に一度だけ処理を行いたい時のもの。
+これらの、**レンダリングが発生しない、値が同期的に更新される点から、直接描画に関与しないが、クラスでのインスタンス変数のような感じで値を保存して扱う事が考えられる。コンポーネントに保持したいけど、レンダリングしなくていいんだよな～ってやつはコレを使える。**  
+以下の例はコンポーネントの呼出し時に一度だけ処理を行うために、フラグの管理をuseRefで行っている。
 ```
 const useEffectOnce = (effect: React.EffectCallback) => {
   const called = useRef(false);
@@ -514,8 +538,77 @@ const useEffectOnce = (effect: React.EffectCallback) => {
 ```
 [この記事](https://zenn.dev/so_nishimura/articles/c7ebfade970bcc)も参照！
 
+### カスタムフック
+コンポーネントからロジック部分を抽出して纏めることで、カスタムフックとして再利用可能にする。
+結局実態は普通の関数と同じであるが、フックであることが一目で分かるように関数名を`use`で始める事が推奨(linterでチェックされるみたい)
+普通に各コンポーネントで共通する処理を抽出して`useXxxxxx`のような関数に纏めて、抽出した各コンポーネントから呼び出すだけである。
+当然、各カスタムコンポーネントから別なフックを呼び出すこともでき、それぞれのステートは独立している。
+
 ## パフォーマンス向上
-attention: 書きかけの項目
+
+### 長いリストの仮想化
+`react-window`とか`react-virtualized`とかがあるのでそのうち使ってみたい
+
+### レンダリングの最適化
+各コンポーネントのレンダリングタイミングは`props` or `state`の更新、親コンポーネントが更新されタイミングであるが、親コンポーネントが更新されても、自コンポーネントの更新は必要ないパターンある。これの最適化を図りたい。
+
+各コンポーネントはレンダーが発生する際に以下の処理を辿る。
+
+1. `shouldComponentUpdate`(デフォルトの実装は何もせずに`return true;`)
+2. 仮想DOMの比較
+3. レンダー
+   
+クラスコンポーネントでは、このライフサイクルメソッド`shouldComponentUpdate`をオーバーライドすることで、それ以下の処理を継続orキャンセルし、再レンダーをコントロールすることができる。このライフサイクルメソッドには引数として次レンダーでの`props`と`state`が渡されるので、これらを比較してどの条件の時にレンダーが必要かを定義する。
+単純に全てのprops、stateを浅く比較するだけであれば`React.PureComponent`を継承しても実現できる。ただし、浅い比較なので、配列やオブジェクトのstateであれば、スプレッド構文とかでちゃんと新しいインスタンスを割り当ててあげなければならない。
+
+関数コンポーネントの場合は`React.memo`でコンポーネントをラップしてあげると良い。これでラップするとpropsのみを比較するようになる。(`React.PureComponent`はstateも比較)
+`React.memo`には、新旧のpropsを受け取るカスタムの比較関数を 2 つめの引数として加えることができ、その関数がtrueを返した場合はコンポーネントの更新はスキップされる。
+これはフック無し。
+```javascript
+const Button = React.memo((props) => {
+  // your component
+});
+```
+
+これらのmemo化と、[useMemo](#usememo)、[useCallback](#usecallback)もパフォーマンス最適化に寄与するのでそちらも参照
+
+## パフォーマンスの測定
+> `Profiler` を使って、React アプリケーションのレンダーの頻度やレンダーの「コスト」を計測することができます。 本機能の目的は、アプリケーション中の、**低速でメモ化などの最適化が有効な可能性のある部位を特定する手助けをすることです。**
+
+`Profiler`の使い方は下記
+- レンダリングコストを測定したいコンポーネントを`<Profiler></Profiler>`で囲み、
+- 識別する`id`とレンダリングしたときのcalback関数を渡す
+  ```
+  render(
+    <App>
+      <Profiler id="Panel" onRender={callback}>
+        <Panel {...props}>
+          <Profiler id="Content" onRender={callback}>
+            <Content {...props} />
+          </Profiler>
+          <Profiler id="PreviewPane" onRender={callback}>
+            <PreviewPane {...props} />
+          </Profiler>
+        </Panel>
+      </Profiler>
+    </App>
+  );
+  ```
+- プロファイリングされているコンポーネントが更新をコミットした際に`onRender`で指定されたコールバックが発火する。引数には
+  ```javascript
+  function onRenderCallback(
+    id,             // `Profiler`に指定したid
+    phase,          // "mount" | "update" 初回マウントか再レンダーか
+    actualDuration, // 現在の更新で Profiler とその子孫のレンダーに要した時間。これがmemo化が有効に使えているかの指標になる
+    baseDuration,   // Profiler ツリー内のそれぞれのコンポーネントの直近の render 時間。これが最悪のレンダーコストを見積もることができる
+    startTime,      // レンダーを開始した時刻に対応するタイムスタンプ
+    commitTime,     // レンダーをコミットした時刻に対応するタイムスタンプ
+    interactions    // 更新がスケジュールされた（render や setState の呼び出しなどにより）際に trace された “interaction” の Set
+  ) {
+    // Aggregate or log render timings...
+  }
+  ```
+
 
 ## テスト
 テストに必要なデータを用意したいときは[jsonジェネレータ](https://json-generator.com/)があるので使ってみよう
