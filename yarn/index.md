@@ -11,7 +11,7 @@
 **※注意**
 - `yarn upgrade`は`package.json`で記述したバージョン範囲に従って更新され`package.json`は更新しない。
 - `yarn upgrade --latest`だと`package.json`で記述した範囲を超えて最新バージョンに更新する。ので**メジャーバージョンが変わったりする**。`package.json`は更新される
-- `yarn upgrade-interactive`は`package.json`で指定した範囲で更新される
+- `yarn upgrade-interactive`は`package.json`で指定した範囲で更新される。`package.json`は更新されない
 - バージョン範囲の見方は
   - ^(キャレット)が付くと、一番左の数字を更新しない範囲で更新
   - ~(チルダ)が付くと、マイナーバージョンが明記されていればパッチバージョンが更新でき、明記されていなければマイナーバージョンが更新される
