@@ -24,51 +24,6 @@ http://localhost:19002/ 上でエミュレーターの開始をすると開発�
 
 ---
 
-## デバッグ環境について(expoの場合)
-
-コンソールからホームディレクトリにて`npm start`または`[npx] expo start`などを  
-行うとexpoでの開発がすぐに始まる。  
-該当のコンソールから`r`でリロード、`m`かエミュ上で`ctrl+M`で開発者メニューが開く  
-JSコードのデバッグにおいてはの`Debug JS Remotely`を選択しなければデバッガーが動作しないものも。
-
-### エミュレーター
-AndroidStudioのAVDマネージャーから、エミュのセットアップを行い、起動する。まよったらとりあえずpixel選択  
-毎回AVDマネージャー開くのは面倒なので、コマンドで起動できるようにバッチ化してある。
-`C:\Users\katu\AppData\Local\Android\Sdk\emulator\emulator.exe -avd Pixel_3a_API_30_x86`    
-起動後、初回の`expo start`で自動でexpogoをインストールし、立ち上がる
-
-開発者メニューを開いて`Show Inspector`をクリックするとコンポーネントの  
-簡単なスタイルをみられるReact Native Inspectorが予め入っており開かれる
-
-hint: 動作がおかしくなったら同じくAVDマネージャーからリセット(actions > wipe data)を行うとよい
-
-hint: [react native公式](https://reactnative.dev/docs/environment-setup)や[expo公式](https://docs.expo.dev/workflow/android-studio-emulator/)が参考になるかも
-
-### 実機
-expo goアプリをインストールしておくだけ。
-
-### Chrome デベロッパーツール
-コンソールで`expo start`を実行すると自動的にlocalhost:19002にこのツールが立ち上がる  
-表示されないときは自分でchromeにlocalhost:19002を入力してアクセスする。  
-ここに表示される(またはコンソールで表示される)QRコードをスマホで読み込むと  
-expo goが立ち上がり、実機デバッグが始まる。  
-エミュレーターデバッグするときはエミュレーターを先に立ち上げてから`expo go`  
-するか後からでも`Run on Android device/emurator`をクリックすればOK  
-
-hint: localhost:19000/debugger-ui/の方ではjsのブレークポイントとか設定してデバッグ  
-できるらしいがやったことない
-
-### ReactDevTools
-`npm install -g react-devtools`でこのツールをインストールできる。  
-デバッグ開始し、このツールを起動し、エミュレーターまたは実機のメニューから`Debug JS Remotely`  
-を選択すると各階層のコンポーネントのprops、state、styleを見ることができる様子。便利そう
-もともと入っているReact Native Inspectorと組み合わせて使うとweb開発時のブラウザ検証ツール  
-みたいに使うことができる
-
-hint: これとは別にReactNativeDebuggerというのを入れるとReactDevToolsを含むさらに便利なツール(ネットワークインスペクター、AsyncStorageをログに記録したり)があるのでこれを入れるといいかも Expo公式より
-
---- 
-
 ## 開発の流れ
 
 どんなアプリを作りたいか、テキトーに開発を進めていくと手戻りが発生しやすく効率が悪い。<br>

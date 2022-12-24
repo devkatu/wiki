@@ -17,16 +17,74 @@ expoを使用しないreactnativeの開発もベアプロジェクトとかい�
 
 ---
 
+## デバッグ環境
+
+コンソールからホームディレクトリにて`npm start`または`[npx] expo start`などを  
+行うとexpoでの開発がすぐに始まる。  
+該当のコンソールから`r`でリロード、`m`かエミュ上で`ctrl+M`で開発者メニューが開く  
+JSコードのデバッグにおいては開発者メニューの`Debug JS Remotely`を選択しなければデバッガーが動作しないものも。
+
+### エミュレーター
+AndroidStudioのAVDマネージャーから、エミュのセットアップを行い、起動する。まよったらとりあえずpixel選択  
+毎回AVDマネージャー開くのは面倒なので、コマンドで起動できるようにバッチ化してある。
+`C:\Users\katu\AppData\Local\Android\Sdk\emulator\emulator.exe -avd Pixel_3a_API_30_x86`    
+起動後、初回の`expo start`で自動でexpogoをインストールし、立ち上がる
+
+開発者メニューを開いて`Show Inspector`をクリックするとコンポーネントの  
+簡単なスタイルをみられるReact Native Inspectorが予め入っており開かれる
+
+hint: 動作がおかしくなったら同じくAVDマネージャーからリセット(actions > wipe data)を行うとよい
+
+hint: [react native公式](https://reactnative.dev/docs/environment-setup)や[expo公式](https://docs.expo.dev/workflow/android-studio-emulator/)が参考になるかも
+
+### 実機
+expo goアプリをインストールしておくだけでもある程度なんとかなるが、サードパーティのライブラリを使用したりしていると、**開発ビルド**が必要になることがある。**開発ビルド**はeasコマンドから.apkファイルを作成して、実機にインストールして使用する。作り方は[ここ](#アプリをビルドする)
+
+### プロダクションモード、開発モード
+**デベロッパーツールは開かなくなった？**  
+~~expo開発時のlocalhost:19002の"PRODUCTION MODE"スイッチをオフにすると開発モードとなる。~~
+`$ npx expo start --no-dev --minify`
+もしくはコンソール上にてPを押し下げすると開発モードと本番モードの切り替えができる。
+
+開発モード中は非推奨のプロパティを使用している場合や、必要なプロパティをコンポーネントに渡すのを忘れた場合に警告が表示される。
+本番モードでは、本番環境でしか発生しないようなバグを探すときに役立つので覚えておくといいかも
+
+attention:
+[ここ](https://docs.expo.dev/introduction/walkthrough/#use-the-expo-sdk-and-community-standard)にあるApp.web.jsとは？
+たぶんwebアプリ版の事を言っていると思うんだけど
+
+### Chrome デベロッパーツール
+**デベロッパーツールは開かなくなった？**  
+コンソールで`expo start`を実行すると自動的にlocalhost:19002にこのツールが立ち上がる表示されないときは自分でchromeにlocalhost:19002を入力してアクセスする。ここに表示される(またはコンソールで表示される)QRコードをスマホで読み込むとexpo goが立ち上がり、実機デバッグが始まる。  
+エミュレーターデバッグするときはエミュレーターを先に立ち上げてから`expo go`するか後からでも`Run on Android device/emurator`をクリックすればOK  
+
+### debugger-ui
+`localhost:19000/debugger-ui/`の方ではjsのブレークポイントとか設定してデバッグできる。`@react-native-community/cli-debugger-ui`のインストールが必要みたい
+
+### ReactDevTools
+`npm install -g react-devtools`でこのツールをインストールできる。  
+デバッグ開始し、このツールを起動し、エミュレーターまたは実機のメニューから`Debug JS Remotely`  
+を選択すると各階層のコンポーネントのprops、state、styleを見ることができる様子。便利そうもともと入っているReact Native Inspectorと組み合わせて使うとweb開発時のブラウザ検証ツール みたいに使うことができる
+
+hint: これとは別にReactNativeDebuggerというのを入れるとReactDevToolsを含むさらに便利なツール(ネットワークインスペクター、AsyncStorageをログに記録したり)があるのでこれを入れるといいかも Expo公式より
+
+---
+
 ## expoの開発流れ
 
 ### プロジェクト初期化、開発スタート
-まずは`$ npm install -g expo-cli`でexpoのcliをインストール
+~~まずは`$ npm install -g expo-cli`でexpoのcliをインストール~~  
+`$ npx expo コマンド`の形が推奨されているみたい
 
-`$ expo init my-app`
-`$ cd my-app`
-`$ expo start`または`$ npm start`
+1. `$ npx create-expo-app my-app`  
+  または、テンプレートを使いたいときは  
+  `$ npx create-expo-app my-app --template`  
+  でテンプレート一覧が表示されるので選択  
+2. `$ cd my-app`
+3. `$ npx expo start`  
+   開発ビルドを使う場合は`$ npx expo start --dev-client`
 
-my-appディレクトリが作成され新規expoプロジェクトが作られる。
+以上でmy-appディレクトリが作成され新規expoプロジェクトが作られる。
 MetroBundlerが起動して開発スタートできる。
 
 ### 各ライブラリのコンポーネントを組み合わせていく
@@ -40,18 +98,6 @@ expoではカメラ、オーディオ、バーコードスキャン、カレン�
 - READMEでプロジェクトに**リンク**しなきゃダメとかかいてある  
 
 とかだと使えない可能性大  
-
-
-### プロダクションモード、開発モード
-expo開発時のlocalhost:19002の"PRODUCTION MODE"スイッチをオフにすると開発モードとなる。
-もしくはコンソール上にてPを押し下げすると開発モードと本番モードの切り替えができる。
-
-開発モード中は非推奨のプロパティを使用している場合や、必要なプロパティをコンポーネントに渡すのを忘れた場合に警告が表示される。
-本番モードでは、本番環境でしか発生しないようなバグを探すときに役立つので覚えておくといいかも
-
-attention:
-[ここ](https://docs.expo.dev/introduction/walkthrough/#use-the-expo-sdk-and-community-standard)にあるApp.web.jsとは？
-たぶんwebアプリ版の事を言っていると思うんだけど
 
 ### app.jsonを編集してiconやバージョン情報を編集
 プロジェクトのルートにあるapp.json内でアプリに関するいろんな設定を行うことができる。
@@ -237,37 +283,104 @@ app.config.jsを使って動的に設定情報を編集することもできる(
 これがあるとapp.jsonより優先されて使われるみたい
 vscodeの拡張でapp.jsonのプロパティの補完機能もあったりするので便利かも
 
-### アプリをビルドする
-~~ストアに提出するための.apkまたは.aab等のバイナリファイルを作成することをビルドという。
-`$ expo build:android --release-channel production`
-のコマンドを実行するとapk、aabの選択があったのち、expoサーバーにコードがアップロードされてビルドが開始されてしばらくするとサーバー上にバイナリができあがる。
-`--release-channel production`
-の部分はオプションになり、ストアアップロード後のOTAの時にリリースチャネルを使用するときに生きてくる。
-`--release-channel`を指定しないときは`default`チャネルにアプリが公開される
-ios向けや、web向けのビルドも別途ある。~~
+### EAS 
+前準備として、  
+`$ npm install -g eas-cli`  
+`$ eas login`  
+を行っておくこと
+#### ビルド
+`$ eas build:configure`を行うと、下記の最小限の構成のeas.jsonが出来上がる。
+```javascript
+// eas.jsonの最小限の構成
+{
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {}
+  }
+}
+```
+`build.development`が開発ビルドプロファイルであり、開発用apkを作成するときの構成。  
+`build.preview`プレビュービルドプロファイルで、本番リリース前の確認apk(ほぼ本番と変わらないけど、署名されていない、アプリストア用に最適化されていないようなapk)の構成。  
+`build.production`が本番ビルドの構成、  
+と管理することができ、ビルドコマンド時にどのプロファイルを使うかオプション選択する事ができる。
 
-~~ビルドして初回のストアアップロードのみ審査がいるが、公開を用いればストア通さずに更新できる
-ただしjavasciptで書いてる部分のみ。アイコン変えたいとかスプラッシュ画面変えたいとかはビルドしなきゃだめ~~
+開発ビルドを作成するときは、上記の構成に加えて`expo-dev-client`をインストールする必要あり  
+`$ npx expo install expo-dev-client`  
 
-~~attention: ビルドしたときもデフォルトでOTA配布がされるので注意。初回のビルドならいいが、ストアアップロード後の変更でビルドをするときはビルドして即OTAが配布されてしまうことがあるので注意。ビルドするときは大体OTA配布で賄えないときに(アイコン更新とか細かい修正じゃないもの)行うはずなので**予め`expo.updates.enabled`をfalseに設定**しおくといいかも。ビルド後にいろいろテストしたくても即ユーザー配布されちゃうよ！またはちゃんと運用するものとテストするもののリリースチャネルを分けて運用しておくこと。~~
+実際にビルドするコマンドは  
+`$ eas build --platform android --profile <profile-name>`  
+もしくは
+`$ eas build -p android --profile <profile-name>`  
+となり、profileを省略すると、productが選択される
 
-hint: **ストアの提出が便利でビルドするサイズも小さくなる**EASbuildというのもあるのでいずれ使ってみたい。eas submitでコマンドからストア提出ができちゃうみたい
+基本的にはexpo buildからの移行でもSDKや、app.jsonはそのまま使用できる。(部分的に手を加えるものはあるかも)。尚、expo buildと異なり、**ビルド時に自動的にpublishされない**ので安心！
 
-#### EASbuildについて
-`$ eas build:configure`を行うと、eas.jsonが構成される。
-開発ビルドを作成したいときは、まず、`$ npx expo install expo-dev-clien`をインストールしておく
+expoのビルドと同じく、EAS上にビルドファイルができあがる。  
+開発の場合は実機orエミュレーターにインストール後`$ npx expo start --dev-client`してから、インストールしたアプリ上でUrl入力等でサーバーに接続するとアプリでデバッグを行うことができる。
 
-expo build(クラシックビルド)との違いは
-- ビルド時に自動的にpublishされない
+#### ビルドにメッセージをつける
+`$ eas build --platform ios --message "Some message"`でメッセージがEAS上に表示されるので、メモを残すのに便利かも
 
-#### 開発ビルドについて
-react-native-mobile-ads-admob導入時に必要になった。その時の調べた事は
-[ここ](https://stackoverflow.com/questions/73372313/react-native-google-mobile-ads-with-expo-managed-workflow-will-not-work)に書いてある  
+#### アプリストアへ提出
+※ストア送信は一回でも手動での送信を行ってからでないとできない。  
+送信の際は、eas.jsonへの構成は必須ではないみたいだけど、あると便利
+```javascript
+{
+  "cli": {
+    "version": ">= 0.34.0"
+  },
+  "submit": {
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "../path/to/api-xxx-yyy-zzz.json",
+        "track": "internal"
+      }
+    }
+  }
+}
+```
+- `submit.production.android.serviceAccountKeyPath`にgoogleplayでの認証に使用するサービス アカウント キーを含む JSON ファイルへのパスを設定する。
+- `submit.production.android.track`はアプリのトラックを指定し、次のいずれかの値を入れる`(enum: production, beta, alpha, internal)`
 
-.apkを普通にビルドするのと同様に開発用にビルドを行って、開発用の.apkファイルを作成し、スマホにインストールする。
-インストール後`$ npx expo start --dev-client`してから、インストールしたアプリ上でUrl入力等でサーバーに接続するとアプリでデバッグを行うことができる。
-インストールしたアプリがexpogoの代わりのようなイメージ。
+実際の提出は  
+`$ eas submit --platform android --profile <profile-name>`  
+もしくは`$ eas submit -p android --profile <profile-name>`
+で対話形式でやりとりしたあと、ストアへの提出が開始される
 
+#### アプリの更新
+※アプリの更新は、最低一回はビルドを行っていること  
+
+アプリの更新は`expo-updates`ライブラリで行っているみたいなのでインストール  
+`$ npx expo install expo-updates`  
+その後、更新設定をeas.jsonに構成するために
+`$ eas update:configure`  
+すると、、
+```javascript
+{
+  "build": {
+    "preview": {
+      "channel": "preview"
+      // ...
+    },
+    "production": {
+      "channel": "production"
+      // ...
+    }
+  }
+}
+```
+
+実際に更新を行うには  
+`$ eas update --branch [branch] --message [message]`  
+で、新たにビルドが行われEAS上に送信され、先のビルドに対する更新が行われる。
+- `branch`はチャネル内で複数のブランチを指定して使い分けられるみたい？？多分後に公開した方が優先なのかな？未使用機能なのでよくわからない
+- `message`はEAS上に表示されるコメント
 
 ### テスト
 テストに必要なデータを用意したいときは[jsonジェネレータ](https://json-generator.com/)があるので使ってみよう
