@@ -277,10 +277,93 @@ anrdroidのマニフェストとかで表示されているやつもあるけど
 }
 ```
 
+### app.config.js
+app.jsonは静的に設定することしかできないけど、`app.config.js`は動的な設定をすることができる。  
+ベースとなる設定項目は`app.json`に記述して、動的にスイッチしたい設定項目は`app.config.js`に記述する。  
+ビルド時にまず`app.json`を読込んだ後に`app.config.js`を処理する流れとなる。
+
+オブジェクトをエクスポートする例
+```javascript
+const myValue = 'My App';
+module.exports = {
+  name: myValue,
+  version: process.env.MY_CUSTOM_PROJECT_VERSION || '1.0.0',
+  // 任意のキーの構成データをアプリに渡す事ができる
+  extra: {
+    fact: 'kittens are cool',
+  },
+};
+```
+```javascript
+// 渡された構成データはアプリ側にて`expo-constants`ライブラリで参照することができる
+import Constants from 'expo-constants';
+Constants.expoConfig.extra.fact === 'kittens are cool';
+```
+
+オブジェクトを返す関数をエクスポートする例  
+引数の`{config}`には`app.json`の`"expo"`のプロパティの中身が入っている
+```javascript
+// app.json
+{
+  "expo": {
+    "name": "My App"
+  }
+}
+```
+```javascript
+// app.config.js
+module.exports = ({ config }) => {
+  console.log(config.name); // prints 'My App'
+  return {
+    ...config,
+  };
+};
+```
+
+応用としてアプリのビルド時に、開発用ビルドと本番用ビルドの切替を行えるように設定できる  
+まず`eas.json`に環境変数の設定を行う。以下のように`env`プロパティを設定すると、各ビルド時の環境変数の設定を行う事ができるので、`development`ビルドの場合は`process.env.APP_VARIANT`は`development`となる
+```javascript
+{
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "env": {
+        "APP_VARIANT": "development"
+      }
+    },
+    "production": {}
+  }
+}
+```
+次に`app.config.js`を下記のようにする。`app.json`をベースに使いたい時はオブジェクトを返す関数式に適宜書き換えること
+```javascript
+const IS_DEV = process.env.APP_VARIANT === 'development';
+export default {
+  // You can also switch out the app icon and other properties to further
+  // differentiate the app on your device.
+  name: IS_DEV ? 'MyApp (Dev)' : 'MyApp',
+  slug: 'my-app',
+  ios: {
+    bundleIdentifier: IS_DEV ? 'com.myapp.dev' : 'com.myapp',
+  },
+  android: {
+    package: IS_DEV ? 'com.myapp.dev' : 'com.myapp',
+  },
+};
+
+// 関数式に書き換えたらこんな感じ？？(未検証)
+const IS_DEV = process.env.APP_VARIANT === 'development';
+module.exports = ({ config }) => {
+  const newConfig = {...config};
+  newConfig.name = IS_DEV ? 'MyApp (Dev)' : 'MyApp';
+  newConfig.ios.bundleIdentifie = IS_DEV ? 'com.myapp.dev' : 'com.myapp';
+  newConfig.android.package = IS_DEV ? 'com.myapp.dev' : 'com.myapp';
+  return newConfig;
+};
+```
+これで開発ビルド時は開発用のバリアント(開発ビルド)を別途インストールすることができる。
+
 hint: 
-app.config.jsを使って動的に設定情報を編集することもできる(未使用)
-開発モード、プロダクションモードで設定を変更したりとかいろいろできる。
-これがあるとapp.jsonより優先されて使われるみたい
 vscodeの拡張でapp.jsonのプロパティの補完機能もあったりするので便利かも
 
 ### EAS 
