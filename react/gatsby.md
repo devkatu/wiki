@@ -539,6 +539,7 @@ graphqlクエリに変数を導入することができる。これはページ�
   ```
 
 ## 動的画像
+
 ブログ投稿にヒーローイメージを追加したい場合など、動的(画像ソースがpropsとして渡される場合とか)に画像を挿入したい場合に`GatsbyImage`を使う事ができる。静的な画像ソースとしては`StaticImage`が適している。  
 
 例としてブログ記事の各MDXのfrontmatterにヒーローイメージ画像のパスを追加し、記事ページからfrontmatterを読出して、imageのパスに設定する。  
@@ -677,6 +678,132 @@ query($id: String) {
 export const Head = ({ data }) => <Seo title={data.mdx.frontmatter.title} />
 
 export default BlogPost
+```
+
+##  アセットのインポート
+
+静的な画像ファイル等のインポートにはwebpackのインポートが使える。
+
+画像ファイルをインポートすると、バンドル後の最終的なパスが返ってくるのでそれを`src`に指定する。
+
+なお、10000バイト未満の画像の場合はbase64データuriが返ってくる。
+
+```
+import React from "react"
+import logo from "./logo.png" // Tell webpack this JS file uses this image
+
+console.log(logo) // /logo.84287d09.png
+
+function Header() {
+  // Import result is the URL of your image
+  return <img src={logo} alt="Logo" />
+}
+
+export default Header
+```
+
+CSSでも同様。
+
+```css
+.Logo {
+  background-image: url(./logo.png);
+}
+```
+
+## `static`フォルダー
+
+プロジェクトのルートに`static`フォルダーを作ると、その中に入れたファイルはビルド後に、`public`フォルダーにそのままコピーされる。
+
+`static/sun.jpg`は`public/sun.jpg`にコピーされる。
+
+基本的には画像はコンポーネントからインポートした方がバンドルされてネットワーク要求が減るので良い。
+
+## グローバルCSS
+
+グローバルCSSの適用方法には次の二通りある。
+
+### レイアウトコンポーネントを使用する
+
+コンテンツをラップするレイアウトコンポーネントを作成して、そこでグローバルにするCSSファイルをインポートする。
+
+`layout.css`
+
+```css
+div {
+  background: red;
+  color: white;
+}
+```
+
+`layout.js`
+
+```
+import React from "react"
+import "./layout.css"
+
+export default function Layout({ children }) {
+  return <div>{children}</div>
+}
+```
+
+`index.js`
+
+```
+import React from "react"
+import Layout from "../components/layout"
+
+export default function Home() {
+  return <Layout>Hello world!</Layout>
+}
+```
+
+### `gatsby-browser.js`を使用する
+
+`gatsby-browser.js`ファイル内で、CSSファイルをインポートしてもOKです。
+
+`global.css`
+
+```css
+html {
+  background-color: peachpuff;
+}
+
+a {
+  color: rebeccapurple;
+}
+```
+
+`gatsby-browser.js`
+
+```
+import "./src/styles/global.css"
+
+// or:
+// require('./src/styles/global.css')
+```
+
+## コンポーネントレベルのCSS
+
+コンポーネントレベルでのCSSにはCSSモジュールを使用することが推奨されている。
+
+`container.module.css`
+
+```css
+.container {
+  margin: 3rem auto;
+  max-width: 600px;
+}
+```
+
+`container.js`
+
+```
+import React from "react"
+import * as containerStyles from "./container.module.css"
+
+export default function Container({ children }) {
+  return <div className={containerStyles.container}>{children}</div>
+}
 ```
 
 ## ほしい機能
