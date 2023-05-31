@@ -806,31 +806,63 @@ export default function Container({ children }) {
 }
 ```
 
-## ほしい機能
+## ブログ作成時に欲しかった機能と各実装
 
-- [x] マークダウンで書きたい
-  `gatsby-transformer-remark`  
-  mdxなら`gatsby-plugin-mdx`
-- [x] タグ  
-  - 入ってた。もしやるならfrontmatterにタグを付けて記事一覧ページで読み出したりする
-- [x] レスポンシブ、ハンバーガー
-  - 入ってた
-- [x] 画像をいい感じに
-  - 入ってた
-  - `gatsby-transformer-sharp`
-  - `gatsby-plugin-sharp`
-- [x] シンタックスハイライト
-  - `gatsby-gatsby-remark-prismjs` 入れてok
-  - `gatsby-remark-vscode`もあったけどなんかいまいちだった
-- [x] SNS共有 
-  - `react-share`入れた
-- [x] SEO、OGPタグ生成
-  -  `gatsby-plugin-react-helmet` `react-helmet`が入ってた
-  - [x] 内容確認ogpタグ少し追加
-- [x] 目次  タグと似たような感じでできるかな`toc`ある
-  - `gatsby-remark-table-of-contents`入れた
-  - [x] あとスタイリングどうするかな
-- [x] コードコピーのスタイリング
+結論、`gatsby-starter-apple`スターターが一番見た目が好みだったのと、欲しい機能がほとんど入っていたのでそれにした。
+
+以下、欲しい機能とスターターの実装について。
+
+### マークダウンで書きたい
+
+`gatsby-transformer-remark`が入ってた。
+
+mdxなら`gatsby-plugin-mdx`を使う。
+
+### タグ、カテゴリを付けたい
+
+入ってた。
+
+`frontmatter`にカテゴリを書くと、TOPページでカテゴリフィルターができる。
+
+タグ機能は無いけど、これも`frontmatter`にタグを書いて記事一覧ページで読み出したりすることで対応できそう。
+
+### レスポンシブである
+
+対応済みだった。
+
+### 画像をいい感じに表示してほしい
+
+入ってた。
+
+`gatsby-remark-images`、`gatsby-transformer-sharp`、`gatsby-plugin-sharp`、`gatsby-plugin-image`が入っている。
+
+画像圧縮してくれる、いい感じに表示してくれる、マークダウンから相対パスで指定しても表示してくれる。
+
+### シンタックスハイライト
+
+`gatsby-remark-vscode`が入っていたけど、イマイチだったので`gatsby-gatsby-remark-prismjs`を入れた。
+
+### SNS共有したい
+
+`react-share`を入れた
+
+### SEO対策したい
+
+`gatsby-plugin-react-helmet`、`react-helmet`が入ってた
+
+OGPタグが少し足りなかったように感じたので入れた
+
+### 目次つけたい
+
+`gatsby-remark-table-of-contents`入れた
+
+目次、コードコピーのスタイリングもした。
+
+
+
+
+
+
 - [x] リストとか各スタイルの見直し
 - [x] 記事の余白もっと撮りたい
 - [x] レイアウトとして右側にプロフとか入れときたい
