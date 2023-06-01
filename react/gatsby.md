@@ -838,53 +838,500 @@ mdxなら`gatsby-plugin-mdx`を使う。
 
 画像圧縮してくれる、いい感じに表示してくれる、マークダウンから相対パスで指定しても表示してくれる。
 
-### シンタックスハイライト
+### コードブロックのシンタックスハイライト
 
-`gatsby-remark-vscode`が入っていたけど、イマイチだったので`gatsby-gatsby-remark-prismjs`を入れた。
+`gatsby-remark-vscode`が入っていたけど、イマイチだったので`gatsby-remark-prismjs`を入れた。
+
+`gatsby-config.js`にプラグインを追加
+
+```javascript
+plugins: [
+  {
+    resolve: "gatsby-transformer-remark",
+    options: {
+      plugins: [
+        {
+          resolve: 'gatsby-remark-prismjs',
+          options: {
+            classPrefix: "language-",
+            inlineCodeMarker: null,
+            aliases: {},
+            showLineNumbers: false,
+            noInlineHighlight: false,
+          }
+        },
+      ]
+    }
+  }
+]
+```
+
+`gatsby-browser.js`にて次のCSSを読込
+
+テーマは[ここ](https://github.com/PrismJS/prism/tree/1d5047df37aacc900f8270b1c6215028f6988eb1/themes)から選択でき、デモは[ここ](https://prismjs.com/)で見られる。
+
+コマンドラインのハイライトや行番号を追加したい場合は追加でCSSを読込む。
+
+```javascript
+require("prismjs/themes/prism-tomorrow.css")
+require("prismjs/plugins/line-numbers/prism-line-numbers.css")  // 行番号用のCSS
+require("prismjs/plugins/command-line/prism-command-line.css")  // コマンドライン用CSS
+```
+
+通常通りマークダウンでコードブロックを書くと、テーマが適用された状態となる。
+
+使用する言語の後に次のようにオプションを追加すると、行番号が追加となる。
+
+````
+```javascript{numberLines: true}
+// In your gatsby-config.js
+plugins: [
+  {
+    resolve: `gatsby-transformer-remark`,
+    options: {
+      plugins: [
+        `gatsby-remark-prismjs`,
+      ]
+    }
+  }
+]
+```
+````
+
+行を指定してハイライトしたい場合は次。
+
+````
+```javascript{1,5-7}
+plugins: [  // ココと
+  {
+    resolve: `gatsby-transformer-remark`,
+    options: {
+      plugins: [                    // ココ
+        `gatsby-remark-prismjs`,    // ココ
+      ]                             // ココがハイライトされる
+    }
+  }
+]
+```
+````
+
+差分の表示をしたい場合は、言語指定の前に`diff-`を付けて、ブロック内で追加の行に`+`、削除する行の頭に`-`を付ける。
+
+````
+```diff-css
+/* PC版のCSS(省略) */
+
+@media screen and (max-width: 768px) {
+
+  /* ヘッダーのCSS(省略) */
+  
+  .hero {
++    height: 50vw;
+-    height: 50px;
+  }
+  .hero_txt {
+    font-size: 4vw;
+  }
+
+}
+```
+````
+
+行ハイライトのスタイルを変えたい場合は`.gatsby-highlight-code-line`を使用できる。
+
+```css
+// prism 行強調
+.gatsby-highlight-code-line {
+  background-color: #5c3f2f;
+  display: block;
+  margin-right: -1em;
+  margin-left: -1em;
+  padding-right: 1em;
+  padding-left: 0.75em;
+  border-left: 0.25em solid var(--color-accent);
+}
+```
+
+適宜スタイルを調整
+
+```css
+// prism コードブロック
+pre[class*="language-"] {
+  border-radius: 5px;
+  margin-bottom: var(--sizing-md);
+}
+
+// prism インラインコード
+*:not(pre) > code[class*="language-"] {
+  padding: 0.1em 0.3em;
+  margin: 0 0.1em;
+}
+```
+
+### コードブロックのコピー
+
+`gatsby-remark-code-buttons`を入れた。
+
+`gatsby-config.js`に下記のようにプラグイン追加。
+
+```javascript
+plugins: [
+  {
+    resolve: 'gatsby-transformer-remark',
+    options: {
+      plugins: [
+        {
+          resolve: 'gatsby-remark-code-buttons',
+          options: {
+            toasterText: 'コピーしました',
+            tooltipText: `コピー`,
+          },
+        }
+      ]
+    }
+  }
+]
+```
+
+コードコピーしたときのトーストメッセージとコピーするボタンのスタイルは下記で調整。
+
+```css
+// コードコピーボタン
+// グローバルで読込まないとスタイル適用されなかった…
+.gatsby-code-button-toaster-text {
+  width: initial;
+  display: inline-block;
+  border-radius: 10px;
+  color: black;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  background-color: var(--color-gray-0);
+  border: 1px solid black;
+}
+// コードコピーボタン
+.gatsby-code-button-container {
+  top: 40px;
+  margin-right: 5px;
+  fill: #eee;
+  z-index: initial;
+  margin-top: -30px;
+}
+.gatsby-code-button:after{
+  font-size: 0.7rem;
+}
+```
 
 ### SNS共有したい
 
 `react-share`を入れた
 
+ページコンポーネントにて下記をインポート
+
+```javascript
+import {
+  FacebookIcon,
+  FacebookShareButton,
+  LineIcon,
+  LineShareButton,
+  TwitterIcon,
+  TwitterShareButton
+} from "react-share"
+```
+
+`<~Button>`コンポーネントには`url`にてシェアしたいページのURLを指定する。
+
+コンテンツとなる`<~Icon>`には`size`を指定し、`round`を指定すると、アイコンが丸く表示される。
+
+```
+<ShareButtonsWrapper>
+  <ButtonWrapper>
+    <FacebookShareButton url={url}>
+      <FacebookIcon size={40} round />
+    </FacebookShareButton>
+  </ButtonWrapper>
+  <ButtonWrapper>
+    <LineShareButton url={url}>
+      <LineIcon size={40} round />
+    </LineShareButton>
+  </ButtonWrapper>
+  <ButtonWrapper>
+    <TwitterShareButton url={url}>
+      <TwitterIcon size={40} round />
+    </TwitterShareButton>
+  </ButtonWrapper>
+</ShareButtonsWrapper>
+```
+
 ### SEO対策したい
 
-`gatsby-plugin-react-helmet`、`react-helmet`が入ってた
+`gatsby-plugin-react-helmet`、`react-helmet`が入ってた。
 
-OGPタグが少し足りなかったように感じたので入れた
+`gatsby-plugin-react-helmet`は`react-helmet`をgatsbyでいい感じに使うためのものみたい。
+
+`react-helemet`は下記のような感じ。最初からある程度いい感じになっていたけど、ogp画像とかcanonicalがいまいちだったので少し手を加えた。
+
+```
+import { Helmet } from "react-helmet"
+
+<Helmet
+  htmlAttributes={{ lang: site.lang ?? DEFAULT_LANG, prefix: "og: https://ogp.me/ns#" }}
+  title={title ?? ""}
+  titleTemplate={`%s | ${site.title}`}
+  meta={
+    [
+      {
+        name: "description",
+        content: description,
+      },
+      {
+        property: "og:title",
+        content: title,
+      },
+      {
+        property: "og:description",
+        content: description,
+      },
+      {
+        property: "og:type",
+        content: "website",
+      },
+      {
+        property: "og:url",
+        content: url
+      },
+      {
+        property: "og:site_name",
+        content: siteName
+      },
+      {
+        name: "twitter:card",
+        content: "summary",
+      },
+      {
+        name: "twitter:creator",
+        content: site.author,
+      },
+      {
+        name: "twitter:title",
+        content: title,
+      },
+      {
+        name: "twitter:description",
+        content: description,
+      },
+      {
+        property: "image",
+        content: ogImageUrl,
+      },
+      {
+        property: "og:image",
+        content: ogImageUrl,
+      },
+      {
+        property: "twitter:image",
+        content: ogImageUrl,
+      },
+    ] as Meta
+  }
+// />
+>
+  <link rel="canonical" href={url} />
+  {/* Adsense用 */}
+  {/* <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3835035638508936" crossorigin="anonymous"></script> */}
+</Helmet>
+  ```
 
 ### 目次つけたい
 
-`gatsby-remark-table-of-contents`入れた
+`gatsby-remark-table-of-contents`入れた。リンク生成の為に予め`gatsby-remark-autolink-headers`も必要。
 
-目次、コードコピーのスタイリングもした。
+```javascript
+plugins: [
+  {
+    resolve: `gatsby-transformer-remark`,
+    options: {
+      plugins: [
+        {
+          resolve: `gatsby-remark-table-of-contents`,
+          options: {
+            exclude: "Table of Contents",
+            tight: false,
+            ordered: false,
+            fromHeading: 1,
+            toHeading: 6,
+            className: "table-of-contents"
+          },
+        },
+        `gatsby-remark-autolink-headers`
+      ],
+    },
+  },
+],
+```
 
+目次のスタイルは下記で調整。
 
+```css
+// 目次 
+.table-of-contents{
+  border-top: 3px solid var(--color-accent);
+  border-radius: var(--sizing-xs);
+  padding: 1.45rem;
+  box-shadow: 0 4px 8px 0 rgb(0 0 0 / 15%);
+  background-color: var(--color-gray-0);
+  margin-bottom: var(--sizing-lg);
+}
+.table-of-contents::before{
+  font-family: "Material Icons";
+  font-size: 1.4rem;
+  content: "toc 目次";
+  border-bottom: 1px solid var(--color-gray-3);
+  display: block;
+  padding-bottom: var(--sizing-sm);
+  text-align: center;
+}
+.table-of-contents>ol, .table-of-contents>ul{
+  margin-bottom: 0;
+}
+.table-of-contents ol, .table-of-contents ul{
+  list-style: revert;
+}  
+.table-of-contents>ol>li>p>a, .table-of-contents>ul>li>p>a{
+  font-weight: var(--font-weight-bold);
+}
+.table-of-contents a{
+  color: var(--color-text);
+}
+```
 
+マークダウン中に下記を追加すると、マークダウンファイルの見出しを抽出して、目次ブロックに変換してくれる。
 
+````
+```toc
+exclude: Table of Contents
+from-heading: 2
+to-heading: 6
+```
+````
 
+上記で`<h2>`~`<h6>`要素までを目次にしてくれる。
 
-- [x] リストとか各スタイルの見直し
-- [x] 記事の余白もっと撮りたい
-- [x] レイアウトとして右側にプロフとか入れときたい
-  - [x] プロフ下にposition: sticky;な目次もいれたい
-  - [x] カテゴリ―追加したのでリンクを作成
-  - [x] レスポンシブ化する
-    - [x] ハンバーガーメニューないへ目次実装中
-  - [ ] asideリファクタリング(ちゃんとtypescriptにする)
-- [x] 他記事へのリンクをカードで表示
-  - 自分で実装したほうがよさげ？外部へのリンクを貼るなら別にいらないけど内部リンクで記事見てほしいのでクエリで画像取り出して自分でカード実装する。記事の関連リンクでも使いたいがコンポーネント化できる？
-  - remark-link-beautifyを追加した。[$card](リンクするURL)だけでOK
-- 強調する感じのリストデザインほしい
-- [x] twitterの投稿表示
-  - 埋め込みコードをサイトから取得して、scriptタグを削除してOK
-- [x] netlifyへのデプロイ`gatsby-plugin-netlify`
-- [x] OGPタグがちゃんと設定されていないかも。デプロイしたら確認する
-- [ ] SEOについてまだなんかあるはず
-  - [ ] robot.txtは一旦インデックスしないようにconfigで設定している
-  - [ ] metaデータをちゃんと直す事。サイトurlとかutteranceとか
-  - [ ] ドメインちゃんとしたのにする
-- [x] グーグルアナリティクス`gatsby-plugin-google-gtag`
-- [ ] アフィリエイト追加
-  - [ ] アフィリエイトやってる旨ブログ免責事項とか追加
+### PC表示では記事の右側にプロフィールとかを入れたい
 
-**ここのやることメモはupnoteへ移行済み**
+`<aside>`でプロフィール、記事のカテゴリ、目次を作成。
+
+目次については`graphql`で`edges.node.tableOfContents`で目次を取り出せたのでそれを追加。
+
+### 他記事へのリンクをカードで表示したい
+
+`remark-link-beautify`を入れた。
+
+`gatsby-config.js`にてプラグイン追加。リンクをツールチップ的に表示できる機能もあるが要らないのでオプション指定。
+
+```javascript
+plugins: [
+  {
+    resolve: `gatsby-transformer-remark`,
+    options: {
+      plugins: [
+        {
+          resolve: "gatsby-remark-link-beautify",
+          options: {
+            enableLinkPreview: false,
+          },
+        },
+      ],
+    },
+  },
+];
+```
+
+`gatsby-browser.js`にてカード用のCSSを読込む。
+
+```javascript
+import 'gatsby-remark-link-beautify/themes/notion.css';
+```
+
+マークダウンにて以下のようにリンクを作成すると、カードで表示してくれる。
+
+```
+[$card](https://github.com/gatsbyjs/gatsby/)
+```
+
+### twitterの投稿を表示したい
+
+`gatsby-plugin-twitter`を入れた。
+
+`gatsby-config.js`にて
+
+```javascript
+plugins: [`gatsby-plugin-twitter`]
+```
+
+あとは埋め込みコードをサイトから取得して、scriptタグを削除し、blockquoteセクションのみをマークダウンに張り付けてOK
+
+### netlifyで自動デプロイしたい
+
+`gatsby-plugin-netlify`を入れた。
+
+`gatsby-config.js`にて
+
+```javascript
+plugins: [`gatsby-plugin-netlify`]
+```
+
+### グーグルアナリティクスを使いたい
+
+`gatsby-plugin-google-gtag`を入れた。
+
+Google Analyticsで測定IDを取得しておいて、`gatsby-config.js`にて下記のように指定するのみ。
+
+あとはオプション色々あるけどデフォルトのまま…
+
+```
+  {
+    resolve: "gatsby-plugin-google-gtag",
+    options: {
+      trackingIds: ["X-XXXXXXXXXX"],  // 控えておいた、測定IDを記載します。
+      pluginConfig: {
+        head: true  // headタグに記載されるようにコンフィグを設定します。
+      }
+    }
+  },
+```
+
+### 記事へのコメント欄が欲しい
+
+そもそもフロントのフレームワークなのでコメント機能は困難だけど、utteranceというものが入ってた。
+
+新しいgithubレポジトリを作って、そこにgithubappのutteranceをインストールして、コメントするとそこのレポジトリに記録されていくようになっていた。
+
+あとは`gatsby-config.js`でレポジトリのURLを入れるだけになっていた。
+
+### codepenのコードを貼り付けたい
+
+`@weknow/gatsby-remark-codepen`を入れた。
+
+`gatsby-config.js`にて
+
+```javascript
+plugins: [
+  {
+    resolve: "gatsby-transformer-remark",
+    options: {
+      plugins: [
+        {
+          resolve: "@weknow/gatsby-remark-codepen",
+          options: {
+            theme: "dark",
+            height: 400
+          }
+        }
+      ]
+    }
+  }
+];
+```
+
+として、マークダウン内でURLを埋め込むだけ。
+
