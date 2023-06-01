@@ -826,6 +826,44 @@ mdxなら`gatsby-plugin-mdx`を使う。
 
 タグ機能は無いけど、これも`frontmatter`にタグを書いて記事一覧ページで読み出したりすることで対応できそう。
 
+### google-font使いたい
+
+`gatsby-config.js`にプラグインを追加
+
+```
+plugins: [
+  {
+    resolve: "gatsby-plugin-google-fonts",
+    options: {
+      fonts: [
+        "Inter",
+        "material icons",
+        "roboto: 300,400,500,700"
+      ]
+    }
+  }
+]
+```
+
+これで使えるようになるので、`<body>`に`font-family`を追加する。
+
+また、アイコンは、`className="material-icons"`とし、使いたいアイコンを[ここ](https://fonts.google.com/icons)から探してしていする。
+
+```html
+<div className="material-icons">edit</div>
+```
+
+cssからも次のようにすると使える。
+
+```css
+.table-of-contents::before{
+  font-family: "Material Icons";
+  font-size: 1.4rem;
+  content: "toc 目次";
+  display: block;
+}
+```
+
 ### レスポンシブである
 
 対応済みだった。
@@ -1062,7 +1100,7 @@ import {
 </ShareButtonsWrapper>
 ```
 
-### SEO対策したい
+### HEADを弄りたい
 
 `gatsby-plugin-react-helmet`、`react-helmet`が入ってた。
 
@@ -1280,15 +1318,22 @@ plugins: [`gatsby-plugin-twitter`]
 plugins: [`gatsby-plugin-netlify`]
 ```
 
+ブランチ切ったら、プレビュービルド※記事の追加くらいなら開発環境だけで良いが、その他の変更の場合はあると便利かも
+
+* netlify上で `Settings` > `Build & deploy` > `Deploy contexts` > `Branch deploys` の `Let me add individual branches` へデプロイしたいブランチを指定 `staging`等
+* 指定したブランチ名に`push`するとビルドが行われ、`staging--マスター`のurlへデプロイが行われる
+* stagingブランチをビルドデプロイするように追加している
+
 ### グーグルアナリティクスを使いたい
 
 `gatsby-plugin-google-gtag`を入れた。
 
-Google Analyticsで測定IDを取得しておいて、`gatsby-config.js`にて下記のように指定するのみ。
+Google Analyticsで測定IDを取得しておいて、`gatsby-config.js`にて下記のように指定するのみで、自動的にアナリティクスタグが埋め込まれる。
 
 あとはオプション色々あるけどデフォルトのまま…
 
 ```
+plugins: [
   {
     resolve: "gatsby-plugin-google-gtag",
     options: {
@@ -1298,7 +1343,66 @@ Google Analyticsで測定IDを取得しておいて、`gatsby-config.js`にて�
       }
     }
   },
+]
 ```
+
+プライバシーポリシー、免責事項も追加している。
+
+### Adsenseをいれたい
+
+`@isamrish/gatsby-plugin-google-adsense`を入れた。
+
+アドセンスのアカウントを作ってから、IDを取得し、`gatsby-config.js`にて下記のようにプラグイン追加。
+
+```
+plugins: [
+  {
+    resolve: '@isamrish/gatsby-plugin-google-adsense',
+    options: {
+      googleAdClientId: 'pub-xxxxxxxxxxxxxxxx',
+    }
+  }
+]
+```
+
+このあと、審査を申し込み。
+
+審査が終わったら自動広告を開始すればOK…のハズだったけど、表示されず。
+
+Adsenseコンポーネントを作成して追加した。
+
+```
+import React, { useEffect } from 'react'
+
+const Adsense = ({path}) => {
+  useEffect(() => {
+    (window.adsbygoogle = window.adsbygoogle || []).push({})
+  }, [path])
+
+  return (
+    <ins
+      className="adsbygoogle"
+      style={{ "display": "block", textAlign: "center" }}
+      data-ad-client="ca-pub-xxxxxxxxxxxxxxxx"
+      data-ad-slot="xxxxxxxxxx"
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+    />
+  )
+}
+
+export default Adsense;
+```
+
+要素そのものはAdsenseのサイトからコードを取得して一部改変し入れている。
+
+プライバシーポリシー、免責事項も追加している。
+
+### サーチコンソール使いたい
+
+特段gatsby側でやることはないけど、所有権の確認が必要(該当のWEBサイトの管理者かどうか確認が必要)。これはアナリティクスタグを先に登録しておけば自動的に検出してくれるので楽ちん。
+
+アナリティクスと連携すると検索キーワードやクリック数とかの情報をアナリティクス側で確認することができる(URLプレフィックスでの登録のみ可能)
 
 ### 記事へのコメント欄が欲しい
 
@@ -1335,3 +1439,149 @@ plugins: [
 
 として、マークダウン内でURLを埋め込むだけ。
 
+### SEO関連
+
+#### 一時的にrobots.txtを弄りたい
+
+`gatsby-plugin-robots-txt`が入っていた。
+
+オプションの所で、環境次第でクロールする、しないを切り替えるようにした。
+
+```javascript
+plugins: [
+  {
+    resolve: "gatsby-plugin-robots-txt",
+    options: {
+      host: 'https://katsu-dev.netlify.app/',
+      sitemap: 'https://katsu-dev.netlify.app/sitemap-index.xml',
+      env: {
+        development: {
+          policy: [{ userAgent: '*', disallow: '/' }]
+        },
+        production: {
+          policy: [{ userAgent: '*', allow: '/' }]
+          // policy: [{ userAgent: '*', disallow: '/' }]
+        }
+      },
+    }
+  },
+]
+```
+
+#### sitemap.xmlが欲しい
+
+`gatsby-plugin-sitemap`が入ってた。
+
+`gatsby-config.js`にて、
+
+```javascript
+{
+  siteMetadata: {
+    // If you didn't use the resolveSiteUrl option this needs to be set
+    siteUrl: `https://www.example.com`,
+  },
+  plugins: [`gatsby-plugin-sitemap`]
+}
+```
+
+とするだけで、最低限の`sitemap-index.xml`と、`sitemap-X.xml`が出力される。
+
+尚、netlifyの `add notifications` から `outgoing webhook` を選択して、 `deploy succeeded` のイベントにて `http://www.google.com/ping?sitempap=https://サイトマップのURL` とすればデプロイが終わった時点でサイトマップを自動送信してくれるらしい。
+
+#### URL正規化
+
+重複するコンテンツについて正規のURLを示す
+
+先の`react-helmet`で
+
+```
+<link rel=”canonical” href=”正規のurl”/>
+```
+
+#### リッチリザルト(検索結果の上の方に出てくる見栄えのいいやつ)
+
+JsonLdコンポーネントを作成した。
+
+必要な構造化データをJSON形式で編集して`react-helmet`で`<head>`に入れてあげる。
+
+```
+import React from "react";
+import { Helmet } from "react-helmet";
+import { useLocation } from "@reach/router";
+import { useStaticQuery, graphql } from "gatsby";
+import defaultOpenGraphImage from "../images/default_ogpimage.jpg";
+
+const JsonLd = ({ title, description, featuredImage, date, update }) => {
+  const { pathname } = useLocation();
+  const { site } = useStaticQuery(query);
+
+  const {
+    siteUrl,
+    // defaultImage,
+    author,
+  } = site.siteMetadata;
+
+  const jsonLdStructuredData = {
+    "@context": "https://schema.org/",
+    "@type": "BlogPosting",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": siteUrl,  // 適宜調節してください。
+    },
+    author: {
+      "@type": "Person",
+      name: author,
+      url: siteUrl,
+      // image: siteUrl,  // 適宜調節してください。
+    },
+    publisher: {
+      "@type": "Person",
+      name: author,
+      url: siteUrl,
+      // logo: {
+      //   "@type": "ImageObject",
+      //   url: siteUrl, // 適宜調節してください。
+      //   width: 300,
+      //   height: 300
+      // }
+    },
+    headline: title,
+    // image: featuredImage ? featuredImage : defaultImage,
+    image: featuredImage ? featuredImage :defaultOpenGraphImage,
+    url: `${siteUrl}${pathname}`,
+    description: description,
+    datePublished: date,
+    dateCreated: date,
+    dateModified: update,
+  }
+
+  return (
+    <Helmet>
+      <script type="application/ld+json">{JSON.stringify(jsonLdStructuredData)}</script>
+    </Helmet>
+  );
+};
+
+export default JsonLd;
+
+// const query = graphql`
+//   query Metadata {
+//     site {
+//       siteMetadata {
+//         siteUrl
+//         defaultImage
+//       }
+//     }
+//   }
+// `
+const query = graphql`
+  query Metadata {
+    site {
+      siteMetadata {
+        author
+        siteUrl
+      }
+    }
+  }
+`
+```
