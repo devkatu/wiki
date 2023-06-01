@@ -849,7 +849,7 @@ plugins: [
 
 また、アイコンは、`className="material-icons"`とし、使いたいアイコンを[ここ](https://fonts.google.com/icons)から探してしていする。
 
-```html
+```
 <div className="material-icons">edit</div>
 ```
 
