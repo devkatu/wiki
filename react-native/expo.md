@@ -500,6 +500,12 @@ Group ID         5a5ce55f-87e4-4b75-8242-2dd61e418243
 
 上記の場合は`production`チャネルに`addadmob`ブランチが紐付いている状態である。なお、特に指定しなければ、バイナリに指定されているチャネルと同名のブランチがチャネルに紐付いているハズである。
 
+紐付きを変更したい場合は
+
+`> eas channel:edit [チャネル名] --branch [紐付きさせたいブランチ名]`
+
+とする。
+
 初回の更新を行うには  
 
 `$ eas update --branch [branch] --message [message]`  
