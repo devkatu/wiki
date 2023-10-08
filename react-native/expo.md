@@ -221,6 +221,14 @@ anrdroidのマニフェストとかで表示されているやつもあるけど
 
 ```
 
+.aabファイルの場合には`aapt`は使用できないので、代わりに`bundletool`を使用する。
+
+`bundletool`は[ここ](https://github.com/google/bundletool/releases)からダウンロードし、次のコマンド。
+
+`> java -jar [bundletool.jarへのパス] dump manifest --bundle [.aab]`
+
+マニフェストファイルが全てダンプされます。
+
 #### app.jsonの構成例
 ```javascript
 {
@@ -428,7 +436,7 @@ expoのビルドと同じく、EAS上にビルドファイルができあがる�
   }
 }
 ```
-- `submit.production.android.serviceAccountKeyPath`にgoogleplayでの認証に使用するサービス アカウント キーを含む JSON ファイルへのパスを設定する。
+- `submit.production.android.serviceAccountKeyPath`にgoogleplayでの認証に使用するサービス アカウント キーを含む JSON ファイルへのパスを設定する。**これはgoogleplayコンソールでのAPIキーのようなものを作成する必要があるが、できなくなっている…もう使えないのな**
 - `submit.production.android.track`はアプリのトラックを指定し、次のいずれかの値を入れる`(enum: production, beta, alpha, internal)`
 
 実際の提出は  
@@ -440,10 +448,15 @@ expoのビルドと同じく、EAS上にビルドファイルができあがる�
 ※アプリの更新は、最低一回はビルドを行っていること  
 
 アプリの更新は`expo-updates`ライブラリで行っているみたいなのでインストール  
+
 `$ npx expo install expo-updates`  
+
 その後、更新設定をeas.jsonに構成するために
+
 `$ eas update:configure`  
+
 すると、、
+
 ```javascript
 {
   "build": {
@@ -459,13 +472,44 @@ expoのビルドと同じく、EAS上にビルドファイルができあがる�
 }
 ```
 
-実際に更新を行うには  
+この状態でビルドすると、それぞれ`preview`でビルドしたバイナリは`preview`チャネルをもち、`production`は`production`チャネルを持つ。
+
+更新時は、このバイナリのチャネルに紐付いているブランチ(ここでのブランチはgitのブランチとは異なるeas独自にもっているブランチのこと)を指定して更新を行うこととなる。
+
+チャネルとブランチは自由に紐付きを指定することができ、現在の紐付きを確認したいときは
+
+`> eas channel:list`
+
+とすると
+
+```
+Channel:
+Name  production
+ID    c5eb554e-66ca-481a-b515-eaa27be8c76a
+
+Branches pointed at this channel and their most recent update group:
+
+Branch           addadmob
+Platforms        android, ios
+Runtime Version  exposdk:49.0.0
+Message          "addadmob" (4 days ago by katu)
+Group ID         5a5ce55f-87e4-4b75-8242-2dd61e418243
+```
+
+のように表示される。
+
+上記の場合は`production`チャネルに`addadmob`ブランチが紐付いている状態である。なお、特に指定しなければ、バイナリに指定されているチャネルと同名のブランチがチャネルに紐付いているハズである。
+
+初回の更新を行うには  
+
 `$ eas update --branch [branch] --message [message]`  
-で、新たにビルドが行われEAS上に送信され、先のビルドに対する更新が行われる。
-- `branch`はチャネル内で複数のブランチを指定して使い分けられるみたい？？多分後に公開した方が優先なのかな？未使用機能なのでよくわからない
-- `message`はEAS上に表示されるコメント
+
+とし、新たなブランチを作成してから更新を行うこととなる。
+
+すでにブランチがいくつか用意されている場合は`> eas update`のみで、更新するブランチを選択する事となり、ブランチを指定すると、更新が始まり、紐付いているチャネルが更新される。
 
 ### テスト
+
 テストに必要なデータを用意したいときは[jsonジェネレータ](https://json-generator.com/)があるので使ってみよう
 
 モックAPIが使いたいならjson-server入れてみよう  
