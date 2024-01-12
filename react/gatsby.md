@@ -1398,6 +1398,14 @@ export default Adsense;
 
 プライバシーポリシー、免責事項も追加している。
 
+ads.txtもサイトのルートに追加。
+
+ads.txtの内容は次の通り、アドセンスで取得し、貼り付けする。
+
+```             
+google.com, pub-xxxxxxxxxxxxxxxx, DIRECT, xxxxxxxxxxxxxxxx
+```
+
 ### サーチコンソール使いたい
 
 特段gatsby側でやることはないけど、所有権の確認が必要(該当のWEBサイトの管理者かどうか確認が必要)。これはアナリティクスタグを先に登録しておけば自動的に検出してくれるので楽ちん。
