@@ -21,7 +21,7 @@
   - [グリッド](library/grid/index.html)
 
 [html](html/index.md)
-[css](cssサンプル/cssサンプル.html)
+[css](css/css.html)
 [javascript/jquery]()
 
   - # javascript
