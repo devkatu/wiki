@@ -1,5 +1,5 @@
 # オレオレフロントエンドwiki
-[HOME](index.md)
+[HOME](top.md)
 [LPとかの練習作品]()
 
   - [isara](2 isara/index.html)
