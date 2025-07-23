@@ -1,5 +1,5 @@
 # オレオレフロントエンドwiki
-[HOME](top.md)
+[HOME](index.md)
 [LPとかの練習作品]()
 
   - [isara](2 isara/index.html)
@@ -21,7 +21,7 @@
   - [グリッド](library/grid/index.html)
 
 [html](html/index.md)
-[css](css/css.html)
+[css](cssサンプル/cssサンプル.html)
 [javascript/jquery]()
 
   - # javascript
