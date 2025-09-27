@@ -194,7 +194,7 @@ npm install --save-dev eslint-config-prettier
 
 インストール後、`eslintrc.config.mjs`の`extends`**配列の最後**に`prettier`を追加します。これにより、他の設定を上書きして競合を回避できます。
 
-```javascript
+```
 // eslintrc.config.mjs
 import { dirname } from "path";
 import { fileURLToPath } from "url";
@@ -238,7 +238,7 @@ npm install --save-dev --save-exact prettier
 
 インストール後、プロジェクトのルートに`.prettierrc`や`.prettierrc.json`などの設定ファイルを作成し、ルールを定義します。ここではjson形式での設定の例を挙げます。
 
-```on
+```
 // .prettierrc.json
 {
   "printWidth": 80,
@@ -280,7 +280,7 @@ build
 
 `package.json`にスクリプトを追加し、コマンドラインでPrettierを実行できるようにします。
 
-```on
+```
 // package.json
 "scripts": {
   "format": "prettier --write .",
