@@ -34,6 +34,11 @@
   - [ES6_ES2015](javascript_jquery/ES6_ES2015.html)
   - [実践的知識](javascript_jquery/実践的知識.md)
   ---
+  - # TypeScript
+  - [導入と型](javascript_jquery/typescript_1.md)
+  - [型の機能](javascript_jquery/typescript_2.md)
+  - [開発時の設定](javascript_jquery/typescript_3.md)
+  ---
   - # jquery
   - [基礎](javascript_jquery/jqueryサンプル_基礎編.html)
   - [応用](javascript_jquery/jqueryサンプル_実用的なやつ.html)
