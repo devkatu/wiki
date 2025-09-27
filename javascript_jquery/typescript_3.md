@@ -12,7 +12,7 @@ TypeScriptはJavaScriptのスーパーセットですが、既存の膨大なJav
 
 例えば、`lodash`というライブラリの型定義をインストールするには、以下のコマンドを実行します。
 
-```bash
+```
 npm install --save-dev @types/lodash
 ```
 
@@ -61,7 +61,7 @@ Next.js等のプロジェクトでTypeScriptを使う設定にすると必ず作
 
 以下は、Next.jsプロジェクトなどで見られる基本的な`tsconfig.json`の例です。
 
-```on
+```
 {
   "compilerOptions": {
     "target": "es5",
@@ -125,7 +125,7 @@ Next.jsを使う場合はプロジェクトの作成時にオプションでESLi
 
 例として下記のような設定ファイルが生成されます。
 
-```javascript
+```
 // eslintrc.config.mjs
 import { dirname } from "path";
 import { fileURLToPath } from "url";
@@ -168,7 +168,7 @@ export default eslintConfig;
 
 また、`package.json`に`lint`が追加されているので、`npm run lint`コマンドでESLintを実行することも可能です。
 
-```on
+```
 // package.json
 {
   // 省略
