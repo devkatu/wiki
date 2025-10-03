@@ -106,6 +106,41 @@ Next.js等のプロジェクトでTypeScriptを使う設定にすると必ず作
 #### `sourceMap`
 これを`true`にすると、コンパイル後のJavaScriptファイルに対応するソースマップファイル（`.js.map`）が生成されます。これにより、ブラウザの開発者ツールでデバッグする際に、実行されているJavaScriptコードではなく、元のTypeScriptコードを表示させることができます。
 
+#### `baseUrl`と`paths`
+これらを組み合わせて、パスエイリアスを設定することが出来ます。下記のような相対パスを絶対パスのように指定することが出来ます。
+
+```
+// パスエイリアス適用前
+import { Button } from '../../../components/button'
+ 
+// パスエイリアス適用後
+import { Button } from '@/components/button'
+```
+
+パスエイリアスを使用するには`tsconfig.json`にて下記の設定が必要です。
+
+```
+// tsconfig.json
+{
+  "compilerOptions": {
+    "baseUrl": "src/",
+    "paths": {
+      "@/styles/*": ["styles/*"],
+      "@/components/*": ["components/*"]
+    }
+  }
+}
+```
+
+各`paths`は`baseUrl`からの相対パスとしてパスのエイリアスを設定しており、上記の場合、
+
+- `@/styles/` → `src/styles/`
+- `@/components/` → `src/components/`
+
+としてエイリアスが設定されます。
+
+Next.jsでパスエイリアスオプションを選択した場合は、`baseUrl`がありませんが、デフォルトで`.`(tsconfig.jsonと同じ階層)となっているようです。
+
 ### ESLint
 
 **ESLint**は、JavaScriptおよびTypeScriptのコードを静的に解析し、問題のあるパターンを見つけ出すための**リンティングツール**です。バグにつながる可能性のあるコードや、推奨されない書き方を警告・エラーとして表示してくれます。
