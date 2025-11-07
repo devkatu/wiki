@@ -22,7 +22,7 @@
 
 [html](html/index.md)
 [css](cssサンプル/cssサンプル.html)
-[javascript/jquery]()
+[javascript]()
 
   - # javascript
   - [コンストラクタ関数、プロトタイプ、継承](javascript_jquery/コンストラクタ関数、プロトタイプ、継承.html)
@@ -42,6 +42,9 @@
   - # jquery
   - [基礎](javascript_jquery/jqueryサンプル_基礎編.html)
   - [応用](javascript_jquery/jqueryサンプル_実用的なやつ.html)
+  ---
+  - # その他
+  - [コーディングの際に考慮する事](javascript_jquery/check.md)
 
 [React]()
 
