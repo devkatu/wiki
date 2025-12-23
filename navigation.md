@@ -45,6 +45,7 @@
   ---
   - # その他
   - [コーディングの際に考慮する事](javascript_jquery/check.md)
+  - [リファクタリング(ReactNative)](javascript_jquery/refactoring.md)
 
 [React]()
 
