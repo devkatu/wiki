@@ -799,7 +799,7 @@ export default function App() {
 
 --- 
 
-## EXPO SDKのアップデート
+## EXPO SDKのアップデート(2020?)
 ストアに提出しようとしたらandroid12(APIレベル31)を求められて、expo sdkを44→45にしなければならなかったことあり、そのメモ
 
 - expoの[https://docs.expo.dev/workflow/upgrading-expo-sdk-walkthrough/](https://docs.expo.dev/workflow/upgrading-expo-sdk-walkthrough/)を、アップデートするバージョンのものを読込んで、廃止されたライブラリ等がないか確認し、対応すべき事をピックアップしておく
@@ -812,3 +812,49 @@ export default function App() {
 - もう一度`yarn upgrade-interactive --latest`したら実行できた
 - 最新以外のパッケージは個別に`yarn upgrade package@version`で地道に更新(package.jsonを弄ってinstallでもいいのかも)
 - ビルドしてテストしていく。パッケージ変わっているのが多数あるので地道にやろう
+
+---
+
+## EXPO SDKのアップデート(こんなことできましたカメラ　2025,26)
+
+端末によってカメラ表示されず、expoモジュールつくれず、広告動作せずとかでいろいろアプデ
+
+基本的にはexpoSDKは新しい方がいいと思う(create-expo-moduleで作るモジュールが新しいけどexpoSDKが古くてダメとかあった)けど、expo以外のパッケージを入れてる場合、expoと各パッケージの相性が悪く動作しない・ビルド失敗するとかある。この辺は都度各パッケージのバージョンを変える・ビルドプロパティを変えるなどして探りながらやるしかない？
+
+あとは各パッケージのREADME、Issues、ChangeLog等を確認しまくる。
+
+**できれば定期的に、パッケージのアプデをしていった方がいい→半年ごととかexpoのメジャーアプデごととか**
+
+1. Expo SDKのアプデ
+
+Expo自体のアプデをする場合は`npm install expo@latest`でアプデし、その後`npx expo install --fix`とします。
+
+事前に[https://docs.expo.dev/workflow/upgrading-expo-sdk-walkthrough/](https://docs.expo.dev/workflow/upgrading-expo-sdk-walkthrough/)を読んで破壊的変更(Breaking Changes)を確認しておくこと！
+
+2. 現状確認
+
+`npx expo install --check`で、Expoチームの出しているパッケージがについて、現在のExpo SDKバージョンに対して、依存関係に不整合がないかチェックします。  
+その他のパッケージについては`npm outdated`でアップデート可能なパッケージが一覧表示できます。
+
+3. アップデート
+
+`npx expo install --fix`で、先に`--check`で確認したパッケージを最新に更新できます。
+
+Expo以外のパッケージについては`npm install [パッケージ名]@latest`で個別に更新しながら開発ビルドで動作確認します。一括更新する場合は`npm update`ができますが、先のExpoパッケージも依存関係を無視したものに更新される可能性があるので注意。
+
+都度、`npx expo-doctor`でプロジェクト全体的な問題がないか確認できます。
+
+4. キャッシュクリア
+
+アプデ後、動作が不安定になる場合があれば下記を実行する。
+
+```
+# 1. node_modulesとロックファイルを削除
+rm -rf node_modules package-lock.json
+
+# 2. クリーンインストール
+npm install
+
+# 3. Expoのキャッシュをクリアして起動
+npx expo start -c
+```
