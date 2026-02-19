@@ -68,6 +68,56 @@ attention:
 
 hint: これとは別にReactNativeDebuggerというのを入れるとReactDevToolsを含むさらに便利なツール(ネットワークインスペクター、AsyncStorageをログに記録したり)があるのでこれを入れるといいかも Expo公式より
 
+### ログ出力について
+
+#### `$ npx expo start`で開発中の場合
+
+下記でコンソールにログが出力される
+
+* 各コンポーネントからのログはweb同様、`console.log()`でOK
+* ネイティブコード(android)からの出力は`Log.d()`(他にも`Log.e()`とかあり)でOK
+
+#### プレビュービルド等した場合
+
+下記でログが見られる
+
+* usbで端末を接続(開発者オプション選択しておくこと)して、  
+`adb logcat *:I | Select-String "ReactNativeJS", "Ads", "GMA"`すると上記同様にログがみられる
+* パイプして、PoserShellでSelect-Stringしているので、好きなキーワードでログ抽出可能。`"ReactNativeJS"`が各コンポーネントからのログに該当する
+
+#### ファイル名、行数を追加する場合
+
+下記が使えるらしい
+
+* babelプラグインをインストール  
+```
+$ npm i babel-plugin-transform-line
+$ npm i babel-plugin-transform-dirname-filename
+```
+* `babel.config.js`に追記  
+```
+module.exports = {
+  presets: ['module:metro-react-native-babel-preset'],
+  plugins: ['babel-plugin-transform-dirname-filename', 'babel-plugin-transform-line']
+};
+```
+* これで下記でコード内で`__filename`,`__dirname`,`__line`を使えるようになる。いい感じにユーティリティ関数にしたい  
+```
+console.log(__filename, __dirname, __line);
+// Prints: /Users/user/TestApp/App.js /Users/user/TestApp 62
+```
+
+#### 実行時間測定したい
+
+下記がいい感じ
+
+```
+console.time("📸 [TakePhoto.js] CaptureTime");
+// ... 撮影処理
+console.timeEnd("📸 [TakePhoto.js] CaptureTime");
+// 出力例: 📸 [TakePhoto.js] CaptureTime: 1245ms
+```
+
 ---
 
 ## expoの開発流れ
