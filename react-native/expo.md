@@ -846,6 +846,20 @@ export default function App() {
 
 ### [アセットのプリロード](https://docs.expo.dev/guides/preloading-and-caching-assets/)
 
+### ネイティブモジュール
+
+expoのマネージドプロジェクトのまま、ネイティブ層のモジュールも開発可能
+
+- `npx create-expo-module --local`でプロジェクト内に`modules`フォルダが作成されて、その中でネイティブモジュール開発を出来る
+- 作成したネイティブモジュールは`npx expo prebuild --clean`で、プロジェクト内の`android`フォルダに反映される。`android`フォルダがある場合、なんらかのパッケージをインストールするなどした場合、都度`npx expo prebuild --clean`を必ず実施してネイティブに反映する(パッケージインストールして開発ビルドを作りたくなった時も同様)
+- 作成したネイティブコードを呼出すには、↓のような感じで出来る…けどちょっと公式docと違う。とりあえず動いてるけど…  
+  ```
+  import { requireNativeModule } from 'expo-modules-core';
+
+  // mp4生成ネイティブモジュールの読込
+  const EncodeMp4Module = requireNativeModule("EncodeMp4Module");
+  ```
+
 ### 多言語化対応
 
 - `npx expo install i18next react-i18next`で必要パッケージインストール
