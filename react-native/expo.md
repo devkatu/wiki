@@ -846,6 +846,101 @@ export default function App() {
 
 ### [アセットのプリロード](https://docs.expo.dev/guides/preloading-and-caching-assets/)
 
+### 多言語化対応
+
+- `npx expo install i18next react-i18next`で必要パッケージインストール
+- `i18n.js`を作成し、以下  
+  ```
+  import i18n from "i18next";
+  import { initReactI18next } from "react-i18next";
+  import * as Localization from "expo-localization";
+  import resources from "./resources";
+
+  console.log(`[i18n.js] 言語　→　${Localization.getLocales()[0].languageTag}`)
+
+  i18n.use(initReactI18next).init({
+      resources,
+      lng: Localization.getLocales()[0]?.languageTag.split('-')[0], // 端末の言語設定を適用
+      fallbackLng: "en", // 言語が見つからない場合は英語にフォールバック
+      interpolation: {
+          escapeValue: false,
+      },
+  });
+
+  export default i18n;
+  ```
+- `resources.js`を作成し、各言語毎の翻訳を入力する
+  ```
+  const resources = {
+    en: {
+      translation: {
+        "home": {
+          "button1": "Capture & Create",
+          "button2": "Import & Combine",
+          "button3": "Settings"
+        },
+        "takePhoto": {
+          "carouselText": "Captured images will appear here",
+          "loadingText": "Converting...",
+          "genPicSize": "Image Size",
+          ...
+        }
+      }
+    }
+    ja: {
+      translation: {
+        "home": {
+          "button1": "写真を撮って遊ぶ",
+          "button2": "画像を選んで繋げる",
+          "button3": "設定"
+        },
+        "takePhoto": {
+          "carouselText": "撮影した画像が表示されます",
+          "loadingText": "へんかんちゅう...",
+          "genPicSize": "画像サイズ",
+          ...
+        }
+      }
+    }
+  }
+  export default resources;
+  ```
+- 各コンポーネントで以下のようにしてテキストを表示  
+  ```
+  import { useTranslation } from "react-i18next";
+  import "../localization/i18n"
+
+  const Home = ({ navigation }) => {
+    const { t, i18n } = useTranslation();
+
+    <!-- 写真を撮って遊ぶ -->
+    <Text>{t("home.button1)}</Text>
+- 言語毎に画像を切り替えたいときは  
+  ```
+  import { useTranslation } from "react-i18next";
+  import "../localization/i18n"
+
+  const Home = ({ navigation }) => {
+    const { t, i18n } = useTranslation();
+
+    const titleLogos = {
+      ja: require('../assets/home/titleLogo_ja.png'),
+      en: require('../assets/home/titleLogo_en.png'),
+      es: require('../assets/home/titleLogo_es.png'),
+      ko: require('../assets/home/titleLogo_ko.png'),
+      zh: require('../assets/home/titleLogo_zh-TW.png'),
+    }
+
+    const currentLang = i18n.language.split('-')[0]
+    const logoSource = titleLogos[currentLang] || titleLogos.en;  // 英語デフォルト
+
+    ...
+
+    <Image
+      style={styles.titleLogo}
+      source={logoSource}
+    />
+  ```
 
 --- 
 
