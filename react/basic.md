@@ -386,8 +386,87 @@ const ArticleCard = () => {
 
 その他のCSSを記述する手段としては、CSS Modules、Tailwind、CSS-in-JS等がありますが、これらは上記の様な制約はなく、通常のCSSとして記述できます。
 
+#### props
+
+HTMLに属性を設定して様々な設定ができるように、コンポーネントに`props`を渡してその挙動を制御できます。
+
+コンポーネントへの`props`の渡し方には主に次の2通りがあります。
+
+- HTMLの属性と同様に`props`を指定して渡す
+- コンポーネントの子要素にして`props.children`で渡す
+
+先の`ArticleCard`に`title`と`date`を渡す例を示します。
+
+```jsx{7}
+const App = () => {
+  // propsとして渡す変数
+  const title = "記事タイトル";
+  const date = new Date();
+
+  // title,dateというpropsを渡す
+  return <ArticleCard title={title} date={date}>
+}
+```
+
+コンポーネントに渡した`props`はコンポーネント関数にて`props`というオブジェクトで受け取ることが出来ます。
+
+また、引数の分割代入を用いて次のようにするのが一般的です。
+
+```jsx
+const ArticleCard = ({ title, date }) => {
+
+  const toggleLike = () => {...}
+
+  return (
+    <article className="card">
+      <span className="date">{date}</span>
+      <h2>{title}</h2>
+      <button onClick={toggleLike}>いいね！</button>
+    </article>
+  );
+};
+```
+
+まどろっこしい書き方をすると下記のとおりです。
+
+```jsx
+const ArticleCard = ( props ) => {
+
+  // propsオブジェクトとして受け取ったものを分割代入
+  const { title, date } = props;
+
+  ...
+
+}
+```
 
 
+
+
+
+
+
+```jsx
+const ContentBlock = ({ title, children }) => {
+  return (
+    <div className="content-block">
+      <h2 className="block-title">{title}</h2>
+      {/* 中身（子要素）をここに流し込む */}
+      <div className="block-body">{children}</div>
+    </div>
+  );
+};
+
+// 親での使い方
+const App = () => {
+  return (
+    <ContentBlock title="最新のニュース">
+      <p>ここにお知らせの文章が入ります。</p>
+      <button>一覧を見る</button>
+    </ContentBlock>
+  );
+};
+```
 
 
 
