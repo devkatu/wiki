@@ -1,6 +1,6 @@
 # React基礎
 
-公式の波括弧やってるところ
+公式のpropsやってるところ
 
 - [ ] UI記述方法
 - [ ] state、レンダリングについて
@@ -245,7 +245,7 @@ const ArticleCard = () => {
 }
 ```
 
-#### JSX中での属性名、CSSプロパティに注意
+#### JSX中での属性名に注意
 
 HTMLの属性名で`class`や`for`等、JavaScriptの予約語と被っているものがあります。これらはJSX中であってもあくまでJavaScriptとして解釈されるため、そのまま使用はできません。
 
@@ -278,21 +278,6 @@ const ArticleCard = () => {
 |autocomplete|autoComplete|オートコンプリート設定|
 |rowspan|rowSpan|テーブルの行結合|
 |colspan|colSpan|テーブルの列結合|
-
-同様にCSSの`background-color`のようなプロパティは、`-`がJavaScriptでの算術演算子として認識されてしまうため、`backgroundColor`のようなキャメルケースとして記述します。
-
-主なCSSプロパティと、それに対応するJSXでの属性名の対応は以下の通りです。
-
-|CSSプロパティ名|JSXでのプロパティ名|記述例（JSX）|
-|:----|:----|:----|
-|background-color|backgroundColor|{ backgroundColor: "red" }|
-|font-size|fontSize|{ fontSize: "16px" }|
-|margin-top|marginTop|{ marginTop: "10px" }|
-|padding-left|paddingLeft|{ paddingLeft: "20px" }|
-|flex-direction|flexDirection|{ flexDirection: "column" }|
-|justify-content|justifyContent|{ justifyContent: "space-between" }|
-|align-items|alignItems|{ alignItems: "center" }|
-|box-shadow|boxShadow|{ boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }|
 
 #### JSX中で式、変数を使用したい場合は`{}`を使用する
 
@@ -359,7 +344,51 @@ const ArticleCard = () => {
 
 #### CSSの記述
 
-公式の波括弧記事参照
+インラインでCSSを記述する場合は、JavaScriptのオブジェクトとして記述しなければなりません。
+
+`background-color`のようなプロパティは、`-`がJavaScriptでの算術演算子として認識されてしまうため、`backgroundColor`のようなキャメルケースとして記述します。
+
+主なCSSプロパティと、それに対応するJSXでの属性名の対応は以下の通りです。
+
+|CSSプロパティ名|JSXでのプロパティ名|記述例（JSX）|
+|:----|:----|:----|
+|background-color|backgroundColor|{ backgroundColor: "red" }|
+|font-size|fontSize|{ fontSize: "16px" }|
+|margin-top|marginTop|{ marginTop: "10px" }|
+|padding-left|paddingLeft|{ paddingLeft: "20px" }|
+|flex-direction|flexDirection|{ flexDirection: "column" }|
+|justify-content|justifyContent|{ justifyContent: "space-between" }|
+|align-items|alignItems|{ alignItems: "center" }|
+|box-shadow|boxShadow|{ boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }|
+
+また、設定する値も数値・文字列である必要があり、`10px`のような記述では妥当ではなく、`"10px"`のように変換する必要があります。次の様なルールとなっています。
+
+- 単位無しの数値 : そのまま数値として記述
+- 単位ありの数値やキーワード : 文字列として記述
+
+以下に例を挙げます。
+
+```jsx
+// NG
+// プロパティ名に「‐」が入っており引き算しようとする
+// 値の「10px」という変数をさがしてしまう
+<div style={{
+  margin-top: 10px
+}}>
+
+// OK
+<div style={{ 
+  marginTop: 10,        // 数値なら自動で "10px" になる
+  width: "50%",         // 単位付き数値は文字列にする
+  display: "flex"       // キーワードも文字列にする
+}}>
+```
+
+その他のCSSを記述する手段としては、CSS Modules、Tailwind、CSS-in-JS等がありますが、これらは上記の様な制約はなく、通常のCSSとして記述できます。
+
+
+
+
 
 
 
