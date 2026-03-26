@@ -408,15 +408,15 @@ const App = () => {
 }
 ```
 
-コンポーネントに渡した`props`はコンポーネント関数にて`props`というオブジェクトで受け取ることが出来ます。
+コンポーネントに渡した`props`は、コンポーネント関数にて`props`というオブジェクトで引数として受け取ることが出来ます。次のように引数で分割代入をするのが一般的です。
 
-また、引数の分割代入を用いて次のようにするのが一般的です。
-
-```jsx
+```jsx{1,2,6,9,10}
+// title,dateのpropsを受け取る
 const ArticleCard = ({ title, date }) => {
 
   const toggleLike = () => {...}
 
+  // 受け取ったtitle,dateのpropsを使用
   return (
     <article className="card">
       <span className="date">{date}</span>
@@ -427,7 +427,7 @@ const ArticleCard = ({ title, date }) => {
 };
 ```
 
-まどろっこしい書き方をすると下記のとおりです。
+ちなみに`props`オブジェクトとしてそのまま受け取る場合は次の通りです。
 
 ```jsx
 const ArticleCard = ( props ) => {
@@ -439,6 +439,8 @@ const ArticleCard = ( props ) => {
 
 }
 ```
+
+
 
 
 
