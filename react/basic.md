@@ -415,7 +415,7 @@ const App = () => {
 コンポーネントに渡した`props`は、コンポーネント関数にて`props`というオブジェクトで引数として受け取ることが出来ます。次のように引数の所で`{}`を用いて分割代入をするのが一般的です。
 
 ```jsx{1,2,6,9,10}
-// title,dateのpropsを受け取る
+// title,dateとしてpropsを受け取る
 const ArticleCard = ({ title, date }) => {
 
   const toggleLike = () => {...}
@@ -431,7 +431,7 @@ const ArticleCard = ({ title, date }) => {
 };
 ```
 
-ちなみに`props`オブジェクトとしてそのまま受け取る場合は次の通りです。
+次のように`props`オブジェクトとしてそのまま受け取るコードでも同じですが、あまりやりません。
 
 ```jsx
 const ArticleCard = ( props ) => {
@@ -462,7 +462,7 @@ const App = () => {
 
 子要素としたもの(ここでは`<p></p>`と`<button></button>`)が、コンポーネント関数にて`props.children`で受け取れます。
 
-先程の例同様、分割代入で受け取ります。
+先程の例同様、コンポーネント関数の引数として、`{children}`を受け取ります。
 
 ```jsx
 // 子要素に記述した要素はchildrenとして受け取る
@@ -476,6 +476,24 @@ const ContentBlock = ({ title, children }) => {
   );
 };
 ```
+
+なお、この`<ContentBlock>`の例では最終的に次のようなHTMLとなります。
+
+```html
+<div className="content-block">
+  <h2 className="block-title">最新のニュース</h2>
+  <div className="block-body">
+    <p>ここにお知らせの文章が入ります。</p>
+    <button>一覧を見る</button>
+  </div>
+</div>
+```
+
+コンポーネントを呼び出すときに、props
+- スプレッド代入
+- デフォルトはtrue
+- 指定しなければundefined
+- 引数側でデフォルト値設けられる
 
 
 
@@ -538,45 +556,7 @@ const LikeButton = () => {
 export default LikeButton;
 ```
 
-- 変数にjsx記法でコンポーネントを代入していく事ができる。
-  ```
-  const element = <h1>Hello, world!</h1>;
-  ```
-- jsx中で式、変数を使う場合は波括弧`{}`で囲う
-  ```
-  const name = 'Josh Perez';
-  const element = <h1>Hello, {name}</h1>;
-  ```
-  ```
-  function formatName(user) {
-    return user.firstName + ' ' + user.lastName;
-  }
-  const element = (
-    <h1>
-      Hello, {formatName(user)}!
-    </h1>
-  );
-  ```
-  ```
-  const element = <img src={user.avatarUrl}></img>;
-  ```
-- クラスコンポーネントの`render`や関数コンポーネントの戻り値では一つの要素のみしか返せない。複数の要素を返したいときは`<div></div>`で囲う、または`<div>`だとセマンティックでなくなってしまうなら、`<> </>`(`<React.Fragment></React.Fragment>`)で囲う必要あり
-  ```
-  const Columns = () => {
-    return (
-      <>
-        <td>Hello</td>
-        <td>World</td>
-      </>
-    );
-  }
-  ```
-- 属性においては予約語とかぶったりしないように記述する。
-  - `class`   →   `className`
-  - (labelの)`for`   →   `htmlFor` など
-- 基本的に属性やcssのプロパティなどは**キャメルケース**を使う
-  - `onclick="handle"`   →   `onClick={handle}`
-  - `tabindex`   →   `tabIndex` など
+
 - コールバックの記述について
   - クラスコンポーネントで記述する場合は、基本的にはアロー関数で記述してリスナに登録する。これでクラスコンポーネントでもbindが不要になる
   - リスナに設定する際はhtmlのような`onclick="hanle()"`にせずに`onClick={handle}`と()省略すること。あくまでjavascriptとして記述しているので()付きだとレンダリングの都度その関数が実行されてしまう
