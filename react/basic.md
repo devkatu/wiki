@@ -270,18 +270,18 @@ const ArticleCard = () => {
 
 主なHTML属性と、それに対応するJSXでの属性名の対応は以下の通りです。
 
-|HTML属性名|JSX（React）属性名|備考|
-|:----|:----|:----|
-|class|className|JSの class 構文と重複を避けるため|
-|for|htmlFor|labelで使用。JSの for ループと重複を避けるため|
-|onclick|onClick|イベントはすべてキャメルケースになる|
-|onchange|onChange|入力値の変更検知|
-|tabindex|tabIndex|キーボード操作の順序|
-|readonly|readOnly|フォームの読み取り専用設定|
-|maxlength|maxLength|入力できる最大文字数|
-|autocomplete|autoComplete|オートコンプリート設定|
-|rowspan|rowSpan|テーブルの行結合|
-|colspan|colSpan|テーブルの列結合|
+| HTML属性名   | JSX（React）属性名 | 備考                                           |
+| :----------- | :----------------- | :--------------------------------------------- |
+| class        | className          | JSの class 構文と重複を避けるため              |
+| for          | htmlFor            | labelで使用。JSの for ループと重複を避けるため |
+| onclick      | onClick            | イベントはすべてキャメルケースになる           |
+| onchange     | onChange           | 入力値の変更検知                               |
+| tabindex     | tabIndex           | キーボード操作の順序                           |
+| readonly     | readOnly           | フォームの読み取り専用設定                     |
+| maxlength    | maxLength          | 入力できる最大文字数                           |
+| autocomplete | autoComplete       | オートコンプリート設定                         |
+| rowspan      | rowSpan            | テーブルの行結合                               |
+| colspan      | colSpan            | テーブルの列結合                               |
 
 #### JSX中で式、変数を使用したい場合は`{}`を使用する
 
@@ -354,16 +354,16 @@ const ArticleCard = () => {
 
 主なCSSプロパティと、それに対応するJSXでの属性名の対応は以下の通りです。
 
-|CSSプロパティ名|JSXでのプロパティ名|記述例（JSX）|
-|:----|:----|:----|
-|background-color|backgroundColor|{ backgroundColor: "red" }|
-|font-size|fontSize|{ fontSize: "16px" }|
-|margin-top|marginTop|{ marginTop: "10px" }|
-|padding-left|paddingLeft|{ paddingLeft: "20px" }|
-|flex-direction|flexDirection|{ flexDirection: "column" }|
-|justify-content|justifyContent|{ justifyContent: "space-between" }|
-|align-items|alignItems|{ alignItems: "center" }|
-|box-shadow|boxShadow|{ boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }|
+| CSSプロパティ名  | JSXでのプロパティ名 | 記述例（JSX）                              |
+| :--------------- | :------------------ | :----------------------------------------- |
+| background-color | backgroundColor     | { backgroundColor: "red" }                 |
+| font-size        | fontSize            | { fontSize: "16px" }                       |
+| margin-top       | marginTop           | { marginTop: "10px" }                      |
+| padding-left     | paddingLeft         | { paddingLeft: "20px" }                    |
+| flex-direction   | flexDirection       | { flexDirection: "column" }                |
+| justify-content  | justifyContent      | { justifyContent: "space-between" }        |
+| align-items      | alignItems          | { alignItems: "center" }                   |
+| box-shadow       | boxShadow           | { boxShadow: "0 2px 4px rgba(0,0,0,0.1)" } |
 
 また、設定する値も数値・文字列である必要があり、`10px`のような記述では妥当ではなく、`"10px"`のように変換する必要があります。次の様なルールとなっています。
 
@@ -510,14 +510,87 @@ const ContentBlock = ({ title, children }) => {
     ```
 
     ```javascript
+    // sizeのデフォルト値を20として扱う
     const ArticleCard = ({ title, date, size = 20}) => {
+      ...
     }
     ```
+- propsに値を代入せずにコンポーネントを呼び出した場合、そのpropsは`true`として扱われます。  
+    ```jsx
+    {/* isNewに値を代入しないで呼び出し */}
+    <ArticleCard title={title} date={date} isNew />
+    ```
 
-- propsに値を代入せずにコンポーネントを呼び出した場合、そのpropsは`true`として扱われます。
-- コンポーネントを呼び出すときに、スプレッド構文でオブジェクトを展開して渡すことができます。ただしこういう実装にしたくなった場合は、コンテナコンポーネントにするのが良いかもしれません。
-- コンポーネントに与えられたpropsを変更してはいけません。画面の再描画をしたい場合は後に説明する**state**を変更する必要があります。  
-`props.title = "new title"`のように変更しても、データは変わるものの画面の見え方は変わらず、「データと見た目の不一致」等のバグが発生します。
+    ```javascript
+    const ArticleCard = ({ title, date, isNew}){
+      // isNewはtrueとして扱われる
+      if ( isNew ) {
+        ...
+      }
+    }
+    ```
+- コンポーネントを呼び出すときに、スプレッド構文でオブジェクトを展開して渡すことができます。  
+    ```jsx
+    const Profile = ({ person, size, isSepia, thickBorder }) =>  {
+      return (
+        <div className="card">
+          {/* 受取ったpropsをそのまま同じ名前で渡す */}
+          <Avatar
+            person={person}
+            size={size}
+            isSepia={isSepia}
+            thickBorder={thickBorder}
+          />
+        </div>
+      );
+    }
+    ```
+    これは次のようにできます。
+    ```jsx
+    const Profile = ( props ) =>  {
+      return (
+        <div className="card">
+          <Avatar { ...props } />
+        </div>
+      );
+    }
+    ```
+    但し、このようにpropsを丸々渡している場合、わざわざ`Profile`というコンポーネントを介して`Avatar`にpropsを渡すのは無駄なので、`Profile`をコンテナとして独立させて次のようにするのがいいでしょう。
+    ```jsx
+    // コンテナとなるコンポーネントとする
+    const ProfileCard = ({ children }) => {
+      return (
+        <div className="card">
+          {children}
+        </div>
+      )
+    }
+    ```
+    ```jsx
+    {/* propsは子コンポーネントに直接渡す */}
+    <ProfileCard>
+      <Avatar src="...">
+    </ProfileCard>
+    ```
+- コンポーネントに与えられたpropsを変更してはいけません。  
+    ```jsx
+    const ArticleCard = ({ title, date }) => {
+
+      const changeTitle = () => {
+        // propsを変えてはいけない！
+        props.title = "new title";
+      }
+
+      return (
+        <article className="card">
+          <span className="date">{date}</span>
+          <h2>{title}</h2>
+          <button onClick={changeTitle}>タイトルを変える</button>
+        </article>
+      );
+    };
+    ```
+    画面の再描画をしたい場合は後に説明する**state**を変更する必要があります。与えられたpropsを変更しても、データは変わるものの画面の見え方は変わらず、「データと見た目の不一致」等のバグが発生します。
 
 
 
