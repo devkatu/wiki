@@ -11,7 +11,7 @@
 - 純関数
   - 同じ入力に対して同じ出力…同じ入力なのに呼び出すたびに違う結果はNG
   - でもスクリーン更新、データ取得などで新たに画面を表示するものが副作用(sideEffect)
-  - イベントハンドラに使う関数は`handleClick`みたいな感じで、コンポーネント関数内に作る。短い処理であればインラインで即時関数としてあげるのもあり
+
 
 ## Reactってなに？
 
@@ -451,11 +451,52 @@ const ArticleCard = ( props ) => {
 }
 ```
 
-また、propsとして関数を渡す場合は、`onClick={toggleLike()}`とはせずに、`onClick={toggleLike}`と、`()`を付けないようにしましょう。
+#### コールバック関数について
 
-HTMLの場合は前者のような感じで「実行したいJavaScriptコードを文字列で記述」できましたが、Reactの場合は飽くまでも全てJavaScriptであるので、`()`がついていると、レンダリングの都度`toggleLike`が実行されてしまう事になります。
+また、propsとしてコールバック関数を渡す場合は、`onClick={toggleLike()}`とはせずに、`onClick={toggleLike}`のように、`()`を付けないようにしましょう。
 
-または、即時関数を使って`onClick={() => toggleLike()}`という書き方も可能です。
+```jsx{1,2,6,9,10}
+const ArticleCard = ({ title, date }) => {
+
+  // コンポーネント関数内にコールバック関数を定義
+  const toggleLike = () => {...}
+
+  return (
+    <article className="card">
+      <span className="date">{date}</span>
+      <h2>{title}</h2>
+      {/* 定義したコールバック関数を()を付けずに渡す */}
+      <button onClick={toggleLike}>いいね！</button>
+    </article>
+  );
+};
+```
+
+HTMLでの場合は前者のような感じで「実行したいJavaScriptコードを文字列で記述」できましたが、Reactの場合は飽くまでも全てJavaScriptであるので、`()`がついていると、レンダリングの都度`toggleLike`が実行されてしまう事になります。
+
+または、コールバック関数での処理が短いものであれば、インラインで即時関数として`onClick={() => alert()}`のような書き方もアリです。
+
+#### イベント伝搬、デフォルト動作の停止
+
+イベントの伝播(バブリング)とは、あるイベントが子要素に発生したときに、親要素へもそのイベントが発生していくことです。これは`e.stopPropagation()`で停止できます。
+
+```javascript
+const handleButtonClick = (e) => {
+  e.stopPropagation(); // 親の onClick が呼ばれるのを止める
+  console.log("ボタンだけが押されました");
+};
+```
+
+デフォルト動作とは、`<a>`タグだったらページ遷移したり、`<form>`だったらフォーム内のボタンをクリックしたらページ全体をリロードしたりといったブラウザの標準の動作のことです。これは、`e.preventDefault()`で停止できます。
+
+```javascript
+const handleSubmit = (e) => {
+  e.preventDefault(); // ページがリロードされるのを防ぐ
+  console.log("フォームを送信しました（リロードなし）");
+};
+```
+
+jQueryを使用していた人であれば、これはコールバック関数内で`return false;`とすればよかったですが、reactではできません。
 
 #### コンポーネントに子要素を渡す(props.children)
 
