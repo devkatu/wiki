@@ -472,7 +472,7 @@ const ArticleCard = ({ title, date }) => {
 };
 ```
 
-HTMLでの場合は前者のような感じで「実行したいJavaScriptコードを文字列で記述」できましたが、Reactの場合は飽くまでも全てJavaScriptであるので、`()`がついていると、レンダリングの都度`toggleLike`が実行されてしまう事になります。
+HTMLでの場合は前者のような感じで「実行したいJavaScriptコードを文字列で記述」できましたが、Reactの場合は飽くまでも全てJavaScriptであるので、`()`がついていると、コンポーネントのレンダリングの都度`toggleLike`が実行されてしまう事になります。
 
 または、コールバック関数での処理が短いものであれば、インラインで即時関数として`onClick={() => alert()}`のような書き方もアリです。
 
@@ -496,7 +496,7 @@ const handleSubmit = (e) => {
 };
 ```
 
-jQueryを使用していた人であれば、これはコールバック関数内で`return false;`とすればよかったですが、reactではできません。
+jQueryを使用していた人であれば、これはコールバック関数内で`return false;`とすればよかったですが、reactではできないので注意しましょう。
 
 #### コンポーネントに子要素を渡す(props.children)
 
@@ -640,14 +640,11 @@ const ContentBlock = ({ title, children }) => {
 
 ### 条件付きでレンダーする
 
-Web制作をしていると、「特定の条件のときだけこの要素を表示したい」という場面がよくありますよね。例えば、アコーディオンメニューの開閉や、「NEW」や「SALE」といったバッジの表示・非表示などです。
+アコーディオンメニューの開閉や、「NEW」や「SALE」といったバッジの表示・非表示など、「特定の条件のときだけこの要素を表示したい」場合、三項演算子 `? :`、論理積 `&&`を使って実装することが可能です。
 
-Reactでは、JavaScriptの標準的な条件分岐（`if` 文や、三項演算子 `? :`、論理積 `&&`）を使って、これをとても簡単に実装できます。
-
-特によく使うのは **論理積（`&&`）** と **三項演算子（`? :`）** です。
 例えば、「セール中（`isSale`）」のときだけ「SALE!」というバッジを表示し、そうでない時は何も表示しない、または別のテキストを表示する商品カードのコンポーネントを見てみましょう。
 
-```jsx
+```jsx{6,7,9-12}
 const ProductCard = ({ name, isSale }) => {
   return (
     <div className="product-card">
@@ -665,22 +662,23 @@ const ProductCard = ({ name, isSale }) => {
 }
 ```
 
-このように、波括弧 `{}` の中でJavaScriptの条件式を書くことで、HTML（JSX）の表示を柔軟に切り替えることができます。表示・非表示のためにわざわざCSSの `display: none` をつけ外しするような手間はもう必要ありません。
+このように、波括弧 `{}` の中でJavaScriptの条件式を書くことで、レンダリングする要素を柔軟に切り替えることができます。
 
 ### リストをレンダーする
 
-Webサイトでは、お知らせ一覧やギャラリーの画像リスト、ナビゲーションメニューなど、同じ形式のデータを繰り返し表示することが頻繁にあります。
-Reactでリストを繰り返し表示するには、JavaScriptの配列メソッドである `map()` を使います。
+お知らせ一覧やギャラリーの画像リスト、ナビゲーションメニューなど、同じ形式のデータを繰り返し表示する場合には`map()`等を使って、JSXの配列を生成することで実装可能です。
+
+※`map()`は配列のメソッドで、引数として与えられた関数を全ての要素に対して適用して新しい配列を生成します。
 
 例として、お知らせ（ニュース）の配列データから、`<ul>` と `<li>` を使ったリストを生成してみましょう。
 
 ```jsx
-const NewsList() => {
+const NewsList = () => {
   // お知らせデータの配列（実際の制作ではWordPressなどのAPIから取得したりします）
   const newsItems = [
-    { id: 1, date: '2026.03.29', title: 'Webサイトをリニューアルしました' },
-    { id: 2, date: '2026.03.15', title: '春のキャンペーンのお知らせ' },
-    { id: 3, date: '2026.03.01', title: '新サービス開始について' }
+    { id: 1, date: '2026.03.29', title: 'Webサイトをリニューアルしました', isImportant: true},
+    { id: 2, date: '2026.03.15', title: '春のキャンペーンのお知らせ', isImportant: false },
+    { id: 3, date: '2026.03.01', title: '新サービス開始について', isImportant: true }
   ];
 
   return (
@@ -697,8 +695,60 @@ const NewsList() => {
 }
 ```
 
-ここでとても重要なのが、繰り返し出力している `<li>` タグに付与している `key={item.id}` です。
+ここで注意すべきなのが、繰り返し出力している `<li>` タグに付与している `key={item.id}` です。
+
 Reactは、リストの中の「どのアイテムが追加・変更・削除されたか」を効率よく把握するために、この `key` を目印にします。データが持っている一意のID（記事IDやデータベースのプライマリーキーなど）を `key` に指定するのを忘れないようにしましょう。
+
+上記の例で実際にレンダリングされる要素は次のようになります。
+
+```html
+<ul class="news-list">
+  <li class="news-item">
+    <time class="news-date">2026.03.29</time>
+    <a href="/news/1">Webサイトをリニューアルしました</a>
+  </li>
+  <li class="news-item">
+    <time class="news-date">2026.03.15</time>
+    <a href="/news/2">春のキャンペーンのお知らせ</a>
+  </li>
+  <li class="news-item">
+    <time class="news-date">2026.03.01</time>
+    <a href="/news/3">新サービス開始について</a>
+  </li>
+</ul>
+```
+
+また、`filter()`を使うと引数に与える関数により、特定の要素のみを返すことも可能です。
+
+```jsx{4}
+  return (
+    <ul className="news-list">
+      {newsItems
+        .filter((item) => item.isImportant)
+        .map((item) => (
+          <li key={item.id} className="news-item">
+            <time className="news-date">{item.date}</time>
+            <a href={`/news/${item.id}`}>{item.title}</a>
+          </li>
+      ))}
+    </ul>
+  );
+```
+
+次の要素が返されます。
+
+```html
+<ul class="news-list">
+  <li class="news-item">
+    <time class="news-date">2026.03.29</time>
+    <a href="/news/1">Webサイトをリニューアルしました</a>
+  </li>
+  <li class="news-item">
+    <time class="news-date">2026.03.01</time>
+    <a href="/news/3">新サービス開始について</a>
+  </li>
+</ul>
+```
 
 ### state
 
