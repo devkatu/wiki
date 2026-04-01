@@ -720,11 +720,19 @@ Reactは、リストの中の「どのアイテムが追加・変更・削除さ
 
 また、`filter()`を使うと引数に与える関数により、特定の要素のみを返すことも可能です。
 
-```jsx{4}
+```jsx{12}
+const NewsList = () => {
+  // お知らせデータの配列（実際の制作ではWordPressなどのAPIから取得したりします）
+  const newsItems = [
+    { id: 1, date: '2026.03.29', title: 'Webサイトをリニューアルしました', isImportant: true},
+    { id: 2, date: '2026.03.15', title: '春のキャンペーンのお知らせ', isImportant: false },
+    { id: 3, date: '2026.03.01', title: '新サービス開始について', isImportant: true }
+  ];
+
   return (
     <ul className="news-list">
       {newsItems
-        .filter((item) => item.isImportant)
+        .filter((item) => item.isImportant)  // isImportantがtrueの要素のみ返す
         .map((item) => (
           <li key={item.id} className="news-item">
             <time className="news-date">{item.date}</time>
@@ -733,6 +741,7 @@ Reactは、リストの中の「どのアイテムが追加・変更・削除さ
       ))}
     </ul>
   );
+}
 ```
 
 次の要素が返されます。
@@ -752,3 +761,11 @@ Reactは、リストの中の「どのアイテムが追加・変更・削除さ
 
 ### state
 
+#### useStateフック
+
+#### stateの更新による再レンダー
+
+ユーザーの操作によって、画面上の表示内容を変更したい場合、**state**を使用します。コンポーネント
+
+本来、関数そのものは状態を保存しておくことができません。コンポーネント関数はレンダリングの都度呼ばれ、そのローカル変数はレンダリングが終わると破棄されてしまいます。
+Reactでは、本体側にコンポーネント専用の変数領域を用意してもらい、その領域にデータを保存しておくことで、関数が状態を持っているように見せかけることができます。
