@@ -931,14 +931,18 @@ setCount(6)  // 前回値5に+1される
 
 ここまでは極端な例ですが、具体的には次のようなケースで効果を発揮します。
 
-- **複数個所からのstate更新があった場合**
-- `setTimeout`や、イベントハンドラ内等でのstate更新など、**関数が定義された瞬間のstateに固定される(クロージャ)場合**
+- **複数個所からのstate更新があった場合**  
+  →上記の`setCount`は一つのイベントハンドラ内でしたが、複数箇所から同時多発的に発生する場合
+- `setTimeout`や、後述する`useEffect`に渡す関数でのstate更新など、**関数が定義された瞬間のstateに固定される(クロージャ)場合**    
+  →`setTimeout`で数秒遅延後にstateを更新する関数を実行する場合、そのstateは関数定義時の値に固定されます。その数秒間の間に他の箇所からstateが更新されていても、`setTimeout`で実行する関数のstateはそのままです。
 
 なお、この連続したstate更新は、react側でバッチ処理として一括して行い、イベントハンドラ内の処理が全て終わってからstateを計算し、レンダーが発生するので、パフォーマンス低下にはつながらないようです。(`setCount`を実行するごとにレンダーが発生するわけではない)
 
 #### 配列、オブジェクト型のstate更新
 
 配列やオブジェクトの更新時にも、先に述べたように元のstateを直接変更するようなことはしてはいけません。
+
+例えば、配列に新しい要素を加えたい、オブジェクトの中のプロパティを一つだけ変更したい場合を見てみます。
 
 ```javascript
 const [items, setItems] = useState(['りんご', 'みかん']);
@@ -949,21 +953,23 @@ items.push('ぶどう')
 position.x = 10;
 ```
 
-既存のstateをコピーして新しい配列やオブジェクトを作成し、それをセットします。
+配列やオブジェクトは、**既存のstateをコピーして新しい配列やオブジェクトを作成し、それを新しいstateとしてセット**します。
 
 ```jsx
 const [items, setItems] = useState(['りんご', 'みかん']);
 const [position, setPosition] = useState({x: 0, y: 0});
 
-// OK: スプレッド構文で元のstateをコピー
+// OK: スプレッド構文で元のstateをコピー、`ぶどう`を追加
 setItems(i => {[
   ...items,
   'ぶどう'
-})
-setPosition({
+]})
+
+// OK: スプレッド構文で元のstateをコピーして、xを10にセットする
+setPosition(p => {{
   ...position,
   x: 10
-})
+}})
 ```
 
 
@@ -976,10 +982,24 @@ setPosition({
 
 
 
-stateの配列の中身を更新死体場合、`map`や`filter`を使うのが良いでしょう。
+stateの配列の中身を更新したい場合、`map`や`filter`を使うのが良いでしょう。
+
+例えば、先の`items`の配列の二番目のstateを更新したい場合
+
 
 ```javascript
+const [items, setItems] = useState(['りんご', 'みかん']);
 
+setItems(prev => {              // 最新stateを引数に受け取り、 
+  prev.map((item, index) => {   // 最新stateに一つずつアクセスし、
+    if (index === 1) {
+      return 'ぶどう';           // indexが1(2番目の要素)を更新
+    } else {
+      return item;              // その他の要素はそのまま
+    
+    }
+  }
+})
 ```
 
 
