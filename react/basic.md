@@ -1064,10 +1064,130 @@ const [count, setCount] = useState(0);
 
 stateの運用方法やその他について記載する
 
+#### コンポーネント間でstateを共有する
+
+複数のコンポーネント間で同じstateを共有したい場合、共通の親コンポーネントへstateを移動させる**リフトアップ**という手法を用います。
+
+次の例は、タブメニューの切替を行うものです。
+
+タブの切替を行う`TabButton`コンポーネントと、コンテンツを表示する`TabContent`コンポーネントがあり、これらコンポーネントは兄弟関係にあります。
+
+`TabButton`コンポーネントに持たせているstateでは、兄弟要素である`TabContent`のコンテンツを制御できません。
+
+```jsx
+import { useState } from 'react';
+
+// --- 子コンポーネント：タブボタン ---
+const TabButton = ({ label }) => {
+  // 自分の「色」だけを管理するstate
+  // buttonのクリックによってTabContentを制御したいけどこのままでは出来ない
+  const [isActive, setIsActive] = useState(false);
+
+  return (
+    <button 
+      onClick={() => setIsActive(a => !a)}
+      style={{ backgroundColor: isActive ? '#007bff' : '#eee', color: isActive ? '#fff' : '#000' }}
+    >
+      {label}
+    </button>
+  );
+};
+
+// --- 子コンポーネント：表示コンテンツ ---
+const TabContent = () => {
+  // 自分の「表示内容」だけを管理するstate
+  const [activeTab, setActiveTab] = useState('home');
+
+  return (
+    <div style={{ marginTop: '20px', padding: '10px', border: '1px solid #ccc' }}>
+      <p>現在のコンテンツstate: {activeTab}</p>
+      {/* 外部から命令を受け取れないので、表示を切り替える手段がない... */}
+    </div>
+  );
+};
+
+// --- 親コンポーネント ---
+export default function TabContainer() {
+  // TabButtonにもたせているstateでは
+  // TabContentの制御ができない・・・
+  return (
+    <div>
+      <nav>
+        <TabButton label="ホーム" />
+        <TabButton label="プロフィール" />
+      </nav>
+      <TabContent />
+    </div>
+  );
+}
+```
+
+`TabContent`の表示をコントロールするためには、**親コンポーネントの`TabContainer`でstateを管理する**必要があります。
+
+これを**stateのリフトアップ**と呼び、以下のように変更してみます。
+
+- `TabButton`、`TabContent`で個別にstateを持たせていたものをやめて、`TabContainer`にstateを移動させる。
+- state更新用関数は、**propsとして`TabButton`に渡し**、アクティブにするタブをセットしてもらうようにする
+- stateそのものは、**propsとして`TabContent`に渡し**、そのstateを用いて表示するコンテンツを制御する
+- `TabButton`のアクティブ表示は、親コンポーネント側でアクティブタブと照らし合わせてpropsとして渡す
+
+```jsx
+import { useState } from 'react';
+
+// --- 子コンポーネント：タブボタン ---
+// 親コンポーネントからstateを元に判定したアクティブフラグ、state更新関数を受け取る
+const TabButton = ({ label, isActive, onClick }) => {
+  return (
+    <button 
+      onClick={onClick}
+      style={{ backgroundColor: isActive ? '#007bff' : '#eee', color: isActive ? '#fff' : '#000' }}
+    >
+      {label}
+    </button>
+  );
+};
+
+// --- 子コンポーネント：表示コンテンツ ---
+// 親コンポーネントからstateを受け取る
+const TabContent = ({ activeTab }) => {
+  return (
+    <div style={{ marginTop: '20px', padding: '10px', border: '1px solid #ccc' }}>
+      {activeTab === 'home' && <p>ホーム画面のコンテンツです。</p>}
+      {activeTab === 'profile' && <p>プロフィール画面のコンテンツです。</p>}
+    </div>
+  );
+};
+
+// --- 親コンポーネント：ここでstateを管理（リフトアップ先） ---
+export default function TabContainer() {
+  // 共通で使うstateを親で定義
+  const [activeTab, setActiveTab] = useState('home');
+
+  return (
+    <div>
+      <nav>
+        {/* 親から「今の値」と「更新用関数」をPropsで渡す */}
+        <TabButton 
+          label="ホーム" 
+          isActive={activeTab === 'home'} 
+          onClick={() => setActiveTab('home')} 
+        />
+        <TabButton 
+          label="プロフィール" 
+          isActive={activeTab === 'profile'} 
+          onClick={() => setActiveTab('profile')} 
+        />
+      </nav>
+
+      {/* 同じStateを別のコンポーネントにも渡す */}
+      <TabContent activeTab={activeTab} />
+    </div>
+  );
+}
+```
 
 #### stateの設計
 
-複数のコンポーネント間で同じstateを共有したい場合、共通の親コンポーネントへstateを移動させる**リフトアップ**という手法を用います。
 
 状態管理でバグを減らすためには、データベースの正規化と同じように、適切なstateの設計が重要です。
 
