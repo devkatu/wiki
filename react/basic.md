@@ -1314,13 +1314,14 @@ export default function VanillaCart() {
 
 reducer関数は変更前のstateと、`dispatch`されたactionオブジェクトを受け取って、それらを元に新しいstateを返すものです。
 
-このreducer関数内に、先程コンポーネント内で行っていたstateの更新処理を抽出することで、コンポーネントからstate変更ロジックを分離できます。
+このreducer関数内に、先程コンポーネント内で行っていたstateの更新処理を移動します。
 
 ```javascript
 // 1つ目のstateには変更前のstate、
 // 2つ目のactionにはdispatchされたオブジェクトが入る
 const cartReducer = (state, action) => {
   // actionのタイプによってstate更新方法を分岐
+  // returnする値が新しいstateとなる
   switch (action.type) {
     case 'ADD_ITEM': {
       const isExist = state.find(item => item.id === action.payload.id);
@@ -1351,6 +1352,7 @@ const cartReducer = (state, action) => {
 
 ```
 
+3. 
 
 ```jsx
 import { useReducer } from 'react';
