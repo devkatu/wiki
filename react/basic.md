@@ -1271,9 +1271,7 @@ export default function VanillaCart() {
 
 `useReducer`(後述)から返される`dispatch`関数へ置き換えます。`dispatch`には引数としてオブジェクトを渡します。
 
-このオブジェクトには、**「何が起きたか」**と、**stateの更新に最低限必要な情報**を渡します。
-
-
+このオブジェクトには、**「何が起きたか」と**、**stateの更新に最低限必要な情報**を渡します。
 
 ```diff
 - <button onClick={() => incrementQuantity(item.id)}>+</button>
@@ -1299,9 +1297,59 @@ export default function VanillaCart() {
 + </button>
 ```
 
-2. stateと、命令を出すためのdispatchを受け取る
+`dispatch`に渡すオブジェクトは**actionオブジェクト**といい、形式は自由に決められますが、次のように`type`、`payload`を持つ形式が一般的です。
 
-3. UIは「何が起きたか」をdispatchで送るだけ！
+```javascript
+{
+  type: "ADD_ITEM" // 何が起きたか判別するための文字列
+  payload: {       // state更新に最低限必要なオブジェクト
+    id: 1,
+    name: "おしゃれな椅子", 
+    price: 5000
+  }
+}
+```
+
+2. reducer関数を定義する
+
+reducer関数は変更前のstateと、`dispatch`されたactionオブジェクトを受け取って、それらを元に新しいstateを返すものです。
+
+このreducer関数内に、先程コンポーネント内で行っていたstateの更新処理を抽出することで、コンポーネントからstate変更ロジックを分離できます。
+
+```javascript
+// 1つ目のstateには変更前のstate、
+// 2つ目のactionにはdispatchされたオブジェクトが入る
+const cartReducer = (state, action) => {
+  // actionのタイプによってstate更新方法を分岐
+  switch (action.type) {
+    case 'ADD_ITEM': {
+      const isExist = state.find(item => item.id === action.payload.id);
+      if (isExist) {
+        // 変更後のstateを返す
+        return state.map(item =>
+          item.id === action.payload.id ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      }
+      // 変更後のstateを返す
+      return [...state, { ...action.payload, quantity: 1 }];
+    }
+
+    case 'INCREMENT':
+      // 変更後のstateを返す
+      return state.map(item =>
+        item.id === action.id ? { ...item, quantity: item.quantity + 1 } : item
+      );
+
+    case 'REMOVE':
+      // 変更後のstateを返す
+      return state.filter(item => item.id !== action.id);
+
+    default:
+      return state;
+  }
+};
+
+```
 
 
 ```jsx
