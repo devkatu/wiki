@@ -1314,7 +1314,7 @@ export default function VanillaCart() {
 
 reducer関数は変更前のstateと、`dispatch`されたactionオブジェクトを受け取って、それらを元に新しいstateを返すものです。
 
-このreducer関数内に、先程コンポーネント内で行っていたstateの更新処理を移動します。
+先程コンポーネント内で行っていたstateの更新処理をやめて、このreducer関数内でstate更新を行うようにします。
 
 ```javascript
 // 1つ目のstateには変更前のstate、
@@ -1323,26 +1323,26 @@ const cartReducer = (state, action) => {
   // actionのタイプによってstate更新方法を分岐
   // returnする値が新しいstateとなる
   switch (action.type) {
+
+    // addItem内のstate更新と同等の処理
     case 'ADD_ITEM': {
       const isExist = state.find(item => item.id === action.payload.id);
       if (isExist) {
-        // 変更後のstateを返す
         return state.map(item =>
           item.id === action.payload.id ? { ...item, quantity: item.quantity + 1 } : item
         );
       }
-      // 変更後のstateを返す
       return [...state, { ...action.payload, quantity: 1 }];
     }
 
+    // incrementQuantity内のstate更新と同等の処理
     case 'INCREMENT':
-      // 変更後のstateを返す
       return state.map(item =>
         item.id === action.id ? { ...item, quantity: item.quantity + 1 } : item
       );
 
+    // removeItem内のstate更新と同等の処理
     case 'REMOVE':
-      // 変更後のstateを返す
       return state.filter(item => item.id !== action.id);
 
     default:
@@ -1352,7 +1352,24 @@ const cartReducer = (state, action) => {
 
 ```
 
-3. 
+3. `useReducer`でコンポーネントと作成した`cartReducer`を関連付ける
+
+コンポーネントで`useReducer`をインポートします。
+
+```javascript
+import { useReducer } from 'react';
+```
+
+コンポーネントのトップレベルで`useReducer`を呼び出し、`useState`は不要となるので削除します。
+
+`useReducer`へ渡す引数は、先の`cartRducer`と、初期stateとなり、返り値はstateとdspatch関数になります。
+
+```diff
+- const [cart, setCart] = useState([]);
++ const [cart, dispatch] = useReducer(cartReducer, []);
+```
+
+コード全体は以下のようになります。
 
 ```jsx
 import { useReducer } from 'react';
@@ -1412,13 +1429,22 @@ export default function ReducerCart() {
 }
 ```
 
+コンポーネントのコード見通しがよくなりましたね！
 
-複数箇所で行われる場合に便利なのが`useReducer`です。一言で言うと、高度なstate更新のための機能です。
+stateの更新ロジックも`cartReducer`にて一元化されることで管理が容易になりました。
+
+アプリの規模が大きくなってくると更に効果を実感できるでしょう。
 
 
-直接stateを更新するのではなく、`dispatch`で「アクション（発生したこと）」を指定し、専用の`reducer`関数側で「アクションに対してstateをどう更新するか」を定義します。これにより、「何が起きたか」と「状態をどう変えるか」を分離（関心の分離）でき、コードの見通しが良くなります。誤った`setState`をしてしまうリスクも減らすことができます。
 
-逆に、シンプルなstate更新（トグルボタンなど）であれば、reducerを入れるとコード量が増えるだけなので`useState`で十分です。
+まとめると、
+
+- コンポーネントでは直接stateを更新せずに、`dispatch`で「アクション（発生したこと）」を指定
+- `reducer`関数側で「アクションに対してstateをどう更新するか」を定義
+
+これにより、「何が起きたか」と「状態をどう変えるか」を分離（関心の分離）でき、コードの見通しが良くなります。誤った`setState`をしてしまうリスクも減らすことができます。
+
+逆に、シンプルなstate更新（トグルボタンなど）であれば、reducerを入れるとコード量が増えるだけなので`useState`で十分でしょう。
 
 #### contextを使用する
 
