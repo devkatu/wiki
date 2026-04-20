@@ -1513,7 +1513,11 @@ export const ThemeContext = createContext(false);
 
 2. stateのリフトアップをしたコンポーネントをコンテクストで囲む
 
-先に作成したコンテクスト`ThemeContext`で、リフトアップしたコンポーネントを囲みます。また、propsをバケツリレーしていた`Header`のpropsは削除します。
+先に作成したコンテクスト`ThemeContext`で、リフトアップ先のコンポーネントを囲みます。
+
+コンテクストのpropsには`value`を指定し、使用先に渡したい変数を渡します。
+
+また、propsをバケツリレーしていた`Header`のpropsは不要となるので削除します。
 
 ```jsx
 export default function App() {
@@ -1540,10 +1544,12 @@ export default function App() {
 
 先に作成したコンテクストの値を使用します。`useContext`を`react`からインポートし、引数に先に作成したコンテクスト`ThemeContext`を渡します。
 
-```jsx
-import { useContext } from 'react`;
+これで、`ThemeContext`の`value`に指定した値を直接受け取ることが可能になります。
 
-function ThemeButton() {
+```jsx
+import { useContext } from 'react';
+
+const ThemeButton = () => {
   const { isDark, toggleTheme } = useContext(ThemeContext);
 
   return (
@@ -1554,7 +1560,7 @@ function ThemeButton() {
 }
 ```
 
-コードの全文はこちら
+コードの全文はこちらです。
 
 
 ```jsx
