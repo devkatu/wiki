@@ -4,6 +4,11 @@
 
 615行目くらいまで見直し中
 
+1. ざっくりゴール・目的を説明
+2. コード構文・考え方
+3. 補足・詳細説明
+4. コードサンプル
+
 - [x] UI記述方法
 - [x] props
 - [x] リストや条件付きレンダー（UI記述方法に統一したい？）
@@ -582,102 +587,138 @@ const ContentBlock = ({ title, children }) => {
 </div>
 ```
 
-#### その他のpropsの挙動について
+#### その他のpropsのルール・挙動について
 
 propsでは下記のようなルールがあります。
 
-- propsを指定せずにコンポーネントを呼び出した場合に、そのpropsは`undefined`となります。デフォルト値を指定したい場合は、分割代入時にデフォルト値を設定します。  
-    ```jsx
-    {/* コンポーネントにsizeが存在するが指定しなかった場合はundefined扱いになる */}
-    <ArticleCard title={title} date={date} />
-    ```
+**★コンポーネントに与えられたpropsを変更してはいけません。**
 
-    ```javascript
-    // sizeのデフォルト値を20として扱う
-    const ArticleCard = ({ title, date, size = 20}) => {
-      ...
-    }
-    ```
-- propsに値を代入せずにコンポーネントを呼び出した場合、そのpropsは`true`として扱われます。  
-    ```jsx
-    {/* isNewに値を代入しないで呼び出し */}
-    <ArticleCard title={title} date={date} isNew />
-    ```
+```jsx{4,5}
+const ArticleCard = ({ title, date }) => {
 
-    ```javascript
-    const ArticleCard = ({ title, date, isNew}){
-      // isNewはtrueとして扱われる
-      if ( isNew ) {
-        ...
-      }
-    }
-    ```
-- コンポーネントを呼び出すときに、スプレッド構文でオブジェクトを展開して渡すことができます。  
-    ```jsx
-    const Profile = ({ person, size, isSepia, thickBorder }) =>  {
-      return (
-        <div className="card">
-          {/* 受取ったpropsをそのまま同じ名前で渡す */}
-          <Avatar
-            person={person}
-            size={size}
-            isSepia={isSepia}
-            thickBorder={thickBorder}
-          />
-        </div>
-      );
-    }
-    ```
-    これは次のようにできます。
-    ```jsx
-    const Profile = ( props ) =>  {
-      return (
-        <div className="card">
-          <Avatar { ...props } />
-        </div>
-      );
-    }
-    ```
-    但し、このようにpropsを丸々渡している場合、わざわざ`Profile`というコンポーネントを介して`Avatar`にpropsを渡すのは無駄なので、`Profile`をコンテナとして独立させて次のようにするのがいいでしょう。
-    ```jsx
-    // コンテナとなるコンポーネントとする
-    const ProfileCard = ({ children }) => {
-      return (
-        <div className="card">
-          {children}
-        </div>
-      )
-    }
-    ```
-    ```jsx
-    {/* propsは子コンポーネントに直接渡す */}
-    <ProfileCard>
-      <Avatar src="...">
-    </ProfileCard>
-    ```
-- コンポーネントに与えられたpropsを変更してはいけません。  
-    ```jsx
-    const ArticleCard = ({ title, date }) => {
+  const changeTitle = () => {
+    // propsを変えてはいけない！
+    props.title = "new title";
+  }
 
-      const changeTitle = () => {
-        // propsを変えてはいけない！
-        props.title = "new title";
-      }
+  return (
+    <article className="card">
+      <span className="date">{date}</span>
+      <h2>{title}</h2>
+      <button onClick={changeTitle}>タイトルを変える</button>
+    </article>
+  );
+};
+```
 
-      return (
-        <article className="card">
-          <span className="date">{date}</span>
-          <h2>{title}</h2>
-          <button onClick={changeTitle}>タイトルを変える</button>
-        </article>
-      );
-    };
-    ```
-    画面の再描画をしたい場合は後に説明する**state**を変更する必要があります。与えられたpropsを変更しても、データは変わるものの画面の見え方は変わらず、「データと見た目の不一致」等のバグが発生します。
+画面の再描画をしたい場合は後に説明する**state**を変更する必要があります。
+
+与えられたpropsを変更しても、**データは変わるものの画面の見え方は変わらず、「データと見た目の不一致」等のバグが発生**します。
+
+---
+
+**★propsを指定せずにコンポーネントを呼び出した場合に、そのpropsは`undefined`となります。**
+
+```jsx
+{/* コンポーネントにsizeが存在するが指定しなかった場合はundefined扱いになる */}
+<ArticleCard title={title} date={date} />
+```
+
+デフォルト値を指定したい場合は、コンポーネント関数の分割代入時に、デフォルト値を設定します。  
+
+```javascript
+// sizeのデフォルト値を20として扱う
+const ArticleCard = ({ title, date, size = 20}) => {
+  ...
+}
+```
+
+---
+
+**★propsに値を代入せずにコンポーネントを呼び出した場合、そのpropsは`true`として扱われます。**
+
+下記のように`isNew`に値を指定せずに呼び出します。
+
+```jsx
+{/* isNewに値を代入しないで呼び出し */}
+<ArticleCard title={title} date={date} isNew />
+```
+
+コンポーネントでは`isNew`は`true`として扱われます。
+
+```javascript{2,3}
+const ArticleCard = ({ title, date, isNew}){
+  // isNewはtrueとして扱われる！
+  if ( isNew ) {
+    ...
+  }
+}
+```
+
+---
+
+**★スプレッド構文でオブジェクトの各プロパティを展開して渡すことができます。**
+
+コンポーネントに複数のpropsを渡す時、オブジェクトにそれらをまとめて渡すことが出来ます。
+
+例えば次のように各propsをそのまま同じ名前で渡している場合です。
+
+```jsx{4-10}
+const Profile = ({ person, size, isSepia, thickBorder }) => {
+  return (
+    <div className="card">
+      {/* 受取ったpropsをそのまま同じ名前で渡す */}
+      <Avatar
+        person={person}
+        size={size}
+        isSepia={isSepia}
+        thickBorder={thickBorder}
+      />
+    </div>
+  );
+}
+```
+
+これは次のようにpropsをスプレッドで展開して渡すことができます。
+
+```jsx{4}
+const Profile = ( props ) =>  {
+  return (
+    <div className="card">
+      <Avatar { ...props } />
+    </div>
+  );
+}
+```
+
+但し、このようにpropsを丸々渡している場合、わざわざ`Profile`というコンポーネントを介して`Avatar`にpropsを渡すのは無駄なので、`Profile`をコンテナとして独立させて次のようにするのがいいでしょう。
+
+```jsx
+// コンテナとなるコンポーネントとする
+const ProfileCard = ({ children }) => {
+  return (
+    <div className="card">
+      {children}
+    </div>
+  )
+}
+```
+
+```jsx
+{/* propsは子コンポーネントに直接渡す */}
+<ProfileCard>
+  <Avatar src="...">
+</ProfileCard>
+```
 
 ### 条件付きでレンダーする
 
-アコーディオンメニューの開閉や、「NEW」や「SALE」といったバッジの表示・非表示など、「特定の条件のときだけこの要素を表示したい」場合、三項演算子 `? :`、論理積 `&&`を使って実装することが可能です。
+アコーディオンメニューの開閉や、「NEW」や「SALE」といったバッジの表示・非表示などのように、「**特定の条件のときだけこの要素を表示したい**」場合、三項演算子 `? :`、論理積 `&&`を使って実装することが可能です。
+
+```jsx
+[条件式] && [trueの時に表示する要素]
+[条件式] ? [trueの時に表示する要素] : [falseの時に表示する要素]
+```
 
 例えば、「セール中（`isSale`）」のときだけ「SALE!」というバッジを表示し、そうでない時は何も表示しない、または別のテキストを表示する商品カードのコンポーネントを見てみましょう。
 
@@ -699,7 +740,7 @@ const ProductCard = ({ name, isSale }) => {
 }
 ```
 
-このように、波括弧 `{}` の中でJavaScriptの条件式を書くことで、レンダリングする要素を柔軟に切り替えることができます。
+このように、波括弧 `{}` の中でJavaScriptの条件式を書くことで、レンダリングする要素を切り替える処理を簡単に書くことができます。
 
 ### リストをレンダーする
 
