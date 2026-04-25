@@ -1713,14 +1713,257 @@ function ThemeButton() {
 - コンポーネントの再利用性が下がる  
   `useContext`を使っているコンポーネントは、該当のcontextの配下にあることが前提なので、そのまま他の所で使おうとしても動きません
 
-## その他のフック
 
-今までに紹介した`useState`や`useContext`以外にも、コンポーネント関数に様々な機能を提供するフックがあります。
+
+
+
+## コンポーネントのライフサイクルと副作用
+
+今までに紹介した`useState`や`useContext`以外にも、コンポーネント関数に様々な機能を提供する重要なフックがあります。
+
+副作用とは、コンポーネントの「見た目を作る」以外の作業を言います。例えばAPIからデータを取得する、タイマーをセットする、DOMを手動操作するなどです。
 
 ### useEffect
 
+**機能・目的**
+
+コンポーネントのレンダリング後に、副作用（DOMの手動変更、データのフェッチ、タイマーのセットなど）を実行するために使用します。
+
+**構文**
+```javascript
+useEffect(() => {
+  // 実行したい副作用の処理
+  return () => {
+    // クリーンアップ処理（アンマウント時や再実行前に呼ばれる）
+  };
+}, [依存配列]);
+```
+
+**補足説明**
+第2引数の依存配列（デペンデンシーアレイ）によって、処理が実行されるタイミングを制御できます。
+- 空の配列 `[]` を渡すと、初回マウント時のみ実行されます。
+- 配列に変数を入れると、その変数が更新された時だけ実行されます。
+- 第2引数を省略すると、毎回のレンダリング後に実行されるので注意が必要です。
+
+**実際のコード例**
+```jsx
+import { useState, useEffect } from 'react';
+
+function Timer() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCount((prev) => prev + 1);
+    }, 1000);
+
+    // コンポーネントがアンマウントされる際にタイマーをクリアする
+    return () => clearInterval(timer);
+  }, []); // 空の配列なので初回のみ実行される
+
+  return <p>経過時間: {count}秒</p>;
+}
+```
+
+### useLayoutEffect
+
+**機能・目的**
+DOMの変更後、ブラウザが画面を描画する「前」に副作用を同期的に実行するために使用します。
+
+**構文**
+```javascript
+useLayoutEffect(() => {
+  // 実行したい副作用の処理
+}, [依存配列]);
+```
+
+**補足説明**
+`useEffect` と使い方は全く同じですが、実行されるタイミングが異なります。
+`useEffect` は画面の描画が終わった「後」に非同期で実行されますが、`useLayoutEffect` は画面の描画の「前」に実行されます。そのため、DOMのサイズや位置を測定して即座にDOMを更新したい場合など、画面のチラつき（フリッカー）を防ぐ目的で使用されます。通常は `useEffect` を優先し、描画に問題がある場合のみ `useLayoutEffect` を使用するのが推奨されます。
+
+**実際のコード例**
+```jsx
+import { useState, useLayoutEffect, useRef } from 'react';
+
+function Tooltip({ children }) {
+  const [tooltipHeight, setTooltipHeight] = useState(0);
+  const ref = useRef(null);
+
+  useLayoutEffect(() => {
+    // 画面に描画される前に高さを測定し、stateを更新する
+    // これにより、高さが適用される前の状態が一瞬表示される（チラつく）のを防げる
+    if (ref.current) {
+      setTooltipHeight(ref.current.getBoundingClientRect().height);
+    }
+  }, []);
+
+  return (
+    <div ref={ref} style={{ padding: '10px', background: 'black', color: 'white' }}>
+      {children} (高さ: {tooltipHeight}px)
+    </div>
+  );
+}
+```
+
+## DOMへのアクセスと値の保持
+
 ### useRef
+
+**機能・目的**
+DOM要素に直接アクセスしたり、レンダリング間で値を保持（ただし値が変わっても再レンダリングさせない）するために使用します。
+
+**構文**
+```javascript
+const refContainer = useRef(初期値);
+```
+
+**補足説明**
+`refContainer.current` プロパティを通じて値の読み書きを行います。
+`useState`とは異なり、`current`の値を変更してもコンポーネントの再レンダリングはトリガーされません。そのため、表示に関わらないタイマーIDなどの裏側のデータを保持するのにも便利です。
+
+**実際のコード例**
+```jsx
+import { useRef } from 'react';
+
+function TextInputWithFocusButton() {
+  const inputEl = useRef(null);
+
+  const onButtonClick = () => {
+    // `current`はマウントされたテキスト入力要素を指す
+    inputEl.current.focus();
+  };
+
+  return (
+    <>
+      <input ref={inputEl} type="text" />
+      <button onClick={onButtonClick}>入力をフォーカスする</button>
+    </>
+  );
+}
+```
+
+## レンダリング（パフォーマンス）の最適化
+
+### useCallback
+
+**機能・目的**
+関数をメモ化（キャッシュ）し、不要な再生成を防ぐために使用します。子コンポーネントにpropsとして関数を渡す際の不要な再レンダリングを防ぐのに役立ちます。
+
+**構文**
+```javascript
+const memoizedCallback = useCallback(
+  () => {
+    // 実行したい処理
+  },
+  [依存配列],
+);
+```
+
+**補足説明**
+Reactではコンポーネントが再レンダリングされるたびに、その中で定義されている関数も新しく作り直されます。`React.memo`などで子コンポーネントをメモ化していても、渡される関数が別物になれば再レンダリングされてしまいます。`useCallback`を使うことで、依存している値が変化しない限り、同じ関数インスタンスを使い回すことができます。
+
+**実際のコード例**
+```jsx
+import { useState, useCallback } from 'react';
+
+function ParentComponent() {
+  const [count, setCount] = useState(0);
+  const [text, setText] = useState('');
+
+  // countが変わらない限り、関数は再生成されない
+  const increment = useCallback(() => {
+    setCount((prev) => prev + 1);
+  }, []);
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      {/* 別のstate（text）が更新されても、increment関数は同じなのでChildは再レンダリングを回避しやすい */}
+      <ChildComponent onIncrement={increment} />
+      <input value={text} onChange={(e) => setText(e.target.value)} />
+    </div>
+  );
+}
+```
 
 ### useMemo
 
-### useCallback
+**機能・目的**
+計算結果をメモ化し、再レンダリング時の重い処理（計算コストの高い関数の実行など）をスキップするために使用します。
+
+**構文**
+```javascript
+const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);
+```
+
+**補足説明**
+`useCallback`が「関数そのもの」をキャッシュするのに対し、`useMemo`は「関数の実行結果（戻り値）」をキャッシュします。依存配列の値が変化した時だけ再計算されるため、パフォーマンスの最適化に効果的です。ただし、何でもメモ化すれば良いわけではなく、かえってメモリを消費するため、本当に重い計算にのみ使用するのが推奨されます。
+
+**実際のコード例**
+```jsx
+import { useState, useMemo } from 'react';
+
+function ExpensiveCalculationComponent({ numbers }) {
+  const [text, setText] = useState('');
+
+  // numbersの配列が変わらない限り、合計値の計算はスキップされる
+  const sum = useMemo(() => {
+    console.log('重い計算を実行中...');
+    return numbers.reduce((acc, curr) => acc + curr, 0);
+  }, [numbers]);
+
+  return (
+    <div>
+      <p>合計値: {sum}</p>
+      {/* textを変更しても、sumの計算は再実行されない */}
+      <input value={text} onChange={(e) => setText(e.target.value)} />
+    </div>
+  );
+}
+```
+
+### React.memo
+
+**機能・目的**
+コンポーネントのレンダリング結果をメモ化し、親コンポーネントが再レンダリングされた際でも、propsが変化していなければ子コンポーネントの不要な再レンダリングをスキップするために使用します。
+
+**構文**
+```javascript
+const MemoizedComponent = React.memo(function MyComponent(props) {
+  // コンポーネントのレンダリング
+});
+```
+
+**補足説明**
+`React.memo` はフック（Hook）ではなく、コンポーネントをラップして返す高階コンポーネント（HOC）です。
+前述の `useCallback` や `useMemo` と組み合わせて使用されることが多く、propsとして渡す関数やオブジェクトをメモ化しておかないと、毎回新しいpropsが渡されたと判定されて再レンダリングされてしまうため、注意が必要です。
+
+**実際のコード例**
+```jsx
+import React, { useState, useCallback } from 'react';
+
+// React.memoでラップすることで、propsが変わらない限り再レンダリングされない
+const ChildComponent = React.memo(({ text, onClick }) => {
+  console.log('ChildComponentがレンダリングされました');
+  return <button onClick={onClick}>{text}</button>;
+});
+
+function ParentComponent() {
+  const [count, setCount] = useState(0);
+
+  // useCallbackで関数をメモ化し、ChildComponentが不必要に再レンダリングされるのを防ぐ
+  const handleClick = useCallback(() => {
+    console.log('クリックされました');
+  }, []);
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>カウントアップ</button>
+      
+      {/* 親のcountが更新されても、ChildComponentは再レンダリングをスキップする */}
+      <ChildComponent text="変わらないボタン" onClick={handleClick} />
+    </div>
+  );
+}
+```
