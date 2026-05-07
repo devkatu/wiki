@@ -2,8 +2,8 @@
 
 メモ
 
-1778行まで見直しした
-画像も欲しいけど・・・
+避難ハッチ以降見直し要！
+**画像も欲しいけど！！！**
 
 1. ざっくりゴール・目的を説明
 2. コード構文・考え方
@@ -15,7 +15,8 @@
 - [x] リストや条件付きレンダー（UI記述方法に統一したい？）
 - [x] state、レンダリングについて
   - state、レンダーあたりは画像も付けたい
-- [ ] その他フック useEffectもこちら
+- [ ] 避難ハッチ　React外とのやり取り
+- [ ] パフォーマンス最適化
 - [ ] いい感じのコンポーネントのサンプルコード？？
 
 - 純関数
@@ -856,6 +857,8 @@ const NewsList = () => {
   </li>
 </ul>
 ```
+
+## stateによるインタラクティブなUI
 
 ### stateとその仕組み
 
@@ -1972,7 +1975,7 @@ function ProductCart({ items, theme }) {
 
 ここで役に立つのが、`useEffectEvent`です。このフックを使って、エフェクトイベントなるものを作り出すことが出来ます。
 
-エフェクトイベントとして先の通知の関数だけを切り出すことが可能になり、最新の`theme`を使いながら、エフェクトは反応させない事ができます。
+エフェクトイベントとして先の通知の関数だけを切り出すことが可能になり、レンダー時の最新の`theme`を使いながら、エフェクトは反応させない事ができます。
 
 ```javascript
 function ProductCart({ items, theme }) {
@@ -2004,28 +2007,26 @@ function ProductCart({ items, theme }) {
 
 #### useEffectのサンプル
 
-次に示すコード例はコンポーネントがレンダーされたら経過時間を表示する例です。
+`useEffect`のよくある例をいくつか紹介します。
+
+**★経過時間を表示する**
+
+コンポーネントがマウントされたらインターバルタイマーを起動して、stateにセットし続けます。クリーンアップ処理でタイマーをクリアするのがポイント。
 
 ```jsx
-import { useState, useEffect } from 'react';
+useEffect(() => {
+  const timer = setInterval(() => {
+    setCount((prev) => prev + 1);
+  }, 1000);
 
-function Timer() {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCount((prev) => prev + 1);
-    }, 1000);
-
-    // コンポーネントがアンマウントされる際にタイマーをクリアする
-    return () => clearInterval(timer);
-  }, []); // 空の配列なので初回のみ実行される
-
-  return <p>経過時間: {count}秒</p>;
-}
+  // コンポーネントがアンマウントされる際にタイマーをクリアする
+  return () => clearInterval(timer);
+}, []); // 空の配列なので初回のみ実行
 ```
 
-次は`localStorage`からデータを読み出してstateにセットする例です。
+**★`localStorage`からデータを読み出す**
+
+コンポーネントがマウントされたときに、ローカルストレージからデータを読み出してstateにセットする例です。
 
 ```javascript
 useEffect(() => {
@@ -2033,23 +2034,70 @@ useEffect(() => {
   if (savedData) {
     setSettings(JSON.parse(savedData));
   }
-}, []); // 空の配列を渡すことで、初回レンダリング時のみ実行
+}, []); // 空の配列なので初回のみ実行
 ```
 
+**★ウィンドウイベントを監視する**
 
+ウィンドウの`resize`イベントにイベントハンドラをセットする例です。クリーンアップ処理で、セットしたイベント監視を必ず外しましょう。
 
+```javascript
+useEffect(() => {
+  const handleResize = () => {
+    setIsMobile(window.innerWidth < 768);
+  };
 
+  // 最初に1回実行して今の状態を確認
+  handleResize();
 
+  // resizeイベントにイベントハンドラセット
+  window.addEventListener('resize', handleResize);
 
+  return () => {
+    // アンマウント時、必ずイベント監視を外す
+    window.removeEventListener('resize', handleResize);
+  };
+}, []);
+```
+
+**★APIからデータを取得する**
+
+任意のAPIからデータを取得し、stateにセットする例です。
+
+リクエストしたデータが返って来る前にページ遷移等で依存配列(下記例では`productId`)が変わったり、コンポーネントがアンマウントとなった場合にはstateセットしないように、クリーンアップ処理で返ってきたデータを無視するフラグを立てています。
+
+```javascript
+useEffect(() => {
+  let ignore = false;
+
+  async function fetchData() {
+    // APIからデータを取得する
+    const result = await api.get(`/products/${productId}`);
+    if (!ignore) {
+      // 自分が「最新」の時だけStateを更新する
+      setProduct(result.data);
+    }
+  }
+
+  fetchData();
+
+  return () => {
+    // 次の通信が始まる前、またはアンマウント時に「自分は古い」とフラグを立てる
+    ignore = true;
+  };
+}, [productId]);
+```
+
+#### 画面のチラつきを抑えたい
 
 `useEffect`は描画「後」に副作用を実行するため、副作用によりコンポーネントの見た目が変わると、一瞬画面がチラついてしまいます。`useEffect`の代わりにシグネチャの同じ`useLayoutEffect`を使用すると、画面の描画「前」に副作用を実行することができます。そのため、DOMのサイズや位置を測定して即座にDOMを更新したい場合など、画面のチラつき（フリッカー）を防ぐことができます。通常は `useEffect` を優先し、描画に問題がある場合のみ `useLayoutEffect` を使用するのが推奨されます。
 
 
 
 
-## DOMへのアクセスと値の保持
 
 ### useRef
+DOMへのアクセスと値の保持
 
 `useRef`フックは、次のようなことが可能です。
 
