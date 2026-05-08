@@ -2106,11 +2106,84 @@ stateはsetStateして、次レンダーで値が変わるがrefは違う
 `useRef`フックは、次のようなことが可能です。
 
 **★レンダリング間で値を保持する**  
-コンポーネントでなんらかの値を保持したい場合、stateを使いたくなるかもしれません。しかし、その値が変化しても再レンダーをトリガしたくない場合は、stateでは適当ではありません。`useRef`を使うと、レンダー間で同一の値を保持できます。
+コンポーネントでなんらかの値を保持したい場合、stateを使いたくなるかもしれませんが、その値が変化しても再レンダーをトリガしたくない場合には、stateでは適当ではありません。`useRef`を使うと、再レンダー無しでコンポーネントで値を保持することが可能です。
 
 **★DOM要素に直接アクセスできる**  
-ReactではDOMを直接操作することはあまりしませんが、要素をフォーカスする・要素の位置までスクロールさせる等のブラウザAPIを使用したい場合は、`useRef`でアクセスできます。
+ReactではDOMを直接操作することはあまりしませんが、要素をフォーカスする・要素の位置までスクロールさせる等のブラウザAPIを使用したい場合等に、`useRef`でアクセスできます。
 
+#### refとstate
+
+- いつでも`ref.current`の値を変更できる 同期的な変更となる
+- レンダー中に`ref.current`の値を読み書きしない(いつ変更されたかわからないため)基本はイベントハンドラ内で読み書きする
+- 毎レンダリング毎に同じrefインスタンスが返される
+
+stateはイミュータブルに扱わなければならなかったが、refは通常のjavascriptオブジェクトとして扱われる。
+
+#### レンダリング間で値を保持する
+
+次のようにして`useRef`を使用できます。
+
+```javascript
+// reactからuseRefをインポート
+import { useRef } from 'react';
+
+// ...
+
+// コンポーネント内でuseRefを呼出す
+// 引数にはrefの初期値を渡します。
+const ref = useRef('初期値');
+```
+
+`useRef`の返す値は、オブジェクトで、唯一`current`プロパティを持ちます。このプロパティに初期値が入っています。
+
+```javascript
+// ref.currentの中身
+{
+  current: '初期値'
+}
+```
+
+サンプル
+
+```jsx
+function StopWatch() {
+  const [count, setCount] = useState(0);
+  // タイマーの「管理番号」をレンダリング間で保持
+  const timerRef = useRef(null);
+
+  const startTimer = () => {
+    if (timerRef.current !== null) return; // 二重起動防止
+
+    timerRef.current = setInterval(() => {
+      setCount((c) => c + 1);
+    }, 1000);
+  };
+
+  const stopTimer = () => {
+    // refに保持していたIDを使ってタイマーを止める
+    clearInterval(timerRef.current);
+    timerRef.current = null;
+  };
+
+  return (
+    <div>
+      <h1>{count}秒</h1>
+      <button onClick={startTimer}>スタート</button>
+      <button onClick={stopTimer}>ストップ</button>
+    </div>
+  );
+}
+```
+
+
+
+
+
+
+
+
+
+#### DOM要素に直接アクセスする
 
 ```javascript
 const refContainer = useRef(初期値);
@@ -2120,7 +2193,6 @@ DOM要素へのアクセスは次のようにして行います。
 
 ```jsx
 <input ref={refContainer} type="text" />
->
 ```
 
 `refContainer.current` プロパティを通じて値の読み書きを行います。
