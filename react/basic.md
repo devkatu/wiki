@@ -2106,7 +2106,35 @@ useEffect(() => {
 **★DOM要素に直接アクセスできる**  
 ReactではDOMを直接操作することはあまりしませんが、要素をフォーカスする・要素の位置までスクロールさせる等のブラウザAPIを使用したい場合等に、`useRef`でアクセスできます。
 
-#### refを使用する際の注意
+#### レンダリング間で値を保持する
+
+次のようにして`useRef`を使用できます。
+
+```javascript
+// reactからuseRefをインポート
+import { useRef } from 'react';
+
+// ...
+
+// コンポーネント内でuseRefを呼出す
+// 引数にはrefの初期値を渡します。
+const ref = useRef('初期値');
+```
+
+`useRef`の返す値は`current`プロパティのみのオブジェクトです。この`current`に初期値が入っています。
+
+```javascript
+// ref.currentの中身
+{
+  current: '初期値'
+}
+```
+
+これをそのままJavaScriptのオブジェクトとして使用することが出来ます。
+
+#### 値を保持する際の注意とコード例
+
+次のような特徴に注意しましょう。
 
 **★直接的に値を変更できる**  
 stateはその値を更新するために専用の関数を使用する(stateはイミュータブルに扱う)必要があり、値の更新が反映されるのも次レンダーでした。refはただのJavaScriptオブジェクトなので、`current`プロパティに入っている値を直接変更でき、その変更は即反映されます。
@@ -2135,41 +2163,6 @@ function MyComponent() {
   );
 }
 ```
-
-また、先に説明したように、DOMにアタッチしたrefでもレンダー中に操作をしてはいけません。
-
-refは、イベントハンドラや、エフェクト等で読み書きするのが基本になります。
-
-**★DOM操作をしない**  
-DOMの変更は飽くまでもReactの仕事です。Reactが管理すべきDOMを、refを使って勝手に追加したり削除したりすると、React側が把握できないため、実行時エラーが発生することがあります。
-
-
-
-#### レンダリング間で値を保持する
-
-次のようにして`useRef`を使用できます。
-
-```javascript
-// reactからuseRefをインポート
-import { useRef } from 'react';
-
-// ...
-
-// コンポーネント内でuseRefを呼出す
-// 引数にはrefの初期値を渡します。
-const ref = useRef('初期値');
-```
-
-`useRef`の返す値は`current`プロパティのみのオブジェクトです。この`current`に初期値が入っています。
-
-```javascript
-// ref.currentの中身
-{
-  current: '初期値'
-}
-```
-
-これをそのままJavaScriptのオブジェクトとして使用することが出来ます。
 
 以下はタイマーのIDを保存しておく例です。
 
@@ -2205,21 +2198,36 @@ function StopWatch() {
 
 #### DOM要素に直接アクセスする
 
-**エフェクトでビデオ再生するやついれたい**
-
 レンダリング間での値保持と同様に`useRef`を呼出します。
 
 ```javascript
-const refContainer = useRef(初期値);
+const refContainer = useRef(null);
 ```
 
-この作成した`refContainer`を、コンポーネントの`ref`属性に設定(refのアタッチ)します。
+この作成した`refContainer`を、`<input>`等の参照を取得したいDOM要素の`ref`属性に設定(refのアタッチ)します。
 
 ```jsx
 <input ref={refContainer} type="text" />
 ```
 
-`refContainer.current`プロパティを通じてDOM要素に直接アクセスできるようになります。
+これだけで、`refContainer.current`プロパティを通じてDOM要素に直接アクセスできるようになります。
+
+#### DOM要素にアクセスする際の注意点とコード例
+
+**★レンダリング中にアクセスしない**
+初回レンダリング中はまだrefが初期値となっており、refにDOMの参照が入るのは次レンダリング時以降になります。
+基本はイベントハンドラやエフェクトからのアクセスになります。
+
+**★DOMを直接操作しない**
+
+DOMの変更は飽くまでもReactの仕事です。Reactが管理するはずのDOMを、refを使って勝手に追加したり削除したりすると、React側が把握できないため、実行時エラーが発生することがあります。
+
+
+
+
+
+
+**エフェクトでビデオ再生するやついれたい**
 
 ```jsx
 import { useRef } from 'react';
@@ -2241,9 +2249,6 @@ function TextInputWithFocusButton() {
 }
 ```
 
-但し、DOM要素にアタッチしたrefは、初回レンダー時にはまだDOMようになります。
-
-初回のレンダー時に
 
 
 
