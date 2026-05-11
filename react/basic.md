@@ -2090,12 +2090,6 @@ useEffect(() => {
 }, [productId]);
 ```
 
-
-
-
-
-
-
 ### useRef
 
 `useRef`フックは、次のようなことが可能です。
@@ -2104,11 +2098,11 @@ useEffect(() => {
 コンポーネントでなんらかの値を保持したい場合、stateを使いたくなるかもしれませんが、その値が変化しても再レンダーをトリガしたくない場合には、stateでは適当ではありません。`useRef`を使うと、再レンダー無しでコンポーネントで値を保持することが可能です。
 
 **★DOM要素に直接アクセスできる**  
-ReactではDOMを直接操作することはあまりしませんが、要素をフォーカスする・要素の位置までスクロールさせる等のブラウザAPIを使用したい場合等に、`useRef`でアクセスできます。
+ReactではDOMを直接操作することは基本的にしませんが、特定の要素をフォーカスする・要素の位置までスクロールさせる等のブラウザAPIを使用したい場合等に、`useRef`でアクセスできます。
 
 #### レンダリング間で値を保持する
 
-次のようにして`useRef`を使用できます。
+次のように`useRef`を使用できます。
 
 ```javascript
 // reactからuseRefをインポート
@@ -2130,11 +2124,9 @@ const ref = useRef('初期値');
 }
 ```
 
-これをそのままJavaScriptのオブジェクトとして使用することが出来ます。
+この`ref.current`がレンダリング間でデータを保持するものとなり、そのままJavaScriptのオブジェクトとして使用しすることが出来ます。
 
-#### 値を保持する際の注意とコード例
-
-次のような特徴に注意しましょう。
+refは、stateと比べて次のような特徴があるので注意しましょう。
 
 **★直接的に値を変更できる**  
 stateはその値を更新するために専用の関数を使用する(stateはイミュータブルに扱う)必要があり、値の更新が反映されるのも次レンダーでした。refはただのJavaScriptオブジェクトなので、`current`プロパティに入っている値を直接変更でき、その変更は即反映されます。
@@ -2142,8 +2134,8 @@ stateはその値を更新するために専用の関数を使用する(stateは
 ```javascript
 const ref = useRef('初期値')
 
-ref.current = '更新値';   // currentを直接変更可能
-console.log(ref.current)  // '更新値'が表示される
+ref.current = '更新値';   // currentを直接変更可能。※stateはsetXxxxで更新
+console.log(ref.current)  // '更新値'が表示される。※stateは次レンダーで値が更新
 ```
 
 **★refの値をレンダリングに使用しない**  
@@ -2158,18 +2150,20 @@ function MyComponent() {
   // ...
 
   return (
-    // refの値を変更しても、レンダーはトリガされない！！
+    // どこかでrefの値を変更しても、レンダーはトリガされない！！
     <div>{myRef.current}</div>
   );
 }
 ```
+
+#### レンダリング間で値を保持するサンプル
 
 以下はタイマーのIDを保存しておく例です。
 
 ```jsx
 function StopWatch() {
   const [count, setCount] = useState(0);
-  // タイマーの「管理番号」をレンダリング間で保持
+  // タイマーIDをレンダリング間で保持
   const timerRef = useRef(null);
 
   const startTimer = () => {
@@ -2198,36 +2192,93 @@ function StopWatch() {
 
 #### DOM要素に直接アクセスする
 
-レンダリング間での値保持と同様に`useRef`を呼出します。
+レンダリング間での値保持と同様に`useRef`を呼出します。初期値には`null`を渡します。
 
 ```javascript
 const refContainer = useRef(null);
 ```
 
-この作成した`refContainer`を、`<input>`等の参照を取得したいDOM要素の`ref`属性に設定(refのアタッチ)します。
+この作成した`refContainer`を、`<input>`等、参照を取得したいDOM要素の`ref`属性に設定(refのアタッチ)します。
 
 ```jsx
 <input ref={refContainer} type="text" />
 ```
 
-これだけで、`refContainer.current`プロパティを通じてDOM要素に直接アクセスできるようになります。
+これだけで、`refContainer.current`プロパティを通じてDOM要素に直接アクセスできるようになり、ブラウザAPI等が使用できるようになります。
 
-#### DOM要素にアクセスする際の注意点とコード例
+ただし、DOM要素にアクセスする際には次の点に注意しましょう。
 
-**★レンダリング中にアクセスしない**
-初回レンダリング中はまだrefが初期値となっており、refにDOMの参照が入るのは次レンダリング時以降になります。
-基本はイベントハンドラやエフェクトからのアクセスになります。
+**★レンダリング中にアクセスしない**  
+初回のレンダリング中はまだrefが初期値(`null`)となっており、初回レンダリングが終わった後にDOM要素が入ります。また、更新時のレンダリング中は、refには更新前のDOM要素が入っており、アクセスするには早すぎます。
 
-**★DOMを直接操作しない**
+このため、**基本的にレンダリング中ではなくイベントハンドラやエフェクトからDOM要素にアクセスする**ことになります。
 
-DOMの変更は飽くまでもReactの仕事です。Reactが管理するはずのDOMを、refを使って勝手に追加したり削除したりすると、React側が把握できないため、実行時エラーが発生することがあります。
+```javascript
+import { useRef } from 'react';
 
+function AutoFocusForm() {
+  const inputRef = useRef(null);  
+  
+  // レンダー中はDOM要素にはアクセスできない！
+  // イベントハンドラやエフェクトからアクセスする
+  inputRef.current.focus();
 
+  return (
+    <form>
+      <label>ユーザー名：</label>
+      <input ref={inputRef} type="text" />
+      <br />
+      <label>パスワード：</label>
+      <input type="password" />
+    </form>
+  );
+}
+```
 
+**★DOMを直接書き換えない**
 
+DOMの書き換えは飽くまでもReactの仕事です。Reactが管理するはずのDOMを、refを使って勝手に追加したり削除したりすると、React側が把握できないため、実行時エラーが発生することがあります。
 
+下記の例では、refで無理やり要素を削除する例です。refで削除した後にstateを切替用とするとエラーが発生します。
 
-**エフェクトでビデオ再生するやついれたい**
+```jsx
+import { useRef, useState } from 'react';
+
+function DangerRemove() {
+  const [show, setShow] = useState(true);
+  const elementRef = useRef(null);
+
+  const handleIllegalRemove = () => {
+    // NG: Reactに内緒で物理的に消す
+    if (elementRef.current) {
+      elementRef.current.remove(); 
+    }
+  };
+
+  return (
+    <div>
+      {show && (
+        <div ref={elementRef}>
+          重要なアラート（Reactの管理下）
+        </div>
+      )}
+
+      <button onClick={handleIllegalRemove}>
+        refで物理的に削除
+      </button>
+
+      <button onClick={() => setShow(!show)}>
+        stateで切り替え
+      </button>
+
+    </div>
+  );
+}
+```
+
+#### DOM要素に直接アクセスするサンプル
+
+下記例はボタンを押すと`<input>`要素へフォーカスする例です。
 
 ```jsx
 import { useRef } from 'react';
@@ -2249,12 +2300,53 @@ function TextInputWithFocusButton() {
 }
 ```
 
+適当なイベントハンドラが無い場合、エフェクトもアリです。
+
+```jsx
+import { useRef, useEffect } from 'react';
+
+function TextInputWithFocusButton() {
+  const inputEl = useRef(null);
+  
+  useEffect(() => {
+    // 初回レンダリング後にフォーカスする
+    inputEl.current.focus();
+  },[])
+
+  return (
+    <>
+      <input ref={inputEl} type="text" />
+      <input type="text" />
+    </>
+  );
+}
+```
+
+
+
+
 
 
 
 
 
 ## レンダリング（パフォーマンス）の最適化
+
+再レンダリングが起こるタイミングは次の通りです。
+
+- 該当のコンポーネントのstateが更新された
+- 親コンポーネントが再レンダリングされた
+- useContext(後述)を使っているときに、そのデータが更新された
+
+しかし、親コンポーネントが再レンダリングされても、必ずしも子コンポーネントが必要とは限りません。**propsが前回と変化していなければ、子コンポーネントは同じJSXを返すはずです。**
+
+じゃあpropsが変化していなければ再レンダリングしないコンポーネントがあればいいよね、というのが`React.memo`です。
+
+しかしこれだけでは実はダメなんです。
+
+`React.memo`を使っても、「propsが前回値と変化していないか」のチェックは`Object.is()`を使った厳格なものです。**これは参照が全く同一か**、をチェックしています。つまり、propsに参照型の変数や関数を渡していると、値は同じでも実体は違うので結局再レンダリングが発生することになります。
+
+これらを解決するのが、`useCallback`と`useMemo`になります。
 
 ### useCallback
 
