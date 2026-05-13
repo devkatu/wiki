@@ -2322,33 +2322,82 @@ function TextInputWithFocusButton() {
 }
 ```
 
+## レンダリング・パフォーマンスの最適化
 
+Reactにおいて、パフォーマンスを向上するためには、無駄なレンダリングを防いだり、コンポーネントでの重い計算を繰り返す事を避けたりする為に、キャッシュを使うことが重要になってきます。これらは**メモ化**とも呼ばれます。
 
+★**ReactCompiler**を導入すると、ここから紹介する機能が全て含まれています。
 
+### React.memo
 
-
-
-
-
-## レンダリング（パフォーマンス）の最適化
-
-再レンダリングが起こるタイミングは次の通りです。
+Reactの仕様上、再レンダリングが起こるタイミングは次のようなものがあります。
 
 - 該当のコンポーネントのstateが更新された
 - 親コンポーネントが再レンダリングされた
-- useContext(後述)を使っているときに、そのデータが更新された
+- useContextを使っているときに、そのデータが更新された
 
-しかし、親コンポーネントが再レンダリングされても、必ずしも子コンポーネントの再レンダリング必要とは限りません。propsが前回と変化していなければ、子コンポーネントは同じJSXを返すはずです。
+しかし、この**親コンポーネントが再レンダリングされた**場合でも、必ずしも子コンポーネントの再レンダリング必要とは限りません。propsが前回と変化していなければ、子コンポーネントは同じ見た目のハズなので再レンダリングする必要はありません。
 
-じゃあ親コンポーネントが再レンダーされても、propsが変化していなければ再レンダーしないコンポーネントがあればいいよね、というのが`React.memo`です。これがメモ化されたコンポーネントです。
+じゃあ**親コンポーネントが再レンダーされても、propsが変化していなければ再レンダーしないコンポーネントがあればいいよね**、というものが`React.memo`です。※`React.memo` はフック（Hook）ではなく、コンポーネントをラップして返す高階コンポーネント（HOC）というものです。
 
-しかしこれだけでは実はダメなんです。
+これにより、コンポーネントのレンダリング結果をメモ化し、親コンポーネントが再レンダリングされた際でも、propsが変化していなければ子コンポーネントの不要な再レンダリングをスキップするために使用します。
+
+
+#### 使い方
+
+```javascript
+const MemoizedComponent = React.memo(function MyComponent(props) {
+  // コンポーネントのレンダリング
+});
+```
+
+#### 実装の落とし穴
+
+
+
+前述の `useCallback` や `useMemo` と組み合わせて使用されることが多く、propsとして渡す関数やオブジェクトをメモ化しておかないと、毎回新しいpropsが渡されたと判定されて再レンダリングされてしまうため、注意が必要です。
+
 
 `React.memo`を使っても、「propsが前回値と変化していないか」のチェックは`Object.is()`を使った厳格なものです。**これは参照が全く同一か**、をチェックしています。つまり、propsに参照型の変数や関数を渡していると、値は同じでも実体は違うので結局再レンダリングが発生することになります。
 
 これらを解決するのが、`useCallback`と`useMemo`になります。
 
-そして**ReactCompoler**は全てが入っています。
+
+
+
+#### 実際のコード例
+
+```jsx
+import React, { useState, useCallback } from 'react';
+
+// React.memoでラップすることで、propsが変わらない限り再レンダリングされない
+const ChildComponent = React.memo(({ text, onClick }) => {
+  console.log('ChildComponentがレンダリングされました');
+  return <button onClick={onClick}>{text}</button>;
+});
+
+function ParentComponent() {
+  const [count, setCount] = useState(0);
+
+  // useCallbackで関数をメモ化し、ChildComponentが不必要に再レンダリングされるのを防ぐ
+  const handleClick = useCallback(() => {
+    console.log('クリックされました');
+  }, []);
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>カウントアップ</button>
+      
+      {/* 親のcountが更新されても、ChildComponentは再レンダリングをスキップする */}
+      <ChildComponent text="変わらないボタン" onClick={handleClick} />
+    </div>
+  );
+}
+```
+
+
+
 
 ### useCallback
 
@@ -2361,8 +2410,13 @@ const memoizedCallback = useCallback(
   () => {
     // 実行したい処理
   },
-  [依存配列],
+  [依存配列]
 );
+```
+
+```javascript
+// これは間違い
+onClick={() => memoizedCallback()}
 ```
 
 **補足説明**
@@ -2428,48 +2482,3 @@ function ExpensiveCalculationComponent({ numbers }) {
 }
 ```
 
-### React.memo
-
-**機能・目的**
-コンポーネントのレンダリング結果をメモ化し、親コンポーネントが再レンダリングされた際でも、propsが変化していなければ子コンポーネントの不要な再レンダリングをスキップするために使用します。
-
-**構文**
-```javascript
-const MemoizedComponent = React.memo(function MyComponent(props) {
-  // コンポーネントのレンダリング
-});
-```
-
-**補足説明**
-`React.memo` はフック（Hook）ではなく、コンポーネントをラップして返す高階コンポーネント（HOC）です。
-前述の `useCallback` や `useMemo` と組み合わせて使用されることが多く、propsとして渡す関数やオブジェクトをメモ化しておかないと、毎回新しいpropsが渡されたと判定されて再レンダリングされてしまうため、注意が必要です。
-
-**実際のコード例**
-```jsx
-import React, { useState, useCallback } from 'react';
-
-// React.memoでラップすることで、propsが変わらない限り再レンダリングされない
-const ChildComponent = React.memo(({ text, onClick }) => {
-  console.log('ChildComponentがレンダリングされました');
-  return <button onClick={onClick}>{text}</button>;
-});
-
-function ParentComponent() {
-  const [count, setCount] = useState(0);
-
-  // useCallbackで関数をメモ化し、ChildComponentが不必要に再レンダリングされるのを防ぐ
-  const handleClick = useCallback(() => {
-    console.log('クリックされました');
-  }, []);
-
-  return (
-    <div>
-      <p>Count: {count}</p>
-      <button onClick={() => setCount(count + 1)}>カウントアップ</button>
-      
-      {/* 親のcountが更新されても、ChildComponentは再レンダリングをスキップする */}
-      <ChildComponent text="変わらないボタン" onClick={handleClick} />
-    </div>
-  );
-}
-```
